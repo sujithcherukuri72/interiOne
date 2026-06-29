@@ -1,9 +1,17 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
+
+/**
+ * Drop interio-one-logo.jpeg into public/brand/ to activate the photo logo.
+ * While the image is absent the SVG monogram renders as fallback.
+ */
+const LOGO_IMAGE = "/brand/interio-one-logo.jpeg";
+const JSW_LOGO   = "/brand/jsw-logo.jpeg";
 
 const NAV_LINKS = [
   { href: "/collections", label: "Collections" },
@@ -28,6 +36,38 @@ function NavLink({ href, label }: { href: string; label: string }) {
         transition={{ duration: 0.28, ease: [0.32, 0, 0.67, 0] }}
       />
     </Link>
+  );
+}
+
+function BrandLogo() {
+  const [imgFailed, setImgFailed] = useState(false);
+
+  if (imgFailed) {
+    return <Logo variant="lockup" size="sm" />;
+  }
+
+  return (
+    <span className="flex items-center gap-2.5">
+      <span className="relative h-7 w-7 flex-shrink-0 overflow-hidden rounded-full">
+        <Image
+          src={LOGO_IMAGE}
+          alt="InterioOne"
+          fill
+          sizes="28px"
+          priority
+          className="object-cover"
+          onError={() => setImgFailed(true)}
+        />
+      </span>
+      <span className="flex flex-col justify-center">
+        <span className="text-[11px] font-semibold tracking-[0.2em] uppercase leading-none">
+          Interio<em className="not-italic font-extralight">One</em>
+        </span>
+        <span className="text-[6.5px] tracking-[0.35em] uppercase text-foreground/40 mt-[3px]">
+          Design · Create · Inspire
+        </span>
+      </span>
+    </span>
   );
 }
 
@@ -58,13 +98,13 @@ export function Navbar() {
       }}
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-10 h-16 flex items-center justify-between gap-8">
-        {/* Brand lockup */}
+        {/* Brand lockup — shows real image if present, SVG monogram otherwise */}
         <Link
           href="/"
           className="shrink-0 select-none text-foreground hover:text-gold transition-colors duration-300"
           aria-label="InterioOne home"
         >
-          <Logo variant="lockup" size="sm" />
+          <BrandLogo />
         </Link>
 
         {/* Primary nav */}
