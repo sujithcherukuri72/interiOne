@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   INTERIOONE — BRAND DESIGN TOKENS
+   Palette sources:
+     · InterioOne logo        → obsidian + gold family
+     · Modula Signature Range → cavern, sienna-husk, terrace-vine, river-raft
+     · Modula Premier Range   → desert-dune, pour-line, courtyard-clay
+     · Modula Select Range    → glacier-veil, oasis-ivory, canyon-ridge
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Semantic surface tokens (light mode default) ── */
+:root {
+  /* Surfaces */
+  --background:     #FAF6F0;   /* warm ivory — drawn from Oasis Ivory / brochure cream */
+  --foreground:     #1A1208;   /* warm near-black — espresso depth */
+  --surface:        #FFFFFF;
+  --surface-alt:    #F0E8D8;   /* Canyon Ridge-ish warmth */
+
+  /* Gold accent family (from logo) */
+  --gold:           #C9A84C;
+  --gold-light:     #E8D5A3;
+  --gold-deep:      #8B6820;
+
+  /* Modula Signature Range — exact named shades */
+  --cavern:         #7D9182;   /* Cavern Grey — Solid Matte */
+  --cavern-deep:    #4B6B54;   /* Terrace Vine — Solid Matte */
+  --sienna-husk:    #C9A87A;   /* Sienna Husk — Solid Matte */
+  --river-raft:     #9BAAB8;   /* River Raft — Solid Matte */
+  --tundra:         #FAFAFA;   /* Tundra — Solid Matte */
+  --metal-moon:     #6B6B6E;   /* Metal Moon — Metallic */
+  --lumen-sand:     #C4B090;   /* Lumen Sand — Metallic */
+  --petal-dust:     #A0827A;   /* Petal Dust — Solid Matte */
+  --tuscan-oak:     #B8956A;   /* Tuscan Oak — Wood */
+  --abyss-edge:     #4A3C30;   /* Abyss Edge — Metallic */
+
+  /* Modula Premier Range */
+  --desert-dune:    #C49482;   /* Desert Dune — Metallic */
+  --crater-dust:    #A89070;   /* Crater Dust — Metallic */
+  --courtyard-clay: #F0E8D0;   /* Courtyard Clay — Matte */
+  --pour-line:      #D0CABC;   /* Pour Line — Concrete */
+  --silt-root:      #6A4840;   /* Silt Root — Matte */
+  --trench-teal:    #4A6858;   /* Trench Teal — Matte */
+  --industrial-bay: #5A5C68;   /* Industrial Bay — Matte */
+
+  /* Modula Select Range */
+  --glacier-veil:   #F0EDE8;   /* Glacier Veil */
+  --oasis-ivory:    #FAF6EC;   /* Oasis Ivory */
+  --canyon-ridge:   #E2D4C0;   /* Canyon Ridge */
+
+  /* Brand deep tones (from brochure backgrounds) */
+  --sienna:         #7B3722;   /* Modula terracotta / burnt sienna */
+  --espresso:       #2C1409;   /* Dark chocolate */
+  --obsidian:       #0E0D0D;   /* InterioOne logo background */
+}
+
+/* ── Tailwind v4 theme registration ── */
+@theme inline {
+  /* Semantic surfaces → Tailwind bg-background, text-foreground, etc. */
+  --color-background:     var(--background);
+  --color-foreground:     var(--foreground);
+  --color-surface:        var(--surface);
+  --color-surface-alt:    var(--surface-alt);
+
+  /* Gold family → bg-gold, text-gold, border-gold-light, etc. */
+  --color-gold:           var(--gold);
+  --color-gold-light:     var(--gold-light);
+  --color-gold-deep:      var(--gold-deep);
+
+  /* Modula material colours as Tailwind utilities */
+  --color-cavern:         var(--cavern);
+  --color-cavern-deep:    var(--cavern-deep);
+  --color-sienna-husk:    var(--sienna-husk);
+  --color-river-raft:     var(--river-raft);
+  --color-tundra:         var(--tundra);
+  --color-metal-moon:     var(--metal-moon);
+  --color-lumen-sand:     var(--lumen-sand);
+  --color-petal-dust:     var(--petal-dust);
+  --color-tuscan-oak:     var(--tuscan-oak);
+  --color-abyss-edge:     var(--abyss-edge);
+  --color-desert-dune:    var(--desert-dune);
+  --color-crater-dust:    var(--crater-dust);
+  --color-courtyard-clay: var(--courtyard-clay);
+  --color-pour-line:      var(--pour-line);
+  --color-silt-root:      var(--silt-root);
+  --color-trench-teal:    var(--trench-teal);
+  --color-industrial-bay: var(--industrial-bay);
+  --color-glacier-veil:   var(--glacier-veil);
+  --color-oasis-ivory:    var(--oasis-ivory);
+  --color-canyon-ridge:   var(--canyon-ridge);
+  --color-sienna:         var(--sienna);
+  --color-espresso:       var(--espresso);
+  --color-obsidian:       var(--obsidian);
+
+  /* Fonts */
+  --font-sans:  var(--font-geist-sans);
+  --font-mono:  var(--font-geist-mono);
+}
+
+/* ── Dark mode (espresso / obsidian night) ── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background:  #0E0D0D;   /* obsidian */
+    --foreground:  #F5EDD8;   /* warm ivory */
+    --surface:     #1A1612;
+    --surface-alt: #241E18;
+  }
+}
+
+/* Manual .dark class override (localStorage toggle) */
+.dark {
+  --background:  #0E0D0D;
+  --foreground:  #F5EDD8;
+  --surface:     #1A1612;
+  --surface-alt: #241E18;
+}
+
+/* ── Base styles ── */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Thin scrollbar on desktop — matches luxury aesthetic */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--gold-deep); border-radius: 2px; }
+}
