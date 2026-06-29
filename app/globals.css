@@ -115,6 +115,27 @@
   --surface-alt: #241E18;
 }
 
+/* ── Lenis smooth-scroll setup ─────────────────────────────────────────────
+   html.lenis overrides `h-full` / any fixed height so the document can grow
+   taller than the viewport — required for Lenis window-scroll mode. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+/* ── ────────────────────────────────────────────────────────────────────── */
+
 /* ── Base styles ── */
 body {
   background-color: var(--background);
