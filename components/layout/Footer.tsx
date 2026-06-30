@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Logo } from "@/components/brand/Logo";
+import { TelanganaMap } from "@/components/layout/TelanganaMap";
 
 /* ── Social icon inline SVGs (lucide-react has no brand icons) ── */
 function IconInstagram() {
@@ -56,16 +57,6 @@ const SOCIAL_LINKS = [
   { href: "https://pinterest.com/interioone", label: "Pinterest", Icon: IconPinterest  },
   { href: "https://youtube.com/@interioone",  label: "YouTube",   Icon: IconYoutube   },
 ] as const;
-
-/* ── Google Maps Embed ── */
-const MAP_API_KEY  = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
-/* Hyderabad co-ordinates — update lat/lng to your exact showroom location */
-const MAP_LAT      = "17.4239";
-const MAP_LNG      = "78.4738";
-const MAP_ZOOM     = "16";
-const MAP_SRC      = MAP_API_KEY
-  ? `https://www.google.com/maps/embed/v1/view?key=${MAP_API_KEY}&center=${MAP_LAT},${MAP_LNG}&zoom=${MAP_ZOOM}&maptype=roadmap`
-  : `https://maps.google.com/maps?q=${MAP_LAT},${MAP_LNG}&z=${MAP_ZOOM}&output=embed`;
 
 /* ── Footer nav ── */
 const FOOTER_LINKS = [
@@ -151,40 +142,15 @@ export function Footer() {
             </div>
           </div>
 
-          {/* ── RIGHT: Google Map ── */}
-          <div className="w-full">
+          {/* ── RIGHT: Telangana state map ── */}
+          <div className="w-full flex flex-col items-center lg:items-start">
             <p
-              className="text-[11px] font-semibold tracking-[0.2em] uppercase mb-4"
+              className="text-[11px] font-semibold tracking-[0.2em] uppercase mb-5 self-start"
               style={{ color: "var(--gold)" }}
             >
-              Find Us
+              Our Presence
             </p>
-            {/* Map container — dark-mode via CSS invert trick */}
-            <div
-              className="relative w-full overflow-hidden"
-              style={{
-                borderRadius: "12px",
-                boxShadow:    "0 4px 32px rgba(0,0,0,0.55), 0 0 0 1px rgba(201,168,76,0.12)",
-                aspectRatio:  "16/9",
-              }}
-            >
-              <iframe
-                src={MAP_SRC}
-                title="InterioOne Main Branch Location"
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="absolute inset-0 w-full h-full border-0"
-                /* Invert + hue-rotate = cheap dark-mode map */
-                style={{ filter: "invert(92%) hue-rotate(180deg) saturate(0.85) brightness(0.92)" }}
-              />
-            </div>
-            <p
-              className="mt-3 text-[11px] tracking-wide"
-              style={{ color: "rgba(245,237,216,0.35)" }}
-            >
-              Plot No. 12, Road No. 36, Jubilee Hills · Hyderabad
-            </p>
+            <TelanganaMap />
           </div>
 
         </div>

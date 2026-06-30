@@ -143,6 +143,18 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ── Telangana map — main pin pulse ring ── */
+@keyframes pin-pulse {
+  0%   { r: 10; opacity: 0.6; }
+  70%  { r: 16; opacity: 0;   }
+  100% { r: 16; opacity: 0;   }
+}
+.main-pin-pulse {
+  animation: pin-pulse 2s ease-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
 /* ── Footer social icon hover (CSS-driven, no JS) ── */
 .footer-social-icon {
   border-color:     rgba(201, 168, 76, 0.25);
