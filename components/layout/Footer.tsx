@@ -73,9 +73,9 @@ export function Footer() {
       className="border-t border-foreground/[0.06]"
       style={{ backgroundColor: "var(--obsidian)", color: "var(--foreground)" }}
     >
-      {/* ── Main split: brand | map ── */}
+      {/* ── Main split: brand (narrow) | map (wide) ── */}
       <div className="mx-auto max-w-7xl px-6 lg:px-10 py-14 lg:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-12 lg:gap-10 items-center">
 
           {/* ── LEFT: brand + address + social ── */}
           <div className="flex flex-col gap-8">
@@ -142,16 +142,15 @@ export function Footer() {
             </div>
           </div>
 
-          {/* ── RIGHT: Telangana map (Google Maps clipped to state shape) ── */}
-          <div className="w-full flex flex-col items-start">
+          {/* ── RIGHT: Telangana map ── */}
+          <div className="w-full flex flex-col items-center lg:items-start">
             <p
-              className="text-[11px] font-semibold tracking-[0.2em] uppercase mb-6"
+              className="text-[11px] font-semibold tracking-[0.2em] uppercase mb-6 self-center"
               style={{ color: "var(--gold)" }}
             >
               Our Presence
             </p>
-            {/* TelanganaMap renders Google Maps through the state outline */}
-            <div className="w-full" style={{ maxWidth: 380 }}>
+            <div className="w-full" style={{ maxWidth: 560 }}>
               <TelanganaMap />
             </div>
           </div>
