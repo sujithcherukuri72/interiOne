@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { SponsorsCarousel } from "@/components/sections/SponsorsCarousel";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import "./globals.css";
 
@@ -38,6 +39,7 @@ export default function RootLayout({
         <SmoothScrollProvider>
           <Navbar />
           <main className="flex-1 pt-16">{children}</main>
+          <SponsorsCarousel />
           <Footer />
         </SmoothScrollProvider>
       </body>
