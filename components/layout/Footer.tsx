@@ -58,6 +58,15 @@ const SOCIAL_LINKS = [
   { href: "https://youtube.com/@interioone",  label: "YouTube",   Icon: IconYoutube   },
 ] as const;
 
+/* ── Google Maps — Kapil Kavuri Hub, Nanakramguda ── */
+const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
+const LAT = "17.4228";
+const LNG = "78.3268";
+const ZOOM = "17";
+const MAP_EMBED_SRC = MAPS_KEY
+  ? `https://www.google.com/maps/embed/v1/place?key=${MAPS_KEY}&q=${LAT},${LNG}&zoom=${ZOOM}`
+  : `https://maps.google.com/maps?q=${LAT},${LNG}&z=${ZOOM}&output=embed`;
+
 /* ── Footer nav ── */
 const FOOTER_LINKS = [
   { href: "/collections", label: "Collections" },
@@ -102,8 +111,8 @@ export function Footer() {
               <p className="font-medium" style={{ color: "rgba(245,237,216,0.85)" }}>
                 InterioOne Design Studio
               </p>
-              <p>Plot No. 12, Jubilee Hills,</p>
-              <p>Road No. 36, Hyderabad — 500 033</p>
+              <p>Kapil Kavuri Hub, Nanakramguda,</p>
+              <p>Hyderabad — 500 032</p>
               <p>Telangana, India</p>
               <p className="mt-3">
                 <a
@@ -142,15 +151,56 @@ export function Footer() {
             </div>
           </div>
 
-          {/* ── RIGHT: Telangana state map ── */}
-          <div className="w-full flex flex-col items-center lg:items-start">
-            <p
-              className="text-[11px] font-semibold tracking-[0.2em] uppercase mb-5 self-start"
-              style={{ color: "var(--gold)" }}
-            >
-              Our Presence
-            </p>
-            <TelanganaMap />
+          {/* ── RIGHT: Telangana presence map + Google Maps drill-down ── */}
+          <div className="w-full flex flex-col gap-8">
+
+            {/* State presence map */}
+            <div>
+              <p
+                className="text-[11px] font-semibold tracking-[0.2em] uppercase mb-5"
+                style={{ color: "var(--gold)" }}
+              >
+                Our Presence
+              </p>
+              <TelanganaMap />
+            </div>
+
+            {/* Google Maps embed — main branch street view */}
+            <div>
+              <p
+                className="text-[11px] font-semibold tracking-[0.2em] uppercase mb-3"
+                style={{ color: "var(--gold)" }}
+              >
+                Main Branch — Find Us
+              </p>
+              <div
+                className="relative w-full overflow-hidden"
+                style={{
+                  borderRadius: "12px",
+                  boxShadow:    "0 4px 28px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.14)",
+                  aspectRatio:  "16/7",
+                }}
+              >
+                <iframe
+                  src={MAP_EMBED_SRC}
+                  title="Kapil Kavuri Hub, Nanakramguda — InterioOne Main Branch"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="absolute inset-0 w-full h-full border-0"
+                  style={{
+                    filter: "invert(90%) hue-rotate(180deg) saturate(0.75) brightness(0.88)",
+                  }}
+                />
+              </div>
+              <p
+                className="mt-2 text-[10px] tracking-wide"
+                style={{ color: "rgba(245,237,216,0.3)" }}
+              >
+                Kapil Kavuri Hub · Nanakramguda, Hyderabad — 500 032
+              </p>
+            </div>
+
           </div>
 
         </div>
