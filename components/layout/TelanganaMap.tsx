@@ -1,306 +1,329 @@
 "use client";
 
 /**
- * Telangana state map — accurate SVG outline derived from geographic coordinates.
+ * Telangana state map — Google Maps iframe clipped to the precise state outline.
  *
- * Coordinate formula (viewBox 0 0 350 466):
- *   x(lon) = (lon - 77.0) × 71.1 + 15
- *   y(lat) = (20.1 - lat) × 101.4 + 10
+ * Coordinate formula used to place all boundary points & pins (viewBox 0 0 350 466):
+ *   x(lon) = (lon − 77.2) × 65.2 + 25
+ *   y(lat) = (19.9 − lat) × 107.3 + 15
  *
  * Boundary traced clockwise from NW corner using real lat/lng turning points.
- * Pin positions computed from actual city coordinates.
+ * Normalised path (coords ÷ 350 or ÷ 466) is used for clipPathUnits="objectBoundingBox"
+ * so the CSS clip-path scales responsively with the container.
  */
 
 import { useState } from "react";
 
-type Pin = {
-  id:     string;
-  label:  string;
-  cx:     number;
-  cy:     number;
-  isMain: boolean;
-};
+/* ── Pin data (city coordinates → SVG positions) ─────────────────────────── */
+type Pin = { id: string; label: string; cx: number; cy: number; isMain: boolean };
 
 const PINS: Pin[] = [
-  {
-    id:     "main",
-    label:  "Kapil Kavuri Hub, Nanakramguda",
-    cx:     109,
-    cy:     282,
-    isMain: true,
-  },
-  {
-    id:    "nizamabad",
-    label: "Upcoming — Nizamabad",
-    cx:    93,
-    cy:    155,
-    isMain: false,
-  },
-  {
-    id:    "karimnagar",
-    label: "Upcoming — Karimnagar",
-    cx:    166,
-    cy:    178,
-    isMain: false,
-  },
-  {
-    id:    "warangal",
-    label: "Upcoming — Warangal",
-    cx:    200,
-    cy:    225,
-    isMain: false,
-  },
-  {
-    id:    "khammam",
-    label: "Upcoming — Khammam",
-    cx:    239,
-    cy:    299,
-    isMain: false,
-  },
-  {
-    id:    "mahbubnagar",
-    label: "Upcoming — Mahbubnagar",
-    cx:    86,
-    cy:    351,
-    isMain: false,
-  },
+  { id: "main",        label: "Kapil Kavuri Hub, Nanakramguda", cx: 109, cy: 285, isMain: true  },
+  { id: "nizamabad",   label: "Upcoming — Nizamabad",           cx:  83, cy: 147, isMain: false },
+  { id: "karimnagar",  label: "Upcoming — Karimnagar",          cx: 150, cy: 172, isMain: false },
+  { id: "warangal",    label: "Upcoming — Warangal",            cx: 181, cy: 221, isMain: false },
+  { id: "khammam",     label: "Upcoming — Khammam",             cx: 217, cy: 300, isMain: false },
+  { id: "mahbubnagar", label: "Upcoming — Mahbubnagar",         cx:  77, cy: 354, isMain: false },
 ];
 
 /**
- * Telangana state outline — geographic boundary traced from actual lat/lng.
- * Clockwise from NW corner (Adilabad / Maharashtra border).
- *
- * Key features preserved:
- *  - Wide flat northern border (Adilabad → Mancherial)
- *  - Eastern Bhadrachalam protrusion (rightmost ~x 307)
- *  - Narrow southern tongue (Nagarkurnool / Devarkonda area)
- *  - Zahirabad waist on the left side
+ * Accurate Telangana border in SVG user-space (viewBox 0 0 350 466).
+ * Key landmarks:
+ *  - Wide northern border: NW(48,20) … NE(180,60)
+ *  - Bhadrachalam eastern protrusion: tip at (279,273)
+ *  - Narrow southern tongue: southernmost at (110,444)
+ *  - Zahirabad waist on western side (~x 41-48)
  */
-const TELANGANA_PATH = `
-  M 54 35
-  Q 75 28 100 40
-  Q 112 43 125 46
-  Q 140 48 154 52
-  Q 160 59 165 66
-  Q 174 59 183 52
-  Q 192 62 200 72
-  Q 209 85 218 98
-  Q 225 113 232 128
-  L 243 169
-  L 257 204
-  Q 265 219 272 234
-  Q 281 247 290 260
-  Q 299 267 307 275
-  L 303 285
-  Q 298 295 292 305
-  Q 283 315 274 325
-  Q 266 332 257 340
-  Q 250 352 243 365
-  Q 233 374 222 381
-  Q 210 391 197 401
-  Q 188 409 179 416
-  Q 172 422 165 428
-  Q 158 433 151 438
-  Q 140 442 130 444
-  Q 120 441 109 437
-  Q 102 430 95 422
-  Q 88 414 81 407
-  Q 74 396 67 386
-  Q 62 376 56 366
-  Q 52 356 49 346
-  Q 51 333 53 320
-  Q 55 312 56 304
-  Q 60 294 64 284
-  Q 62 274 60 264
-  Q 62 256 64 248
-  Q 68 240 71 233
-  Q 73 222 75 212
-  Q 77 202 79 192
-  Q 81 181 83 171
-  Q 87 161 90 151
-  Q 85 141 79 131
-  Q 77 120 75 110
-  Q 72 100 68 90
-  Q 66 77 64 64
-  Q 62 56 61 49
-  Q 57 42 54 35
+const PATH = `
+  M 48 20
+  Q 66 28 84 37
+  Q 95 39 107 42
+  L 139 42
+  Q 145 47 152 53
+  Q 158 49 165 45
+  Q 172 52 180 60
+  Q 186 75 191 90
+  Q 195 106 198 122
+  Q 206 143 214 165
+  Q 220 181 227 197
+  Q 234 213 240 230
+  Q 248 243 257 256
+  Q 268 264 279 273
+  L 273 283
+  Q 268 294 263 305
+  Q 255 321 247 337
+  Q 234 358 221 380
+  Q 204 390 188 401
+  Q 175 412 162 423
+  Q 136 433 110 444
+  Q 97 433 84 423
+  Q 74 412 64 401
+  Q 55 390 45 380
+  Q 42 369 38 358
+  Q 40 347 41 337
+  L 41 315
+  L 41 294
+  Q 43 283 45 273
+  L 45 251
+  Q 47 240 48 230
+  Q 51 219 55 208
+  Q 57 197 58 187
+  Q 60 176 62 165
+  Q 64 154 65 144
+  Q 64 133 62 122
+  Q 60 111 58 101
+  Q 57 90 55 79
+  Q 53 68 51 58
+  L 51 42
+  Q 50 36 48 31
+  L 48 20
   Z
 `;
 
+/**
+ * Same path with coordinates normalised to [0,1] for
+ * clipPathUnits="objectBoundingBox" — each x ÷ 350, each y ÷ 466.
+ */
+const NORM_PATH = `
+  M 0.137 0.043
+  Q 0.189 0.060 0.240 0.079
+  Q 0.271 0.084 0.306 0.090
+  L 0.397 0.090
+  Q 0.414 0.101 0.434 0.114
+  Q 0.451 0.105 0.471 0.097
+  Q 0.491 0.112 0.514 0.129
+  Q 0.531 0.161 0.546 0.193
+  Q 0.557 0.227 0.566 0.262
+  Q 0.589 0.307 0.611 0.354
+  Q 0.629 0.388 0.649 0.423
+  Q 0.669 0.457 0.686 0.494
+  Q 0.709 0.521 0.734 0.549
+  Q 0.766 0.566 0.797 0.586
+  L 0.780 0.607
+  Q 0.766 0.631 0.751 0.654
+  Q 0.729 0.689 0.706 0.723
+  Q 0.669 0.768 0.631 0.815
+  Q 0.583 0.837 0.537 0.860
+  Q 0.500 0.884 0.463 0.907
+  Q 0.389 0.929 0.314 0.952
+  Q 0.277 0.929 0.240 0.907
+  Q 0.211 0.884 0.183 0.860
+  Q 0.157 0.837 0.129 0.815
+  Q 0.120 0.792 0.109 0.768
+  Q 0.114 0.744 0.117 0.723
+  L 0.117 0.676
+  L 0.117 0.631
+  Q 0.123 0.607 0.129 0.586
+  L 0.129 0.539
+  Q 0.134 0.515 0.137 0.494
+  Q 0.146 0.470 0.157 0.446
+  Q 0.163 0.423 0.166 0.401
+  Q 0.171 0.378 0.177 0.354
+  Q 0.183 0.330 0.186 0.309
+  Q 0.183 0.285 0.177 0.262
+  Q 0.171 0.238 0.166 0.217
+  Q 0.163 0.193 0.157 0.169
+  Q 0.151 0.146 0.146 0.124
+  L 0.146 0.090
+  Q 0.143 0.077 0.137 0.066
+  L 0.137 0.043
+  Z
+`;
+
+/* ── Google Maps — centred on Telangana, zoom 8 so entire state is visible ── */
+const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
+const MAP_SRC = MAPS_KEY
+  ? `https://www.google.com/maps/embed/v1/view?key=${MAPS_KEY}&center=17.85,79.1&zoom=8&maptype=roadmap`
+  : `https://maps.google.com/maps?q=17.85,79.1&z=8&output=embed`;
+
+/* Unique ID avoids collisions if component is rendered more than once */
+const CLIP_ID = "ts-map-clip-v2";
+
 export function TelanganaMap() {
   const [hovered, setHovered] = useState<string | null>(null);
-
   const hoveredPin = PINS.find(p => p.id === hovered);
 
   return (
-    <div className="relative w-full select-none" style={{ maxWidth: 360 }}>
-      {/* Tooltip */}
+    <div
+      className="relative w-full select-none"
+      style={{ maxWidth: 360, aspectRatio: "350 / 466" }}
+    >
+      {/* ── 1. Hidden SVG: defines objectBoundingBox clip path ── */}
+      <svg
+        aria-hidden="true"
+        style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}
+      >
+        <defs>
+          <clipPath id={CLIP_ID} clipPathUnits="objectBoundingBox">
+            <path d={NORM_PATH} />
+          </clipPath>
+        </defs>
+      </svg>
+
+      {/* ── 2. Google Maps iframe, clipped to Telangana shape ── */}
+      <div
+        style={{
+          position: "absolute",
+          inset:    0,
+          clipPath: `url(#${CLIP_ID})`,
+        }}
+      >
+        <iframe
+          src={MAP_SRC}
+          title="Telangana region — Google Maps"
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          style={{
+            width:   "100%",
+            height:  "100%",
+            border:  "none",
+            display: "block",
+            /* Dark-mode: invert → hue-correct → tone down */
+            filter:  "invert(92%) hue-rotate(180deg) saturate(0.72) brightness(0.85)",
+          }}
+        />
+      </div>
+
+      {/* ── 3. SVG layer: glow + dark overlay + border + pins ── */}
+      <svg
+        viewBox="0 0 350 466"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{
+          position:      "absolute",
+          inset:         0,
+          width:         "100%",
+          height:        "100%",
+          pointerEvents: "none",
+          overflow:      "visible",
+        }}
+        aria-label="Telangana location pins"
+      >
+        {/* Soft outer glow */}
+        <path d={PATH} stroke="rgba(201,168,76,0.14)" strokeWidth="18" strokeLinejoin="round" />
+
+        {/* Dark overlay — blends map with dark theme */}
+        <path d={PATH} fill="rgba(14,13,13,0.22)" />
+
+        {/* Gold border */}
+        <path
+          d={PATH}
+          stroke="rgba(201,168,76,0.72)"
+          strokeWidth="1.8"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+
+        {/* Inner border shimmer */}
+        <path d={PATH} stroke="rgba(201,168,76,0.18)" strokeWidth="5" strokeLinejoin="round" />
+
+        {/* Pins — pointer-events re-enabled */}
+        <g style={{ pointerEvents: "all" }}>
+          {PINS.map(pin => (
+            <g
+              key={pin.id}
+              onMouseEnter={() => setHovered(pin.id)}
+              onMouseLeave={() => setHovered(null)}
+              style={{ cursor: "pointer" }}
+              role="button"
+              aria-label={pin.label}
+            >
+              {pin.isMain ? (
+                <>
+                  <circle
+                    cx={pin.cx} cy={pin.cy} r="14"
+                    fill="rgba(201,168,76,0.12)"
+                    stroke="rgba(201,168,76,0.28)"
+                    strokeWidth="1"
+                    className="main-pin-pulse"
+                  />
+                  <circle
+                    cx={pin.cx} cy={pin.cy} r="7.5"
+                    fill="rgba(201,168,76,0.25)"
+                    stroke="rgba(201,168,76,0.75)"
+                    strokeWidth="1.5"
+                  />
+                  <circle cx={pin.cx} cy={pin.cy} r="3.5" fill="var(--gold)" />
+                  <text
+                    x={pin.cx} y={pin.cy + 24}
+                    textAnchor="middle"
+                    fontSize="6.5"
+                    fill="rgba(245,237,216,0.92)"
+                    fontFamily="var(--font-geist-sans)"
+                    letterSpacing="0.1em"
+                    fontWeight="600"
+                  >
+                    MAIN BRANCH
+                  </text>
+                </>
+              ) : (
+                <>
+                  {hovered === pin.id && (
+                    <circle
+                      cx={pin.cx} cy={pin.cy} r="9"
+                      fill="rgba(201,168,76,0.08)"
+                      stroke="rgba(201,168,76,0.2)"
+                      strokeWidth="1"
+                    />
+                  )}
+                  <circle
+                    cx={pin.cx} cy={pin.cy} r="4.5"
+                    fill="rgba(14,13,13,0.65)"
+                    stroke={hovered === pin.id ? "rgba(201,168,76,0.85)" : "rgba(201,168,76,0.35)"}
+                    strokeWidth="1.3"
+                    style={{ transition: "stroke 0.2s" }}
+                  />
+                  <circle
+                    cx={pin.cx} cy={pin.cy} r="1.6"
+                    fill={hovered === pin.id ? "var(--gold)" : "rgba(201,168,76,0.5)"}
+                    style={{ transition: "fill 0.2s" }}
+                  />
+                </>
+              )}
+            </g>
+          ))}
+        </g>
+      </svg>
+
+      {/* ── 4. Tooltip — HTML layer (above SVG) ── */}
       {hoveredPin && (
         <div
           className="absolute z-20 pointer-events-none px-3 py-1.5 rounded-lg text-[10px] font-medium tracking-wide whitespace-nowrap"
           style={{
-            background: "rgba(14,13,13,0.92)",
-            border:     "1px solid rgba(201,168,76,0.35)",
+            background: "rgba(14,13,13,0.95)",
+            border:     "1px solid rgba(201,168,76,0.4)",
             color:      "var(--gold)",
-            top:        `${hoveredPin.cy - 38}px`,
-            left:       `${hoveredPin.cx}px`,
+            top:        `calc(${(hoveredPin.cy / 466) * 100}% - 42px)`,
+            left:       `calc(${(hoveredPin.cx / 350) * 100}%)`,
             transform:  "translateX(-50%)",
           }}
         >
           {hoveredPin.label}
-          {/* Caret */}
           <span
             className="absolute left-1/2 -translate-x-1/2 -bottom-[6px] block w-0 h-0"
             style={{
-              borderLeft:   "5px solid transparent",
-              borderRight:  "5px solid transparent",
-              borderTop:    "6px solid rgba(201,168,76,0.35)",
+              borderLeft:  "5px solid transparent",
+              borderRight: "5px solid transparent",
+              borderTop:   "6px solid rgba(201,168,76,0.4)",
             }}
           />
         </div>
       )}
 
-      <svg
-        viewBox="0 0 350 466"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-auto"
-        aria-label="Telangana state map showing InterioOne branch locations"
-      >
-        {/* ── Outer glow (soft halo) ── */}
-        <path
-          d={TELANGANA_PATH}
-          fill="none"
-          stroke="rgba(201,168,76,0.08)"
-          strokeWidth="14"
-          strokeLinejoin="round"
-        />
-
-        {/* ── State fill ── */}
-        <path
-          d={TELANGANA_PATH}
-          fill="rgba(201,168,76,0.05)"
-          stroke="none"
-        />
-
-        {/* ── Border ── */}
-        <path
-          d={TELANGANA_PATH}
-          fill="none"
-          stroke="rgba(201,168,76,0.6)"
-          strokeWidth="1.6"
-          strokeLinejoin="round"
-          strokeLinecap="round"
-        />
-
-        {/* ── Pins ── */}
-        {PINS.map(pin => (
-          <g
-            key={pin.id}
-            onMouseEnter={() => setHovered(pin.id)}
-            onMouseLeave={() => setHovered(null)}
-            style={{ cursor: "pointer" }}
-            role="button"
-            aria-label={pin.label}
-          >
-            {pin.isMain ? (
-              <>
-                {/* Animated pulse */}
-                <circle
-                  cx={pin.cx}
-                  cy={pin.cy}
-                  r="12"
-                  fill="rgba(201,168,76,0.1)"
-                  stroke="rgba(201,168,76,0.3)"
-                  strokeWidth="1"
-                  className="main-pin-pulse"
-                />
-                {/* Mid ring */}
-                <circle
-                  cx={pin.cx}
-                  cy={pin.cy}
-                  r="7"
-                  fill="rgba(201,168,76,0.2)"
-                  stroke="rgba(201,168,76,0.65)"
-                  strokeWidth="1.4"
-                />
-                {/* Core */}
-                <circle
-                  cx={pin.cx}
-                  cy={pin.cy}
-                  r="3.2"
-                  fill="var(--gold)"
-                />
-                {/* Label */}
-                <text
-                  x={pin.cx}
-                  y={pin.cy + 22}
-                  textAnchor="middle"
-                  fontSize="6.5"
-                  fill="rgba(201,168,76,0.75)"
-                  fontFamily="var(--font-geist-sans)"
-                  letterSpacing="0.1em"
-                  fontWeight="600"
-                >
-                  MAIN BRANCH
-                </text>
-              </>
-            ) : (
-              <>
-                {/* Hover ring */}
-                {hovered === pin.id && (
-                  <circle
-                    cx={pin.cx}
-                    cy={pin.cy}
-                    r="8"
-                    fill="rgba(201,168,76,0.06)"
-                    stroke="rgba(201,168,76,0.25)"
-                    strokeWidth="1"
-                  />
-                )}
-                {/* Border circle */}
-                <circle
-                  cx={pin.cx}
-                  cy={pin.cy}
-                  r="4.5"
-                  fill="rgba(201,168,76,0.06)"
-                  stroke={hovered === pin.id ? "rgba(201,168,76,0.75)" : "rgba(201,168,76,0.28)"}
-                  strokeWidth="1.2"
-                  style={{ transition: "stroke 0.2s" }}
-                />
-                {/* Dot */}
-                <circle
-                  cx={pin.cx}
-                  cy={pin.cy}
-                  r="1.6"
-                  fill={hovered === pin.id ? "var(--gold)" : "rgba(201,168,76,0.38)"}
-                  style={{ transition: "fill 0.2s" }}
-                />
-              </>
-            )}
-          </g>
-        ))}
-      </svg>
-
-      {/* Legend */}
+      {/* ── 5. Legend ── */}
       <div
-        className="flex items-center gap-5 mt-2 px-1"
+        className="absolute bottom-0 translate-y-8 left-0 flex items-center gap-5"
         style={{ color: "rgba(245,237,216,0.38)" }}
       >
         <div className="flex items-center gap-1.5">
-          <span
-            className="inline-block w-2.5 h-2.5 rounded-full"
-            style={{ background: "var(--gold)" }}
-          />
+          <span className="inline-block w-2.5 h-2.5 rounded-full" style={{ background: "var(--gold)" }} />
           <span className="text-[10px] tracking-[0.12em] uppercase">Main Branch</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span
             className="inline-block w-2.5 h-2.5 rounded-full"
-            style={{
-              border:     "1.2px solid rgba(201,168,76,0.4)",
-              background: "rgba(201,168,76,0.07)",
-            }}
+            style={{ border: "1.2px solid rgba(201,168,76,0.4)", background: "rgba(201,168,76,0.07)" }}
           />
           <span className="text-[10px] tracking-[0.12em] uppercase">Upcoming</span>
         </div>
