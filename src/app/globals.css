@@ -1,0 +1,186 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  --background: #f5f0eb;
+  --foreground: #1a1a1a;
+  --muted: #8c8579;
+  --line: #e3dcd0;
+
+  /* One step darker than the page — the band sections sit on this. */
+  --surface: #e6ddcd;
+
+  /* Ink is the takeover panel; the four accents rotate down its list. */
+  --ink: #0c0c0b;
+  --coral: #ff4d6a;
+  --sky: #6ab4f5;
+  --signal: #e8341a;
+  --navy: #0f3474;
+
+  /* shadcn-standard pair — components dropped in from a registry expect
+     both halves, so `muted-foreground` sits alongside the `muted` this
+     project already had. */
+  --muted-foreground: var(--muted);
+  --ring: var(--coral);
+
+  --font-display: var(--font-archivo), "Helvetica Neue", Arial, sans-serif;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-coral: var(--coral);
+  --color-sky: var(--sky);
+  --color-signal: var(--signal);
+  --color-navy: var(--navy);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-display);
+  --font-display: var(--font-display);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-display);
+  font-synthesis-weight: none;
+}
+
+/* Scrollbar hidden everywhere — Lenis drives scroll, so the native track is
+   just chrome. Content still fills the full viewport width since scrolling
+   itself is untouched, only the track's rendering is suppressed. */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+::selection {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* The single horizontal gutter every full-width section aligns to. */
+.section-shell {
+  width: 100%;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .section-shell {
+    padding-inline: 2rem;
+  }
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   Menu toggle — two rules, spreading apart on hover rather than morphing.
+   -------------------------------------------------------------------------- */
+.menu-line {
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.menu-toggle:hover .menu-line-top,
+.menu-toggle:focus-visible .menu-line-top {
+  transform: translateY(-0.2rem);
+}
+
+.menu-toggle:hover .menu-line-bottom,
+.menu-toggle:focus-visible .menu-line-bottom {
+  transform: translateY(0.2rem);
+}
+
+/* Hovering one destination recedes the rest of the list. */
+.menu-list:hover .menu-link {
+  opacity: 0.3;
+}
+
+.menu-list .menu-link:hover,
+.menu-list .menu-link:focus-visible {
+  opacity: 1;
+}
+
+.menu-link {
+  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-line,
+  .menu-link {
+    transition: none;
+  }
+}
+
+/* Frosted pill for the menu CTA, over the ink panel. */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(14px);
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease;
+}
+
+.liquid-glass:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+/* Entrance choreography for the hero. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes unveil {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.animate-rise {
+  animation: rise 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-unveil {
+  animation: unveil 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Per-character colour sweep: light-gray → coral hint → foreground */
+@keyframes char-reveal {
+  0%   { color: #c9c4b8; }
+  28%  { color: rgba(255, 77, 106, 0.55); }
+  100% { color: var(--foreground); }
+}
+
+.char-reveal {
+  animation: char-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-unveil,
+  .char-reveal {
+    animation: none;
+  }
+}

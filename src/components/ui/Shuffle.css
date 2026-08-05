@@ -1,0 +1,30 @@
+/*
+ * Support styles for <Shuffle />.
+ *
+ * Deliberately smaller than the upstream React Bits stylesheet: that one hard-
+ * codes `font-size: 4rem`, `font-family: 'Press Start 2P'`, `text-transform`
+ * and `line-height: 1`. Every one of those would fight the type scale the call
+ * site already sets, and because plain CSS outranks Tailwind's `@layer
+ * utilities`, they would silently win over classes like `leading-[0.82]`.
+ * Everything typographic is left to inherit instead.
+ *
+ * The per-character strips are built in JS with inline styles, so only the
+ * visibility gate and the split-char defaults are needed here.
+ */
+
+.shuffle-parent {
+  display: inline-block;
+  white-space: normal;
+  word-wrap: break-word;
+  /* Hidden until the strips are built, so the un-split text never flashes. */
+  visibility: hidden;
+}
+
+.shuffle-parent.is-ready {
+  visibility: visible;
+}
+
+.shuffle-char {
+  display: inline-block;
+  text-align: center;
+}
