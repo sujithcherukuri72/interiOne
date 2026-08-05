@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { BRAND } from "@/data/brand";
 import { EASE, EASE_UI } from "@/lib/motion";
 import CloseButton from "./CloseButton";
+import Logo from "./Logo";
 
 /**
  * Full-screen navigation takeover.
@@ -21,6 +22,7 @@ import CloseButton from "./CloseButton";
 
 const PRIMARY = [
   { label: "Technology", href: "#technology" },
+  { label: "Planning", href: "#planning" },
   { label: "Finishes", href: "#finishes" },
   { label: "Journey", href: "#journey" },
   { label: "Showrooms", href: "#showrooms" },
@@ -33,7 +35,7 @@ const SECONDARY = [
     { label: "Careers", href: "#contact" },
   ],
   [
-    { label: "Press", href: "#contact" },
+    { label: "FAQ", href: "#faq" },
     { label: "Trade", href: "#contact" },
     { label: "Contact", href: "#contact" },
   ],
@@ -63,9 +65,7 @@ export default function MenuOverlay({
             {/* Matches the bar geometry underneath, so the wordmark does not
                 shift when the panel drops over it. */}
             <div className="flex h-[72px] shrink-0 items-center justify-between">
-              <span className="text-[22px] leading-none font-bold tracking-[-0.03em] text-white">
-                interi<span className="font-medium text-white/70">One</span>
-              </span>
+              <Logo className="text-[17px] text-white" tagline />
               {/* Pulled out to the gutter edge, the way the reference hangs it. */}
               <div className="-mr-4">
                 <CloseButton onClick={onClose} />

@@ -7,4 +7,6 @@ export const BRAND = {
   phone: "+91 40 4000 2026",
   phoneHref: "tel:+914040002026",
   email: "studio@interione.in",
+  address: "Road No. 36, Jubilee Hills, Hyderabad",
+  logoTagline: "Design · Craft · Elevate",
 } as const;

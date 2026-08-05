@@ -24,6 +24,12 @@
   --ring: var(--coral);
 
   --font-display: var(--font-archivo), "Helvetica Neue", Arial, sans-serif;
+
+  /* The identity faces: serif carries the logo and footer wordmark, mono the
+     legal line under it. */
+  --font-serif-brand: var(--font-cormorant), "Cormorant Garamond", Georgia,
+    serif;
+  --font-mono-brand: var(--font-jetbrains-mono), ui-monospace, monospace;
 }
 
 @theme inline {
@@ -41,6 +47,8 @@
   --color-ring: var(--ring);
   --font-sans: var(--font-display);
   --font-display: var(--font-display);
+  --font-serif: var(--font-serif-brand);
+  --font-mono: var(--font-mono-brand);
 }
 
 body {
@@ -135,6 +143,40 @@ html::-webkit-scrollbar {
 .liquid-glass:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.28);
+}
+
+/* --------------------------------------------------------------------------
+   Testimonial lanes. The track holds the list twice, so translating exactly
+   -50% lands on an identical frame and the seam is invisible.
+   -------------------------------------------------------------------------- */
+@keyframes marquee-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    /* The trailing gap belongs to the first copy, hence the offset. */
+    transform: translate3d(calc(-50% - 0.625rem), 0, 0);
+  }
+}
+
+.marquee-track {
+  animation: marquee-drift linear infinite;
+  will-change: transform;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    overflow-x: auto;
+  }
+
+  .marquee-track {
+    animation: none;
+  }
 }
 
 /* Entrance choreography for the hero. */

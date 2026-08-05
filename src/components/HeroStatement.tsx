@@ -6,7 +6,7 @@ import { MotionValue, motion, useScroll, useTransform } from "framer-motion";
 /* ─── scroll-animation text ──────────────────────────────────────────────── */
 
 const FULL_TEXT =
-  "A modular kitchen system built on JSW Xteel, measured, made and installed in thirty days";
+  "We stopped building kitchens out of wood. Steel does not swell, does not burn, and does not feed termites.";
 
 const TEXT_WORDS = FULL_TEXT.split(" ");
 const N = TEXT_WORDS.length;

@@ -8,6 +8,7 @@ import { EASE, EASE_UI } from "@/lib/motion";
 import { useLenis } from "./SmoothScrollProvider";
 import MenuOverlay from "./ui/MenuOverlay";
 import MenuToggle from "./ui/MenuToggle";
+import Logo from "./ui/Logo";
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
@@ -99,10 +100,8 @@ export default function Nav() {
         className="fixed inset-x-0 top-0 z-50"
       >
         <div className="section-shell flex h-[72px] items-center justify-between">
-          <Link href="/" className="focus-ring rounded">
-            <span className="text-[22px] leading-none font-bold tracking-[-0.03em] text-white">
-              interi<span className="font-medium text-white/70">One</span>
-            </span>
+          <Link href="/" aria-label="interiOne — home" className="focus-ring rounded">
+            <Logo className="text-[17px] text-white" />
           </Link>
 
           <MenuToggle onClick={() => setOpen(true)} expanded={open} />

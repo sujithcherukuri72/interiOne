@@ -3,9 +3,9 @@ export const JOURNEY = [
   {
     step: 1,
     day: "Day 0",
-    title: "Briefing & ₹2000 Layout Visit",
+    title: "Briefing & Layout Visit",
     description:
-      "A designer captures your site. The ₹2000 is adjusted against your order.",
+      "A designer captures your site. The visit fee is adjusted against your order.",
     milestone: "Brief",
   },
   {

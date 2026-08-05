@@ -24,7 +24,7 @@ export default function Showrooms() {
           </p>
           <p className="mt-4 max-w-[46ch] text-[14px] leading-[1.6] tracking-[-0.01em] text-foreground/60">
             Put your hand on the finish first. Then book a designer to your
-            site for ₹2000.
+            site.
           </p>
         </motion.div>
 
