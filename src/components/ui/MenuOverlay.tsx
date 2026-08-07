@@ -57,7 +57,8 @@ export default function MenuOverlay({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.35, delay: 0.15 } }}
           transition={{ duration: 0.3, ease: EASE_UI }}
-          className="fixed inset-0 z-[60] overflow-y-auto bg-ink"
+          data-lenis-prevent
+          className="fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-ink"
           role="dialog"
           aria-modal="true"
           aria-label="Site menu"

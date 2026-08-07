@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 import { BRAND } from "@/data/brand";
 import { EASE } from "@/lib/motion";
-import { LogoWord } from "@/components/ui/Logo";
+import GildedWordmark from "@/components/ui/GildedWordmark";
 
 const ACTIONS = [{ label: "Book a site visit", href: "#showrooms" }];
 
@@ -138,10 +138,14 @@ export default function Contact() {
         >
           {/* The logo lockup at display size — same face, same interlocked
               O's. `leading-[1.15]` and the padding below keep the descenders
-              off the legal rule underneath. */}
-          <LogoWord
+              off the legal rule underneath.
+
+              Gilding the whole mark on hover made it shout; only the letters
+              under the cursor light now, which reads as a light being moved
+              across metal rather than as a hover state. */}
+          <GildedWordmark
             tracking="0.02em"
-            className="block w-full cursor-default select-none text-center text-[clamp(2.6rem,13.5vw,13rem)] leading-[1.15] font-light text-foreground/15 transition-colors duration-500 ease-out hover:text-[#d4af37]"
+            className="w-full cursor-default text-center text-[clamp(2.6rem,13.5vw,13rem)] leading-[1.15] font-light"
           />
         </motion.div>
 

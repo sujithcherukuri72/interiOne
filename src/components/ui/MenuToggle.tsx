@@ -19,7 +19,10 @@ export default function MenuToggle({
       onClick={onClick}
       aria-label="Open menu"
       aria-expanded={expanded}
-      className="menu-toggle focus-ring relative -m-2.5 p-2.5 text-white"
+      /* No colour of its own — it inherits the bar's, which is white over the
+         hero and ink once the pane frosts against the cream page. Hard-coding
+         white here made it invisible on the light half. */
+      className="menu-toggle focus-ring relative -m-2.5 p-2.5"
     >
       <svg
         viewBox="0 0 25 25"

@@ -532,6 +532,82 @@ svg {
 }
 
 /* --------------------------------------------------------------------------
+   The gilded wordmark — see components/ui/GildedWordmark.tsx.
+
+   A disc of gold that follows the pointer across the footer mark. Everything
+   here is driven by two custom properties the component writes on pointer move,
+   so the effect runs entirely in the compositor and never through React.
+   -------------------------------------------------------------------------- */
+.gilded {
+  --mx: 50%;
+  --my: 50%;
+  --on: 0;
+  /* How far the light reaches. Wide enough to catch two or three letters at
+     display size, tight enough that it is clearly a spotlight. */
+  --gild-radius: 190px;
+}
+
+.gilded-layer,
+.gilded-bloom {
+  opacity: var(--on);
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  /* The mask is the whole effect: only what the disc covers is painted. Soft
+     stops rather than a hard edge, or it reads as a cut-out. */
+  -webkit-mask-image: radial-gradient(
+    circle var(--gild-radius) at var(--mx) var(--my),
+    #000 0%,
+    rgba(0, 0, 0, 0.85) 42%,
+    rgba(0, 0, 0, 0.25) 68%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--gild-radius) at var(--mx) var(--my),
+    #000 0%,
+    rgba(0, 0, 0, 0.85) 42%,
+    rgba(0, 0, 0, 0.25) 68%,
+    transparent 100%
+  );
+}
+
+/* Leaf gold rather than yellow: a warm shadow, a bright specular band and a
+   deeper edge, angled across the letterforms. */
+.gilded-text {
+  background: linear-gradient(
+    102deg,
+    #8f6a2c 0%,
+    #c99a4e 22%,
+    #f6e6bd 46%,
+    #d9b166 62%,
+    #a87a34 82%,
+    #f0d9a8 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* Lifts the gold off the pale copy underneath so the two never look like a
+     printing misregistration. */
+  filter: drop-shadow(0 1px 1px rgba(94, 63, 18, 0.28));
+}
+
+.gilded-bloom {
+  background: radial-gradient(
+    circle calc(var(--gild-radius) * 0.8) at var(--mx) var(--my),
+    rgba(255, 240, 205, 0.5) 0%,
+    rgba(226, 187, 110, 0.18) 45%,
+    transparent 78%
+  );
+  mix-blend-mode: screen;
+  filter: blur(14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gilded-layer,
+  .gilded-bloom {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
    Glass — the estimator's surface.
 
    Frosted panels only read as glass if there is something behind them worth

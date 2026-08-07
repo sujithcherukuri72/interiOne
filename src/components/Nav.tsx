@@ -21,6 +21,12 @@ export default function Nav() {
   });
 
   const [navHidden, setNavHidden] = useState(false);
+  /**
+   * Over the hero the bar is clear glass with white type; past it the page is
+   * cream and white type would vanish, so the pane frosts up and the type goes
+   * to ink. One boolean, because there are only ever two grounds.
+   */
+  const [onHero, setOnHero] = useState(true);
   const lastY = useRef(0);
   const heroHeight = useRef(0);
 
@@ -32,7 +38,7 @@ export default function Nav() {
 
   useEffect(() => {
     const measure = () => {
-      heroHeight.current = window.innerHeight - 72;
+      heroHeight.current = window.innerHeight;
     };
     measure();
     window.addEventListener("resize", measure);
@@ -45,6 +51,10 @@ export default function Nav() {
     lastY.current = latest;
 
     const halfHero = heroHeight.current / 2;
+
+    // Swapped a little before the hero actually ends, so the pane has frosted
+    // by the time the cream section arrives under it rather than after.
+    setOnHero(latest < heroHeight.current - 120);
 
     if (latest < halfHero) {
       setNavHidden(false);
@@ -93,15 +103,22 @@ export default function Nav() {
             : { duration: 0.9, ease: EASE, delay: 0.2 }
         }
         onAnimationComplete={() => setHasEntered(true)}
-        style={{
-          mixBlendMode: "difference",
-          pointerEvents: navHidden ? "none" : "auto",
-        }}
-        className="fixed inset-x-0 top-0 z-50"
+        style={{ pointerEvents: navHidden ? "none" : "auto" }}
+        /* Glass, not a slab. `difference` blending used to invert the bar
+           against whatever was behind it, which meant it could never simply be
+           translucent — and over a video that is the one thing it should be. */
+        className={`fixed inset-x-0 top-0 z-50 border-b backdrop-blur-xl transition-[background-color,border-color,color] duration-500 ${
+          onHero
+            ? "border-white/12 bg-white/[0.07] text-white"
+            : "border-line bg-background/70 text-foreground"
+        }`}
       >
         <div className="section-shell flex h-[72px] items-center justify-between">
           <Link href="/" aria-label="interiOne — home" className="focus-ring rounded">
-            <Logo className="text-[15px] text-white sm:text-[17px]" variant="light" />
+            <Logo
+              className="text-[15px] sm:text-[17px]"
+              variant={onHero ? "light" : "dark"}
+            />
           </Link>
 
           <MenuToggle onClick={() => setOpen(true)} expanded={open} />

@@ -2,9 +2,16 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 
 import { EASE } from "@/lib/motion";
 import { LAYOUTS, ROOM, type Fixture, type Run } from "@/data/layouts";
+import { KITCHEN_STYLES } from "@/data/kitchen-styles";
+import KitchenPlanner from "./ui/KitchenPlanner";
+import {
+  CoverflowCarousel,
+  type CoverflowSlide,
+} from "./ui/coverflow-carousel";
 
 /** Rects as paths, so `pathLength` draws them stroke-by-stroke. */
 const rectPath = ({ x, y, w, h }: Run) =>
@@ -15,6 +22,8 @@ const CYCLE_MS = 6000;
 export default function DrawKitchen() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [plannerOpen, setPlannerOpen] = useState(false);
+  const [styleFromCarousel, setStyleFromCarousel] = useState<string | null>(null);
   const reduced = useReducedMotion();
   const layout = LAYOUTS[index];
 
@@ -55,6 +64,26 @@ export default function DrawKitchen() {
                 A designer measures your site, then three costed plans come back
                 within a day. These are the four we start from — the walls
                 decide which.
+              </p>
+
+              {/* Or draw it yourself. The planner is the real catalogue —
+                  every unit, at the widths Modula makes — so what comes out of
+                  it is an order, not a wish list. */}
+              <button
+                type="button"
+                onClick={() => {
+                  // The generic entry point starts at the style question.
+                  setStyleFromCarousel(null);
+                  setPlannerOpen(true);
+                }}
+                className="focus-ring mt-8 inline-flex items-center gap-3 rounded-full bg-ink px-6 py-3.5 text-[13.5px] tracking-[-0.005em] text-white transition-opacity duration-300 hover:opacity-85"
+              >
+                Build your own kitchen
+                <ArrowRight size={16} strokeWidth={1.75} />
+              </button>
+
+              <p className="mt-3 max-w-[34ch] font-mono text-[10px] leading-[1.6] tracking-[0.14em] text-muted uppercase">
+                Cabinet by cabinet · real catalogue codes · priced as you place
               </p>
             </div>
 
@@ -233,7 +262,99 @@ export default function DrawKitchen() {
           </div>
         </div>
       </div>
+
+      {/* ── Styles ───────────────────────────────────────────────────
+          The plans above answer "where does everything go". This answers
+          "what will it look like" — the same question in the other order,
+          and the one most people actually arrive with. */}
+      <StyleCarousel onBuild={(id) => {
+        setStyleFromCarousel(id);
+        setPlannerOpen(true);
+      }} />
+
+      {/* Keyed on the style so a different one starts a fresh plan — the
+          planner seeds its own state from the prop and never syncs to it. */}
+      <KitchenPlanner
+        key={styleFromCarousel ?? "no-style"}
+        open={plannerOpen}
+        onClose={() => setPlannerOpen(false)}
+        initialStyleId={styleFromCarousel}
+      />
     </section>
+  );
+}
+
+/**
+ * The six styles, on the coverflow rake.
+ *
+ * The same carousel the hero used to carry, given the content it suits better:
+ * these are photographs of rooms, and a raked stack is a good way to look
+ * through a set of pictures without committing to any of them. Copy and the
+ * call to action hang off whichever card is centred, so the whole block reads
+ * as one thing rather than a gallery with a button under it.
+ */
+function StyleCarousel({ onBuild }: { onBuild: (id: string) => void }) {
+  const [index, setIndex] = useState(0);
+  const style = KITCHEN_STYLES[index] ?? KITCHEN_STYLES[0];
+
+  const slides: CoverflowSlide[] = KITCHEN_STYLES.map((item) => ({
+    src: item.hero,
+    alt: `${item.name} kitchen`,
+    title: item.name,
+    subtitle: item.tagline,
+  }));
+
+  return (
+    <div className="mt-[clamp(3rem,8vh,6rem)] border-t border-line pt-[clamp(2.5rem,6vh,4.5rem)]">
+      <div className="section-shell">
+        <p className="font-mono text-[11px] tracking-[0.28em] text-foreground/45 uppercase">
+          Styles
+        </p>
+        <h3 className="mt-6 max-w-[20ch] text-[clamp(1.5rem,2.6vw,2.4rem)] leading-[1.1] font-medium tracking-[-0.03em] text-balance">
+          Six ways to dress the same steel
+        </h3>
+      </div>
+
+      <div className="mt-10">
+        <CoverflowCarousel
+          slides={slides}
+          onSelectedChange={setIndex}
+          showCaption
+          showNavigation
+          showPagination
+          cardWidth="clamp(200px, 46vw, 380px)"
+          label="interiOne kitchen styles"
+          cardClassName="rounded-2xl"
+        />
+      </div>
+
+      {/* Whatever is centred, described — and buildable in one tap. */}
+      <div className="section-shell mt-10">
+        <div className="flex flex-col items-center gap-5 text-center">
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={style.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3, ease: EASE }}
+              className="max-w-[52ch] text-[14px] leading-[1.65] tracking-[-0.01em] text-muted"
+            >
+              {style.blurb}
+            </motion.p>
+          </AnimatePresence>
+
+          <button
+            type="button"
+            onClick={() => onBuild(style.id)}
+            className="focus-ring inline-flex items-center gap-3 rounded-full bg-brown px-6 py-3 text-[13px] tracking-[-0.005em] text-white transition-opacity duration-300 hover:opacity-90"
+          >
+            Build a {style.name.toLowerCase()} kitchen
+            <ArrowRight size={15} strokeWidth={1.75} />
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 

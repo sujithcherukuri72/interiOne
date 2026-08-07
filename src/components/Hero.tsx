@@ -1,39 +1,45 @@
-import { finishes } from "@/data/finishes";
-import { finishImage } from "@/lib/finish-image";
+"use client";
+
+import { motion } from "framer-motion";
+
+import { HERO_MEDIA } from "@/data/kitchen-styles";
+import { EASE } from "@/lib/motion";
 import { SHUFFLE_PRESET } from "@/lib/shuffle";
-import { CoverflowCarousel, type CoverflowSlide } from "./ui/coverflow-carousel";
 import Shuffle from "./ui/Shuffle";
 
-/** The whole catalogue, not a curated six — every finish gets a turn. */
-const SLIDES: CoverflowSlide[] = finishes.map((finish) => ({
-  src: finishImage(finish.hex, finish.grain),
-  alt: `${finish.name} — ${finish.rangeLabel} ${finish.type.toLowerCase()} finish`,
-  title: finish.name,
-  subtitle: `${finish.rangeLabel} · ${finish.type}`,
-  meta: [
-    { label: "Code", value: finish.code },
-    { label: "Sheen", value: finish.sheen },
-    { label: "Range", value: finish.rangeLabel },
-  ],
-}));
-
+/**
+ * The hero: a kitchen playing behind the headline, and nothing else.
+ *
+ * The style rail that used to sit along the bottom now lives in the planning
+ * section, where picking one leads somewhere — here it was a second thing to
+ * look at on a screen whose whole job is the first line.
+ */
 export default function Hero() {
   return (
-    <section className="flex min-h-[calc(100dvh-72px)] flex-1 flex-col justify-between overflow-hidden pt-[clamp(2rem,7vh,7rem)] pb-[4vh]">
-      {/* Two lines, each its own shuffle-in strip — "the shuffle is the
-          entrance", so `animate-rise` is never layered on top of it.
+    <section className="relative isolate flex min-h-[100dvh] flex-1 flex-col justify-between overflow-hidden">
+      {/* ── Background ─────────────────────────────────────────────── */}
+      <div aria-hidden="true" className="absolute inset-0 -z-10">
+        <video
+          className="h-full w-full object-cover"
+          poster={HERO_MEDIA.poster}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+        >
+          {HERO_MEDIA.hasMp4 && <source src={HERO_MEDIA.videoMp4} type="video/mp4" />}
+          <source src={HERO_MEDIA.video} type="video/webm" />
+        </video>
 
-          The size clamp is deliberately below what the space allows: each
-          character sits in a shuffle window a fixed 1.2em tall, so the gap
-          between the two lines is set by the font size and not by
-          `leading-[0.86]`. Sized to fit the sentence, a phone got two
-          over-large lines with a hole between them. */}
-      {/* The page's one h1. The visible lines are the positioning, not the
-          subject — a crawler landing here needs to be told in the first
-          heading what this is and where it is, which "Forged In Steel" does
-          not say. So the heading carries both: the sentence for machines, the
-          two shuffled lines for everyone else. */}
-      <h1 className="px-5 sm:px-8">
+        {/* Scrim. Warm rather than black, so the page's cream carries into it
+            and the headline holds whatever frame the video is on. */}
+        <div className="absolute inset-0 bg-gradient-to-b from-brown-deep/70 via-brown-deep/40 to-brown-deep/80" />
+      </div>
+
+      {/* ── Headline ───────────────────────────────────────────────────
+          The 72px clears the fixed bar, which the video now runs behind. */}
+      <h1 className="px-5 pt-[calc(72px+clamp(1.5rem,6vh,5rem))] sm:px-8">
         <span className="sr-only">
           Modular kitchens in Hyderabad — steel-composite kitchens by interiOne,
           forged in steel, not in sawdust.
@@ -45,33 +51,47 @@ export default function Hero() {
             tag="span"
             text="Forged In Steel"
             textAlign="left"
-            className="block text-[clamp(1.75rem,min(7.5vw,11vh),8.5rem)] leading-[0.86] font-medium tracking-[-0.045em]"
+            className="block text-[clamp(1.75rem,min(7.5vw,11vh),8.5rem)] leading-[0.86] font-medium tracking-[-0.045em] text-white"
           />
           <Shuffle
             {...SHUFFLE_PRESET}
             tag="span"
             text="Not In Sawdust"
             textAlign="left"
-            className="block text-[clamp(1.75rem,min(7.5vw,11vh),8.5rem)] leading-[0.86] font-medium tracking-[-0.045em] text-foreground/35"
+            className="block text-[clamp(1.75rem,min(7.5vw,11vh),8.5rem)] leading-[0.86] font-medium tracking-[-0.045em] text-white/45"
           />
         </span>
       </h1>
 
-      {/* Every finish in the catalogue, on one shelf — drag it, arrow through
-          it, or just watch it settle. */}
-      <div className="animate-rise mt-[2vh]" style={{ animationDelay: "180ms" }}>
-        <CoverflowCarousel
-          slides={SLIDES}
-          showCaption
-          showNavigation
-          // Fixed at 280px the centre card crowded both neighbours off a
-          // 360px phone; the clamp keeps the rake readable down to 320px and
-          // still tops out at the size the desktop layout was tuned for.
-          cardWidth="clamp(186px, 58vw, 280px)"
-          cardClassName="rounded-none shadow-none bg-line"
-          label="interiOne finish catalogue"
-        />
-      </div>
+      {/* ── Foot ───────────────────────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}
+        className="flex items-end justify-between gap-6 px-5 pb-[5vh] sm:px-8"
+      >
+        <p className="max-w-[34ch] text-[13.5px] leading-[1.6] tracking-[-0.01em] text-white/70">
+          Steel-composite kitchens, built in Hyderabad and installed in 30 days.
+        </p>
+
+        {/* A line that draws itself down, once. Enough to say the page
+            continues without asking anyone to read the word "scroll". */}
+        <span
+          aria-hidden="true"
+          className="hidden shrink-0 flex-col items-center gap-3 sm:flex"
+        >
+          <span className="font-mono text-[9.5px] tracking-[0.28em] text-white/45 uppercase">
+            Scroll
+          </span>
+          <span className="relative block h-14 w-px overflow-hidden bg-white/20">
+            <motion.span
+              className="absolute inset-x-0 top-0 block h-1/2 bg-white/80"
+              animate={{ y: ["-100%", "200%"] }}
+              transition={{ duration: 2.4, ease: "easeInOut", repeat: Infinity }}
+            />
+          </span>
+        </span>
+      </motion.div>
     </section>
   );
 }

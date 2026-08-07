@@ -40,6 +40,12 @@ export interface CoverflowCarouselProps {
   label?: string;
   className?: string;
   cardClassName?: string;
+  /**
+   * Fires whenever a different card takes the centre — by drag, arrow, key or
+   * pagination dot. Lets a caller hang its own copy and controls off whatever
+   * is currently front and centre.
+   */
+  onSelectedChange?: (index: number) => void;
 }
 
 export function CoverflowCarousel({
@@ -58,6 +64,7 @@ export function CoverflowCarousel({
   label = "Cover carousel",
   className,
   cardClassName,
+  onSelectedChange,
 }: CoverflowCarouselProps) {
   const count = slides.length;
 
@@ -79,6 +86,17 @@ export function CoverflowCarousel({
   } | null>(null);
 
   const [selected, setSelected] = React.useState(0);
+
+  // Reported in an effect rather than from each of the four places that can
+  // change the selection — one notification per settled card, however it got
+  // there, and no risk of firing mid-drag on every pointer move.
+  const notify = React.useRef(onSelectedChange);
+  React.useEffect(() => {
+    notify.current = onSelectedChange;
+  });
+  React.useEffect(() => {
+    notify.current?.(selected);
+  }, [selected]);
 
   /** Nearest whole card, folded back into 0..count-1. */
   const indexAt = React.useCallback(

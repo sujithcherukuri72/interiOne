@@ -78,6 +78,16 @@ If a file is over ~10 MB it does not belong in the repo — put it on a CDN or
 Vercel Blob and reference the URL. Git is not a video host, and every clone
 pays for what is committed here forever.
 
+### `appliances/` — product shots for the planner
+
+Optional. The planner draws every appliance in the kitchen's own metal finish,
+so the list works with this folder empty. Drop a photo here and set `image` on
+that appliance in [`src/data/catalogue.ts`](../../src/data/catalogue.ts) to use
+it instead.
+
+Cut out on white or transparent, square-ish, 600px is plenty — they render at
+64x44. Name by product: `electrolux-ut300-60-hob.jpg`.
+
 ### `og/` — social share images
 
 `og-default.jpg` at **1200×630**, under 300 KB. Only needed if you want to

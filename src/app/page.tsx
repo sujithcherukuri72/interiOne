@@ -17,8 +17,11 @@ export default function Home() {
   return (
     <>
       <Nav />
-      {/* Clears the fixed bar, which sits outside the flow. */}
-      <main className="flex flex-1 flex-col pt-[72px]">
+      {/* No top padding: the bar is glass now, so the hero has to run up
+          underneath it — a 72px cream strip above the video is exactly what
+          made the old bar read as a slab. The hero pads its own content
+          instead. */}
+      <main className="flex flex-1 flex-col">
         <Hero />
         <HeroStatement />
         <Technology />
