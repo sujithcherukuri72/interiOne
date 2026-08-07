@@ -4,7 +4,7 @@ export const CITIES = [
     id: "hyderabad",
     name: "Hyderabad",
     state: "Telangana",
-    address: "Road No. 36, Jubilee Hills",
+    address: "Kavuri Hills, Madhapur",
     phone: "+91 88585 58752",
     flagship: true,
     hours: "Mon–Sun · 10:00–20:00",

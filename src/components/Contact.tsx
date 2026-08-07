@@ -22,12 +22,14 @@ const reveal = (delay: number) => ({
 });
 
 /** Small line icons for the contact rows â€” stroked, so they inherit weight. */
-function Icon({ name }: { name: "phone" | "mail" | "pin" }) {
+function Icon({ name }: { name: "phone" | "mail" | "pin" | "instagram" }) {
   const paths = {
     phone:
       "M4.5 3h3l1.5 3.6-2 1.4a11 11 0 0 0 5 5l1.4-2L17 12.5v3a1.5 1.5 0 0 1-1.6 1.5A13 13 0 0 1 3 4.6 1.5 1.5 0 0 1 4.5 3Z",
     mail: "M3 5h14v10H3z M3 5.5l7 5 7-5",
     pin: "M10 17s5.5-5 5.5-9a5.5 5.5 0 1 0-11 0c0 4 5.5 9 5.5 9Z M10 8.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z",
+    instagram:
+      "M6 3h8a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Z M10 7.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6Z M13.6 6.4h.01",
   };
 
   return (
@@ -115,6 +117,15 @@ export default function Contact() {
             <Icon name="pin" />
             {BRAND.address}
           </span>
+          <a
+            href={BRAND.instagramHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="focus-ring inline-flex w-fit items-center gap-3 rounded transition-colors duration-300 hover:text-foreground"
+          >
+            <Icon name="instagram" />
+            {BRAND.instagram}
+          </a>
         </motion.div>
 
         {/* The oversized wordmark, hairline-ruled top and bottom. */}
@@ -130,7 +141,7 @@ export default function Contact() {
               off the legal rule underneath. */}
           <LogoWord
             tracking="0.02em"
-            className="block w-full select-none text-center text-[clamp(2.6rem,13.5vw,13rem)] leading-[1.15] font-light text-foreground/15"
+            className="block w-full cursor-default select-none text-center text-[clamp(2.6rem,13.5vw,13rem)] leading-[1.15] font-light text-foreground/15 transition-colors duration-500 ease-out hover:text-[#d4af37]"
           />
         </motion.div>
 

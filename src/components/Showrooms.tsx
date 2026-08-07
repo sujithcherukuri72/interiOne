@@ -88,7 +88,7 @@ export default function Showrooms() {
           </h3>
 
           <p className="mt-5 max-w-[62ch] text-[14px] leading-[1.65] tracking-[-0.01em] text-foreground/70">
-            The Jubilee Hills studio covers the whole city. A designer measures
+            The Madhapur studio covers the whole city. A designer measures
             on site anywhere inside the Outer Ring Road at no charge, and three
             costed plans follow within a day.
           </p>
