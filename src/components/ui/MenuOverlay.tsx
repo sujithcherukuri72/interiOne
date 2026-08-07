@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { BRAND } from "@/data/brand";
 import { EASE, EASE_UI } from "@/lib/motion";
+import { useOverlayLock } from "@/lib/overlay";
 import CloseButton from "./CloseButton";
 import Logo from "./Logo";
 
@@ -49,6 +50,10 @@ export default function MenuOverlay({
   open: boolean;
   onClose: () => void;
 }) {
+  // Same lock the planner uses: hold the page still, and stand the floating
+  // WhatsApp button down while a takeover owns the screen.
+  useOverlayLock(open);
+
   return (
     <AnimatePresence>
       {open && (
@@ -68,7 +73,7 @@ export default function MenuOverlay({
                 shift when the panel drops over it. */}
             <div className="flex h-[72px] shrink-0 items-center justify-between">
               <Logo
-                className="text-[15px] text-white sm:text-[17px]"
+                className="text-[17px] text-white sm:text-[19px]"
                 variant="light"
                 tagline
               />

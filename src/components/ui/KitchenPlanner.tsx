@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, Minus, Plus } from "lucide-react";
@@ -32,6 +33,7 @@ import { KITCHEN_STYLES } from "@/data/kitchen-styles";
 import { LAYOUTS } from "@/data/layouts";
 import { lighten, darken } from "@/lib/color";
 import { EASE, EASE_UI } from "@/lib/motion";
+import { useOverlayLock } from "@/lib/overlay";
 import { whatsappLink } from "@/lib/whatsapp";
 import {
   WALL_HEIGHT,
@@ -224,12 +226,26 @@ export default function KitchenPlanner({
     0
   );
 
-  useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
+  // Locks the page scroll and tells the floating WhatsApp button to get out of
+  // the way — it is fixed to the same bottom-right corner as "Next", and it was
+  // swallowing the tap that advances the step.
+  useOverlayLock(open);
+
+  /**
+   * Rendered into `body`, not in place.
+   *
+   * This component is a child of the planning section, so its `z-index` was
+   * competing with everything else on the page — and losing to a carousel arrow
+   * that had claimed `z-[200]`. A takeover has no business being sorted against
+   * page furniture at all: in a portal at the top of the document it is above
+   * the page by structure rather than by winning an argument about numbers.
+   *
+   * Read straight off `document` rather than latched in an effect: `open` can
+   * only become true from a click, so by the time there is anything to show,
+   * body exists. On the server this is null and on the client's first render the
+   * portal's children are empty, so both produce no DOM and hydration matches.
+   */
+  const portal = typeof document === "undefined" ? null : document.body;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -320,7 +336,7 @@ export default function KitchenPlanner({
     (step !== 2 || walls.every((w) => w.lengthFt > 0)) &&
     (step !== 3 || placedCount > 0);
 
-  return (
+  const ui = (
     <AnimatePresence>
       {open && (
         <motion.div
@@ -328,7 +344,7 @@ export default function KitchenPlanner({
           animate={{ y: 0 }}
           exit={{ y: "100%", transition: { duration: 0.5, ease: EASE_UI } }}
           transition={{ duration: 0.7, ease: EASE }}
-          className="fixed inset-0 z-[80] flex flex-col bg-background"
+          className="fixed inset-0 z-[100] flex flex-col bg-background"
           role="dialog"
           aria-modal="true"
           aria-label="Kitchen planner"
@@ -526,14 +542,17 @@ export default function KitchenPlanner({
 
           {/* ── Navigation ─────────────────────────────────────────── */}
           <footer className="relative z-10 flex shrink-0 items-center justify-between gap-4 border-t border-line/70 bg-background/92 px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md sm:px-8">
+            {/* On the first step there is no step behind this one, so the slot
+                becomes the way out instead of an invisible dead control — the
+                old version rendered "Back" at opacity 0 there, which looks
+                exactly like a button that has stopped working. */}
             <button
               type="button"
-              onClick={() => go(step - 1)}
-              disabled={step === 0}
-              className="focus-ring inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[13px] text-foreground/60 transition-colors duration-300 enabled:hover:text-foreground disabled:pointer-events-none disabled:opacity-0"
+              onClick={() => (step === 0 ? onClose() : go(step - 1))}
+              className="focus-ring inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[13px] text-foreground/60 transition-colors duration-300 hover:text-foreground"
             >
               <ArrowLeft size={15} strokeWidth={1.75} />
-              Back
+              {step === 0 ? "Close" : "Back"}
             </button>
 
             <span className="hidden font-mono text-[10px] tracking-[0.16em] text-muted uppercase sm:block">
@@ -569,6 +588,8 @@ export default function KitchenPlanner({
       )}
     </AnimatePresence>
   );
+
+  return portal ? createPortal(ui, portal) : null;
 }
 
 /* ── Step 1 · style ──────────────────────────────────────────────────────── */

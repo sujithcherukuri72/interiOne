@@ -6,6 +6,7 @@ import { Crosshair, Minus, Plus } from "lucide-react";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
+import { ASSETS } from "@/data/assets";
 import {
   GOOGLE_MAPS_API_KEY,
   MAPBOX_STYLE,
@@ -33,17 +34,24 @@ function prefersReducedMotion() {
 
 /**
  * The pin, built in plain DOM because both map libraries want an element, not
- * a subtree React owns. A stem down to the ground point and a coral head that
- * pulses — the only saturated thing on the block. Styled in globals.css, so
- * the two providers cannot drift apart visually.
+ * a subtree React owns.
+ *
+ * A badge carrying the mark rather than a dot: on a map full of pins for
+ * everything else on the street, a generic dot says "a place" while the mark
+ * says which one. The tail's tip is the actual coordinate, which is why the
+ * element is anchored at its bottom edge in both providers.
+ *
+ * Styled in globals.css so Mapbox and Google cannot drift apart visually.
  */
 function buildPin(label: string) {
   const el = document.createElement("div");
   el.className = "studio-pin";
   el.innerHTML = `
     <span class="studio-pin__ring" aria-hidden="true"></span>
-    <span class="studio-pin__dot" aria-hidden="true"></span>
-    <span class="studio-pin__stem" aria-hidden="true"></span>
+    <span class="studio-pin__badge" aria-hidden="true">
+      <img src="${ASSETS.logo.mark}" alt="" class="studio-pin__mark" />
+    </span>
+    <span class="studio-pin__tail" aria-hidden="true"></span>
     <span class="studio-pin__label">${label}</span>
   `;
   return el;
@@ -221,11 +229,13 @@ function GoogleCanvas({ className }: { className: string }) {
       }
       if (!containerRef.current) return;
 
-      const reduced = prefersReducedMotion();
-
       const map = new maps.Map(container, {
         center: LAT_LNG,
-        zoom: reduced ? Math.round(MAP_VIEW.zoom) : Math.round(MAP_VIEW.introZoom),
+        // The final zoom from the first frame. It used to open wide and step in
+        // on a timer, which meant any hitch in that timer left the map showing
+        // the whole city — a map at the wrong zoom is simply a broken map, and
+        // the flourish is not worth that risk.
+        zoom: Math.round(MAP_VIEW.zoom),
         styles: GOOGLE_MAP_STYLE,
         disableDefaultUI: true,
         // The page keeps the scroll gesture; the map takes two fingers or
@@ -255,10 +265,13 @@ function GoogleCanvas({ className }: { className: string }) {
             new maps.LatLng(LAT_LNG)
           );
           if (!point || !this.el) return;
-          // The pin's ground point is the foot of its stem, hence the offset
-          // by the element's own height rather than half of it.
+          // Straight onto the coordinate, with no measurement: the pin is a
+          // 0×0 box whose parts hang off this origin in CSS, so the tail tip
+          // lands here exactly. Offsetting by `offsetHeight` was the bug —
+          // it is 0 until the first layout, and the label made the box wider
+          // than the badge anyway.
           this.el.style.left = `${point.x}px`;
-          this.el.style.top = `${point.y - this.el.offsetHeight}px`;
+          this.el.style.top = `${point.y}px`;
         }
 
         onRemove() {
@@ -270,14 +283,7 @@ function GoogleCanvas({ className }: { className: string }) {
       const pin = new StudioPin();
       pin.setMap(map);
 
-      maps.event.addListenerOnce(map, "idle", () => {
-        setReady(true);
-        if (!reduced) {
-          // Google has no `flyTo`; stepping the zoom in gives the same "settle
-          // onto the address" reading without a jump cut.
-          window.setTimeout(() => map.setZoom(Math.round(MAP_VIEW.zoom)), 400);
-        }
-      });
+      maps.event.addListenerOnce(map, "idle", () => setReady(true));
     },
     true
   );

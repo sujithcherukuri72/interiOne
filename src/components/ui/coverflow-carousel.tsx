@@ -328,13 +328,18 @@ export function CoverflowCarousel({
           </div>
         </div>
 
+        {/* z-20, not z-200. These only ever need to sit above the raked cards
+            beside them, and a three-figure z-index on a decorative arrow is a
+            claim on the whole page: at 200 they painted straight through the
+            planner takeover and swallowed clicks down both of its edges — the
+            reason "Back" could not be pressed. */}
         {showNavigation && (
           <>
             <button
               type="button"
               aria-label="Previous slide"
               onClick={() => nudge(-1)}
-              className="absolute top-1/2 left-3 z-[200] -translate-y-1/2 rounded-full bg-background/70 p-2 text-foreground backdrop-blur transition hover:bg-background"
+              className="absolute top-1/2 left-3 z-20 -translate-y-1/2 rounded-full bg-background/70 p-2 text-foreground backdrop-blur transition hover:bg-background"
             >
               <ChevronLeft className="size-5" />
             </button>
@@ -342,7 +347,7 @@ export function CoverflowCarousel({
               type="button"
               aria-label="Next slide"
               onClick={() => nudge(1)}
-              className="absolute top-1/2 right-3 z-[200] -translate-y-1/2 rounded-full bg-background/70 p-2 text-foreground backdrop-blur transition hover:bg-background"
+              className="absolute top-1/2 right-3 z-20 -translate-y-1/2 rounded-full bg-background/70 p-2 text-foreground backdrop-blur transition hover:bg-background"
             >
               <ChevronRight className="size-5" />
             </button>

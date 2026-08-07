@@ -1,3 +1,4 @@
+import { ASSETS, LOGO_MARK_SIZE } from "@/data/assets";
 import { BRAND } from "@/data/brand";
 import { FAQS } from "@/data/faqs";
 import { XTEEL_FEATURES } from "@/data/technology";
@@ -61,8 +62,12 @@ export function buildGraph() {
         telephone: STUDIO.phone,
         address: postalAddress,
         logo: {
+          // The mark artwork, not the favicon: Google wants at least 112px on
+          // a side here and will drop a 32px icon on the floor.
           "@type": "ImageObject",
-          url: `${SITE_URL}/icon.svg`,
+          url: `${SITE_URL}${ASSETS.logo.mark}`,
+          width: LOGO_MARK_SIZE.width,
+          height: LOGO_MARK_SIZE.height,
           caption: `${SITE.name} logo`,
         },
         // The manufacturing partnership is a real trust signal and is stated

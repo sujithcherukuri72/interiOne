@@ -1,6 +1,11 @@
 import Image from "next/image";
 
-import { ASSETS, LOGO_LOCKUP_RATIO, USE_IMAGE_LOGO } from "@/data/assets";
+import {
+  ASSETS,
+  LOGO_MARK_SIZE,
+  LOGO_WORD_SIZE,
+  USE_IMAGE_LOGO,
+} from "@/data/assets";
 import { cn } from "@/lib/cn";
 
 /**
@@ -73,32 +78,44 @@ export function LogoWord({
 export default function Logo({
   className,
   tagline = false,
-  variant = "dark",
 }: {
   className?: string;
   tagline?: boolean;
   /**
-   * Which artwork to use once `USE_IMAGE_LOGO` is on. `light` is the white
-   * lockup for ink panels; `dark` is the ink lockup for the cream page. The
-   * drawn fallback ignores it entirely and takes `currentColor` instead.
+   * Kept so call sites that set it still type-check, and ignored by both
+   * branches. The supplied artwork is gold, which holds on the cream page and
+   * on the ink panels alike, and the drawn fallback takes `currentColor` — so
+   * neither has a second version to choose between.
    */
   variant?: "light" | "dark";
 }) {
   if (USE_IMAGE_LOGO) {
-    const src =
-      variant === "light" ? ASSETS.logo.lockupLight : ASSETS.logo.lockupDark;
-
+    /* Built from the two supplied files rather than a single lockup image, so
+       the mark and the wordmark keep the spacing the drawn version used and
+       the bar does not change shape when this flips on. `variant` is unused
+       here on purpose — the artwork is gold, and gold needs no second version
+       for dark grounds. */
     return (
-      <span className={cn("inline-flex items-center", className)}>
-        {/* Height tracks the caller's font-size the way the drawn lockup does,
-            so nothing at the call sites has to change when this flips on. */}
+      <span className={cn("inline-flex items-center gap-2.5", className)}>
         <Image
-          src={src}
-          alt="interiOne"
-          width={Math.round(LOGO_LOCKUP_RATIO * 100)}
-          height={100}
+          src={ASSETS.logo.mark}
+          alt=""
+          width={LOGO_MARK_SIZE.width}
+          height={LOGO_MARK_SIZE.height}
           priority
-          className="h-[1.9em] w-auto"
+          sizes="80px"
+          className="h-[2.9em] w-auto"
+        />
+        {/* The tagline is part of this artwork, so `tagline` is not consulted:
+            asking for it twice would set it twice. */}
+        <Image
+          src={ASSETS.logo.word}
+          alt="interiOne — Design, Craft, Elevate"
+          width={LOGO_WORD_SIZE.width}
+          height={LOGO_WORD_SIZE.height}
+          priority
+          sizes="260px"
+          className="h-[2.6em] w-auto"
         />
       </span>
     );

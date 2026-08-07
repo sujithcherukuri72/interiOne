@@ -116,7 +116,7 @@ export default function Nav() {
         <div className="section-shell flex h-[72px] items-center justify-between">
           <Link href="/" aria-label="interiOne — home" className="focus-ring rounded">
             <Logo
-              className="text-[15px] sm:text-[17px]"
+              className="text-[17px] sm:text-[19px]"
               variant={onHero ? "light" : "dark"}
             />
           </Link>

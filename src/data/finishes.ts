@@ -29,6 +29,325 @@ const rangeLabel: Record<RangeId, string> = {
   select: "Select",
 };
 
+/**
+ * The rest of the colour book, from the catalogue.
+ *
+ * Names and finish types are Modula's own, transcribed from *The Modula
+ * Blueprint* pages 43 to 45. Two things about them are worth stating plainly:
+ *
+ * The **hex pairs are matched by eye**, not measured. The catalogue is a
+ * printed document whose swatch images are not colour-managed, so these are
+ * close enough to specify a scheme from and not close enough to order from.
+ * Replace them with the factory's values before anyone signs off a colour on a
+ * screen.
+ *
+ * The **range each colour sits in is ours, not the catalogue's**. Modula groups
+ * by manufacturing process — every metallic and every wood is Signature there,
+ * which would leave our Select range empty and unpriceable. These are filed by
+ * what they cost us to make and what they are for, which is what the three
+ * rates in `data/estimator.ts` are attached to. Reconcile the two only if the
+ * factory's grouping ever becomes the commercial one.
+ */
+function makeFinish(f: {
+  slug: string;
+  name: string;
+  range: RangeId;
+  type: string;
+  code: string;
+  hex: string;
+  grain: string;
+  sheen: string;
+  summary: string;
+  tagline: string;
+  description: string;
+  suited?: string[];
+}): Finish {
+  return {
+    ...f,
+    rangeLabel: rangeLabel[f.range],
+    // Derived rather than restated: every one of these four already exists as
+    // a field above, and typing them twice is how they drift apart.
+    stats: [
+      { label: "Code", value: f.code },
+      { label: "Type", value: f.type },
+      { label: "Sheen", value: f.sheen },
+      { label: "Range", value: rangeLabel[f.range] },
+    ],
+    suited: f.suited ?? [
+      "Base units",
+      "Wall-mounted units",
+      "Tall pantry units",
+      "Kitchen island",
+    ],
+    image: placeholder(`interione-${f.slug}`, 1600, 900),
+  };
+}
+
+const CATALOGUE_FINISHES: Finish[] = [
+  /* ── Signature ─────────────────────────────────────────────────────────── */
+  makeFinish({
+    slug: "lumen-sand",
+    name: "Lumen Sand",
+    range: "signature",
+    type: "Metallic",
+    code: "SG-05",
+    hex: "#C9B694",
+    grain: "#A2906F",
+    sheen: "Fine metallic",
+    summary: "Pale sand with a metallic lift — bright without going white.",
+    tagline: "The warm answer to a white kitchen",
+    description:
+      "A pale sand carrying just enough flake to catch daylight, for rooms that want the brightness of a white kitchen without the coldness of one. Holds its warmth under the yellow-tinted LEDs most Indian kitchens are lit with, which is where true whites tend to turn grey.",
+  }),
+  makeFinish({
+    slug: "metal-moon",
+    name: "Metal Moon",
+    range: "signature",
+    type: "Metallic",
+    code: "SG-06",
+    hex: "#9AA0A6",
+    grain: "#767C82",
+    sheen: "Fine metallic",
+    summary: "Cool grey flake. Reads as brushed steel at arm's length.",
+    tagline: "Brushed steel, without the fingerprints",
+    description:
+      "Cool grey with a fine flake that reads as brushed stainless from a step away — and unlike stainless, does not hold a fingerprint. The obvious partner for an appliance wall where the oven and the hood are already steel.",
+  }),
+  makeFinish({
+    slug: "crater-dust",
+    name: "Crater Dust",
+    range: "signature",
+    type: "Metallic",
+    code: "SG-07",
+    hex: "#8C8580",
+    grain: "#6B6560",
+    sheen: "Fine metallic",
+    summary: "Warm mid-grey flake that sits between stone and steel.",
+    tagline: "The grey that does not go blue",
+    description:
+      "A warm mid-grey — the one that stops a grey kitchen drifting blue under daylight. Sits comfortably against both a black granite counter and a pale quartz one, which is not true of most greys at this value.",
+  }),
+  makeFinish({
+    slug: "mine-grade",
+    name: "Mine Grade",
+    range: "signature",
+    type: "Metallic",
+    code: "SG-08",
+    hex: "#5E6266",
+    grain: "#45484B",
+    sheen: "Fine metallic",
+    summary: "Deep graphite flake for a full-height run that anchors a room.",
+    tagline: "Graphite with a flake in it",
+    description:
+      "Deep graphite with a metallic flake that keeps it from going flat and dead the way solid dark greys do at full height. Built for the tall wall — a bank of towers in this reads as one object rather than as four doors.",
+    suited: ["Tall pantry units", "Appliance towers", "Base units", "Kitchen island"],
+  }),
+  makeFinish({
+    slug: "celestial-sky",
+    name: "Celestial Sky",
+    range: "signature",
+    type: "Leather",
+    code: "SG-09",
+    hex: "#6E7C8C",
+    grain: "#55606D",
+    sheen: "Leather texture",
+    summary: "Slate blue with a leather grain you can feel.",
+    tagline: "A texture, not just a colour",
+    description:
+      "Slate blue in a leather-grained texture — one of the two finishes in the range with something to feel as well as see. The grain scatters light, so it stays matte at every angle and hides the daily marks a flat blue shows immediately.",
+  }),
+  makeFinish({
+    slug: "abyss-edge",
+    name: "Abyss Edge",
+    range: "signature",
+    type: "Fabric",
+    code: "SG-10",
+    hex: "#3A3E44",
+    grain: "#2B2E33",
+    sheen: "Fabric texture",
+    summary: "Near-black with a woven texture. Absorbs light rather than bouncing it.",
+    tagline: "Near-black, woven",
+    description:
+      "A near-black carrying a woven fabric texture, which is what keeps it from behaving like a mirror the way gloss blacks do. Absorbs light instead of throwing it back, so a dark island in this does not double every downlight above it.",
+    suited: ["Kitchen island", "Base units", "Tall pantry units", "Breakfast counter"],
+  }),
+  makeFinish({
+    slug: "peruvian-walnut",
+    name: "Peruvian Walnut",
+    range: "signature",
+    type: "Wood",
+    code: "SG-11",
+    hex: "#6B4A33",
+    grain: "#4E3624",
+    sheen: "Low sheen",
+    summary: "Dark open-pore walnut. The warm counterweight to a pale run.",
+    tagline: "Walnut that stays walnut",
+    description:
+      "Dark open-pore walnut, grained onto the Xteel core rather than veneered over ply — so no lifting at the seams and no reddening under years of afternoon light. Usually specified as the tall bank against a pale base run rather than the whole kitchen.",
+  }),
+
+  /* ── Premier ───────────────────────────────────────────────────────────── */
+  makeFinish({
+    slug: "sienna-husk",
+    name: "Sienna Husk",
+    range: "premier",
+    type: "Solid matte",
+    code: "PR-05",
+    hex: "#A9613F",
+    grain: "#85492E",
+    sheen: "Solid matte",
+    summary: "Burnt sienna. Carries a terracotta splashback without competing.",
+    tagline: "Terracotta, at cabinet scale",
+    description:
+      "A burnt sienna that holds its own beside a terracotta splashback instead of arguing with it — the pairing most people reach for and most palettes get wrong. Best on a base run with something pale above it.",
+    suited: ["Base units", "Kitchen island", "Breakfast counter", "Open shelving"],
+  }),
+  makeFinish({
+    slug: "cavern-grey",
+    name: "Cavern Grey",
+    range: "premier",
+    type: "Solid matte",
+    code: "PR-06",
+    hex: "#8E8C88",
+    grain: "#6E6C69",
+    sheen: "Solid matte",
+    summary: "A neutral warm grey that gets out of the way.",
+    tagline: "The grey with no opinion",
+    description:
+      "A properly neutral warm grey — no blue, no green — which is what makes it the safe half of a two-tone scheme. Pairs with almost anything in the book, and is the finish to choose when the counter or the splashback is doing the talking.",
+  }),
+  makeFinish({
+    slug: "petal-dust",
+    name: "Petal Dust",
+    range: "premier",
+    type: "Solid matte",
+    code: "PR-07",
+    hex: "#D9C3C0",
+    grain: "#B99F9C",
+    sheen: "Solid matte",
+    summary: "Dusty rose, held back far enough to read as a neutral.",
+    tagline: "Pink that behaves like a neutral",
+    description:
+      "A dusty rose greyed off far enough that it reads as a warm neutral rather than as a pink kitchen. Works best on wall units above a darker base, where it lightens the room without becoming the subject of it.",
+    suited: ["Wall-mounted units", "Open shelving", "Base units", "Loft units"],
+  }),
+  makeFinish({
+    slug: "river-raft",
+    name: "River Raft",
+    range: "premier",
+    type: "Solid matte",
+    code: "PR-08",
+    hex: "#7E8B8A",
+    grain: "#616D6C",
+    sheen: "Solid matte",
+    summary: "Grey with a green cast — quieter than sage, cooler than stone.",
+    tagline: "Between sage and stone",
+    description:
+      "A grey carrying just enough green to warm under lamplight without ever announcing itself as a colour. The finish for a north-facing kitchen, where true greys go cold and true greens go grey.",
+  }),
+  makeFinish({
+    slug: "terrace-vine",
+    name: "Terrace Vine",
+    range: "premier",
+    type: "Solid matte",
+    code: "PR-09",
+    hex: "#6E7A52",
+    grain: "#55603E",
+    sheen: "Solid matte",
+    summary: "Olive green. The one dark colour that still feels like daylight.",
+    tagline: "Olive, not forest",
+    description:
+      "An olive rather than a forest green — enough yellow in it to stay alive under warm light, where a bluer green would go black after sunset. Handles a full base run in a room with one window.",
+  }),
+  makeFinish({
+    slug: "marsh-bank",
+    name: "Marsh Bank",
+    range: "premier",
+    type: "Gloss",
+    code: "PR-10",
+    hex: "#5C6B57",
+    grain: "#45513F",
+    sheen: "Gloss",
+    summary: "Deep green in gloss. Doubles whatever light the room has.",
+    tagline: "Deep green, mirror finish",
+    description:
+      "A deep green in full gloss, which is how you put a dark colour into a small kitchen without closing it in — the reflection gives back the light the colour takes. Wants a clean run to reflect; the effect is spoiled by clutter on the counter.",
+  }),
+  makeFinish({
+    slug: "courtyard-clay",
+    name: "Courtyard Clay",
+    range: "premier",
+    type: "Solid matte",
+    code: "PR-11",
+    hex: "#C08A67",
+    grain: "#9B6B4D",
+    sheen: "Solid matte",
+    summary: "Warm clay. Reads as unglazed terracotta rather than as orange.",
+    tagline: "Unglazed terracotta",
+    description:
+      "A warm clay with the chalkiness of unglazed terracotta, which is what keeps it from reading as orange. Sits naturally with brass handles and a pale stone counter; fights anything chrome.",
+  }),
+
+  /* ── Select ────────────────────────────────────────────────────────────── */
+  makeFinish({
+    slug: "mistfield",
+    name: "Mistfield",
+    range: "select",
+    type: "Gloss",
+    code: "SL-04",
+    hex: "#C6CBCB",
+    grain: "#A5ABAB",
+    sheen: "Gloss",
+    summary: "Pale grey gloss. The default for a narrow galley.",
+    tagline: "Light, given back",
+    description:
+      "A pale grey in gloss — the standard answer to a narrow kitchen, because the reflection makes the run read further away than it is. Shows dust sooner than a matte, and wipes clean faster.",
+  }),
+  makeFinish({
+    slug: "salt-flat",
+    name: "Salt Flat",
+    range: "select",
+    type: "Solid matte",
+    code: "SL-05",
+    hex: "#E8E4DB",
+    grain: "#C9C4B8",
+    sheen: "Solid matte",
+    summary: "Warm off-white. The white that does not go blue at night.",
+    tagline: "Off-white, deliberately",
+    description:
+      "A warm off-white rather than a true one, which is the whole point: pure whites turn blue under LED and grey against daylight. This holds its warmth in both, and is the most-ordered finish in the range for exactly that reason.",
+  }),
+  makeFinish({
+    slug: "silt-root",
+    name: "Silt Root",
+    range: "select",
+    type: "Solid matte",
+    code: "SL-06",
+    hex: "#A08E77",
+    grain: "#7E6F5C",
+    sheen: "Solid matte",
+    summary: "Mushroom taupe — hides everything a working kitchen does to it.",
+    tagline: "The hardest-wearing colour here",
+    description:
+      "A mushroom taupe, and the most forgiving finish in the book: dust, splashes and the marks around a handle all disappear into it. The finish to choose for a kitchen that is genuinely cooked in three times a day.",
+  }),
+  makeFinish({
+    slug: "industrial-bay",
+    name: "Industrial Bay",
+    range: "select",
+    type: "Solid matte",
+    code: "SL-07",
+    hex: "#4A5560",
+    grain: "#364049",
+    sheen: "Solid matte",
+    summary: "Deep slate blue. Dark base units at the entry price.",
+    tagline: "Dark, at the entry rate",
+    description:
+      "A deep slate blue — the way to get dark base units without moving up a range. Best kept below the counter with something pale above; a full kitchen in this needs more light than most flats have.",
+    suited: ["Base units", "Kitchen island", "Tall pantry units", "Breakfast counter"],
+  }),
+];
+
 export const finishes: Finish[] = [
   {
     slug: "tuscan-oak",
@@ -362,6 +681,8 @@ export const finishes: Finish[] = [
     ],
     image: placeholder("interione-oasis-ivory", 1600, 900),
   },
+
+  ...CATALOGUE_FINISHES,
 ];
 
 /** The strip in the hero lays out exactly six frames. */
@@ -385,7 +706,7 @@ export const ranges: Range[] = [
     label: "Signature",
     blurb:
       "The everyday range — matte, metallic and open-pore wood finishes that hold up to a decade of ordinary use.",
-    image: placeholder("interione-range-signature", 1920, 1080),
+    image: "/assets/Kitchen-Types/Hero/GlamKitchen.jpg",
   },
   {
     range: "premier",
@@ -393,7 +714,7 @@ export const ranges: Range[] = [
     label: "Premier",
     blurb:
       "Textured and solid finishes for two-tone layouts and statement islands, built for a kitchen that leads the home.",
-    image: placeholder("interione-range-premier", 1920, 1080),
+    image: "/assets/Kitchen-Types/Hero/IndustrialKitchen_1.jpg",
   },
   {
     range: "select",
@@ -401,6 +722,6 @@ export const ranges: Range[] = [
     label: "Select",
     blurb:
       "Gloss, stone and ivory finishes chosen for narrow footprints, north-facing rooms and resale value.",
-    image: placeholder("interione-range-select", 1920, 1080),
+    image: "/assets/Kitchen-Types/Hero/MinimalKitchen.jpg",
   },
 ];

@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 
+import { ASSETS } from "@/data/assets";
 import { HERO_MEDIA } from "@/data/kitchen-styles";
 import { EASE } from "@/lib/motion";
 import { SHUFFLE_PRESET } from "@/lib/shuffle";
@@ -74,21 +76,46 @@ export default function Hero() {
           Steel-composite kitchens, built in Hyderabad and installed in 30 days.
         </p>
 
-        {/* A line that draws itself down, once. Enough to say the page
-            continues without asking anyone to read the word "scroll". */}
-        <span
-          aria-hidden="true"
-          className="hidden shrink-0 flex-col items-center gap-3 sm:flex"
-        >
-          <span className="font-mono text-[9.5px] tracking-[0.28em] text-white/45 uppercase">
-            Scroll
-          </span>
-          <span className="relative block h-14 w-px overflow-hidden bg-white/20">
-            <motion.span
-              className="absolute inset-x-0 top-0 block h-1/2 bg-white/80"
-              animate={{ y: ["-100%", "200%"] }}
-              transition={{ duration: 2.4, ease: "easeInOut", repeat: Infinity }}
+        <span className="flex shrink-0 flex-col items-end gap-5">
+          {/* The parent group, straight onto the photograph.
+              Reversed to white rather than left in navy and red: JSW's navy is
+              almost exactly the value of the scrim behind it, so in full colour
+              on this ground the mark half-disappears. A single-colour reverse
+              is the standard treatment for that, and it sits with the white
+              type beside it instead of fighting it. */}
+          <span className="flex items-center gap-3">
+            <span className="hidden font-mono text-[9px] tracking-[0.2em] text-white/45 uppercase sm:block">
+              A JSW
+              <br />
+              Enterprise
+            </span>
+            <Image
+              src={ASSETS.brand.jsw}
+              alt="JSW"
+              width={4000}
+              height={1980}
+              sizes="76px"
+              priority
+              className="h-auto w-[76px] opacity-90 brightness-0 invert drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]"
             />
+          </span>
+
+          {/* A line that draws itself down, once. Enough to say the page
+              continues without asking anyone to read the word "scroll". */}
+          <span
+            aria-hidden="true"
+            className="hidden flex-col items-center gap-3 sm:flex"
+          >
+            <span className="font-mono text-[9.5px] tracking-[0.28em] text-white/45 uppercase">
+              Scroll
+            </span>
+            <span className="relative block h-14 w-px overflow-hidden bg-white/20">
+              <motion.span
+                className="absolute inset-x-0 top-0 block h-1/2 bg-white/80"
+                animate={{ y: ["-100%", "200%"] }}
+                transition={{ duration: 2.4, ease: "easeInOut", repeat: Infinity }}
+              />
+            </span>
           </span>
         </span>
       </motion.div>

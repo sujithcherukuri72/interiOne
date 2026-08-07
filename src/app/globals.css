@@ -782,64 +782,118 @@ svg {
   letter-spacing: -0.01em;
 }
 
-.studio-pin {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* The stem's foot is the real coordinate; the marker is anchored there. */
-  padding-bottom: 26px;
+/* ── Floating WhatsApp button ──────────────────────────────────────────────
+   Stood down whenever a full-screen takeover is open (see lib/overlay.ts).
+   It is fixed to the bottom-right corner, which is exactly where the planner
+   puts "Next" — so it was sitting on top of the one control the step needs,
+   eating the click. Written as CSS on an html attribute rather than as React
+   state because the button lives in a different subtree from both overlays,
+   and the attribute selector out-specifies the utility classes that handle
+   the button's own scroll-in. */
+html[data-overlay="open"] .fab-whatsapp {
+  opacity: 0;
+  translate: 0 1.25rem;
+  pointer-events: none;
 }
 
-.studio-pin__dot {
-  width: 12px;
-  height: 12px;
+/**
+ * The root is deliberately zero-sized.
+ *
+ * Both providers place a marker by its own box — Mapbox translates it by
+ * -50%/-100% of its size, and the Google overlay sets left/top from a measured
+ * offsetHeight. Measuring is the problem: before the first layout pass those
+ * sizes are 0, and the label alone made the box wider than the badge, so the
+ * "centre" was never the pin. With a 0×0 root, both providers land its origin
+ * exactly on the coordinate and every part hangs off that origin in CSS — no
+ * measurement, and the tail tip is the coordinate at every zoom.
+ */
+.studio-pin {
+  --pin-size: 62px;
+  --pin-tail: 15px;
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* The badge: the mark on the ink disc, ringed in coral. */
+.studio-pin__badge {
+  position: absolute;
+  left: 50%;
+  bottom: var(--pin-tail);
+  translate: -50% 0;
+  display: grid;
+  place-items: center;
+  width: var(--pin-size);
+  height: var(--pin-size);
   border-radius: 9999px;
-  background: var(--coral);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--background) 70%, transparent);
+  background: var(--ink);
+  border: 2px solid var(--coral);
+  box-shadow:
+    0 12px 26px -10px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+}
+
+.studio-pin__mark {
+  /* The artwork is gold on transparency, which is why it needs the dark disc
+     under it — on the map's own pale ground it would disappear. */
+  width: calc(var(--pin-size) * 0.46);
+  height: auto;
+  display: block;
+}
+
+.studio-pin__tail {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: var(--pin-tail) solid var(--coral);
 }
 
 .studio-pin__ring {
   position: absolute;
-  top: 0;
-  width: 12px;
-  height: 12px;
+  left: 50%;
+  bottom: var(--pin-tail);
+  translate: -50% 0;
+  width: var(--pin-size);
+  height: var(--pin-size);
   border-radius: 9999px;
-  border: 1px solid var(--coral);
-  animation: pin-pulse 2.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-}
-
-.studio-pin__stem {
-  width: 1px;
-  height: 26px;
-  position: absolute;
-  bottom: 0;
-  background: linear-gradient(to bottom, var(--coral), transparent);
+  border: 1.5px solid var(--coral);
+  animation: pin-pulse 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
 .studio-pin__label {
   position: absolute;
-  bottom: -6px;
-  left: 14px;
+  /* Vertically centred on the badge, not on the whole pin, so the tail does
+     not drag it below the middle. */
+  bottom: calc(var(--pin-tail) + var(--pin-size) / 2);
+  translate: 0 50%;
+  left: calc(var(--pin-size) / 2 + 10px);
   white-space: nowrap;
   font-family: var(--font-mono-brand);
   font-size: 10px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--foreground);
-  background: color-mix(in srgb, var(--background) 80%, transparent);
-  padding: 3px 8px;
+  background: color-mix(in srgb, var(--background) 88%, transparent);
+  padding: 4px 9px;
+  border-radius: 3px;
   backdrop-filter: blur(2px);
 }
 
+/* `translate` positions the ring; `scale` alone animates, so the two do not
+   fight over one `transform`. */
 @keyframes pin-pulse {
   0% {
-    transform: scale(1);
-    opacity: 0.9;
+    scale: 1;
+    opacity: 0.8;
   }
   70%,
   100% {
-    transform: scale(4.2);
+    scale: 2.1;
     opacity: 0;
   }
 }

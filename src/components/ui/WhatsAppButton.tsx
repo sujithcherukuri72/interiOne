@@ -65,7 +65,7 @@ export default function WhatsAppButton() {
       rel="noreferrer noopener"
       data-section={section ?? ""}
       aria-label="Chat with interiOne on WhatsApp"
-      className={`focus-ring group fixed right-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] z-40 flex items-center gap-0 overflow-hidden rounded-full bg-[#25D366] py-3.5 pl-4 text-white shadow-[0_10px_30px_-10px_rgba(0,0,0,0.45)] transition-all duration-500 hover:gap-2 sm:right-8 ${
+      className={`fab-whatsapp focus-ring group fixed right-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] z-40 flex items-center gap-0 overflow-hidden rounded-full bg-[#25D366] py-3.5 pl-4 text-white shadow-[0_10px_30px_-10px_rgba(0,0,0,0.45)] transition-all duration-500 hover:gap-2 sm:right-8 ${
         visible
           ? "pointer-events-auto translate-y-0 opacity-100"
           : "pointer-events-none translate-y-4 opacity-0"
