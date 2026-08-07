@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -55,8 +55,8 @@ export default function Partners() {
                   )
                 }
                 // Keyboard gets the same reveal on focus that a pointer gets
-                // on hover. The card is content rather than a control â€” it
-                // navigates nowhere â€” so it is made reachable rather than
+                // on hover. The card is content rather than a control — it
+                // navigates nowhere — so it is made reachable rather than
                 // dressed up as a button.
                 tabIndex={0}
                 onFocus={() => setActive(partner.id)}

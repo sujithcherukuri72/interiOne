@@ -23,6 +23,16 @@
   --muted-foreground: var(--muted);
   --ring: var(--coral);
 
+  /* Modula's own tokens, lifted from modula.in so the two properties read as
+     one company: their deep brown, their accent, their two creams and the
+     offset drop shadow every card on that site carries. */
+  --brown: #865b49;
+  --brown-deep: #3a1a1a;
+  --tan: #d7c5aa;
+  --cream: #fdf9f3;
+  --cream-cool: #f1f0ef;
+  --shadow-card: 5px 5px 5px 0 rgba(0, 0, 0, 0.25);
+
   --font-display: var(--font-archivo), "Helvetica Neue", Arial, sans-serif;
 
   /* The identity faces: serif carries the logo and footer wordmark, mono the
@@ -45,6 +55,10 @@
   --color-signal: var(--signal);
   --color-navy: var(--navy);
   --color-ring: var(--ring);
+  --color-brown: var(--brown);
+  --color-brown-deep: var(--brown-deep);
+  --color-cream: var(--cream);
+  --color-cream-cool: var(--cream-cool);
   --font-sans: var(--font-display);
   --font-display: var(--font-display);
   --font-serif: var(--font-serif-brand);
@@ -80,9 +94,43 @@ html::-webkit-scrollbar {
   display: none;
 }
 
+/* --------------------------------------------------------------------------
+   Selection is off.
+
+   A drag across a heading used to leave a black block behind it — the page is
+   read, not transcribed, and a stray highlight sitting over the display type
+   looks like damage. Turning it off also stops the long-press menu on iOS,
+   where a scroll that starts on a word is easily mistaken for a selection.
+
+   Fields keep it, because a text input without selection cannot be corrected.
+   -------------------------------------------------------------------------- */
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  /* iOS: no callout menu on long-press. */
+  -webkit-touch-callout: none;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Nothing should ever be highlighted, so give selection no appearance at all
+   in the cases a browser still forces one (find-on-page, select-all). */
 ::selection {
-  background: var(--foreground);
-  color: var(--background);
+  background: transparent;
+  color: inherit;
+}
+
+/* Images are not draggable — a drag on a photograph should scroll the page,
+   not peel a ghost of it off the layout. */
+img,
+svg {
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 /* The single horizontal gutter every full-width section aligns to. */
@@ -359,6 +407,371 @@ html::-webkit-scrollbar {
   .type-reveal[data-typing="on"] .type-reveal-char,
   .type-reveal[data-caret="off"][data-typing="on"] .type-reveal-char {
     animation: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Property cards — the four claims under the Xteel section.
+
+   Each icon carries the motion of the thing it denies: the flame gutters, the
+   droplet beads and runs, the leaf breathes, the shield seals. Idle motion is
+   slow and small enough to read as life rather than as a widget demanding
+   attention; hover doubles it.
+   -------------------------------------------------------------------------- */
+.prop-card {
+  border-radius: 0.75rem;
+  border: 2px solid transparent;
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.45s ease;
+}
+
+.prop-card:hover {
+  transform: translateY(-6px);
+  border-color: color-mix(in srgb, var(--brown) 60%, transparent);
+}
+
+/* The rule above the title, wiped in from the left when the card arrives. */
+.prop-rule {
+  transform-origin: left;
+  animation: prop-rule-wipe 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes prop-rule-wipe {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.prop-icon {
+  animation-duration: 5.5s;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  animation-iteration-count: infinite;
+  transition: color 0.45s ease;
+}
+
+.prop-card:hover .prop-icon {
+  animation-duration: 2.4s;
+  color: var(--brown);
+}
+
+.prop-icon[data-motion="seal"] {
+  animation-name: prop-seal;
+}
+.prop-icon[data-motion="flicker"] {
+  animation-name: prop-flicker;
+  transform-origin: 50% 80%;
+}
+.prop-icon[data-motion="breathe"] {
+  animation-name: prop-breathe;
+  transform-origin: 50% 90%;
+}
+.prop-icon[data-motion="bead"] {
+  animation-name: prop-bead;
+}
+
+@keyframes prop-seal {
+  0%,
+  70%,
+  100% {
+    transform: scale(1);
+  }
+  80% {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes prop-flicker {
+  0%,
+  100% {
+    transform: scaleY(1) skewX(0deg);
+    opacity: 1;
+  }
+  35% {
+    transform: scaleY(1.1) skewX(-3deg);
+    opacity: 0.75;
+  }
+  62% {
+    transform: scaleY(0.94) skewX(2deg);
+    opacity: 1;
+  }
+}
+
+@keyframes prop-breathe {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes prop-bead {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  45% {
+    transform: translateY(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prop-icon,
+  .prop-rule {
+    animation: none;
+  }
+  .prop-card:hover {
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Glass — the estimator's surface.
+
+   Frosted panels only read as glass if there is something behind them worth
+   blurring, which a flat cream section does not provide. So `.aurora` lays
+   three slow-drifting colour fields under the section and the panels blur
+   those. Get this wrong and "glassmorphism" is just a grey box with a border.
+   -------------------------------------------------------------------------- */
+.glass {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(255, 255, 255, 0.34) 100%
+  );
+  backdrop-filter: blur(22px) saturate(1.35);
+  -webkit-backdrop-filter: blur(22px) saturate(1.35);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  /* Two shadows: Modula's offset drop, plus an inner highlight along the top
+     edge — the lit rim is what sells a pane as having thickness. */
+  box-shadow:
+    var(--shadow-card),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+}
+
+/* The same material, dark — for the panel carrying the total. */
+.glass-ink {
+  background: linear-gradient(
+    135deg,
+    rgba(26, 26, 26, 0.82) 0%,
+    rgba(58, 26, 26, 0.72) 100%
+  );
+  backdrop-filter: blur(22px) saturate(1.2);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    var(--shadow-card),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.16);
+}
+
+/* Selected state for a glass control — brown rim, brighter pane. */
+.glass-on {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0.5) 100%
+  );
+  border-color: color-mix(in srgb, var(--brown) 55%, transparent);
+}
+
+.aurora {
+  position: absolute;
+  inset: -20% -10%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.aurora span {
+  position: absolute;
+  display: block;
+  border-radius: 9999px;
+  /* Heavily blurred so the panes have a gradient to distort rather than an
+     edge to reveal. */
+  filter: blur(70px);
+  opacity: 0.5;
+  animation: aurora-drift 26s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+.aurora span:nth-child(1) {
+  top: 4%;
+  left: 2%;
+  width: 42vw;
+  height: 42vw;
+  background: var(--brown);
+  opacity: 0.22;
+}
+
+.aurora span:nth-child(2) {
+  top: 34%;
+  right: 4%;
+  width: 34vw;
+  height: 34vw;
+  background: var(--coral);
+  opacity: 0.16;
+  animation-delay: -9s;
+}
+
+.aurora span:nth-child(3) {
+  bottom: 2%;
+  left: 32%;
+  width: 38vw;
+  height: 38vw;
+  background: var(--tan, #d7c5aa);
+  opacity: 0.4;
+  animation-delay: -17s;
+}
+
+@keyframes aurora-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(6%, -8%, 0) scale(1.18);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora span {
+    animation: none;
+  }
+}
+
+/* Modula's card: 12px corners, a 2px rim that only shows when chosen, and the
+   offset drop shadow. Lifted from their kitchen-type picker. */
+.card-modula {
+  border-radius: 0.75rem;
+  border: 2px solid transparent;
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
+}
+
+.card-modula:hover {
+  transform: scale(1.03);
+}
+
+.card-modula:active {
+  transform: scale(0.98);
+}
+
+.card-modula[data-selected="true"] {
+  border-color: var(--brown);
+  transform: scale(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-modula,
+  .card-modula:hover,
+  .card-modula:active,
+  .card-modula[data-selected="true"] {
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Studio map — see components/ui/StudioMap.tsx.
+
+   Mapbox ships its own light basemap; the tint below pulls it into the page's
+   warm palette. It is applied to the canvas alone, never the map root, so the
+   marker and the controls keep their real colour — the pin is the one
+   saturated thing on the block.
+   -------------------------------------------------------------------------- */
+.studio-map .mapboxgl-canvas {
+  filter: grayscale(0.6) sepia(0.3) brightness(1.03) contrast(1.02);
+}
+
+.studio-map .mapboxgl-ctrl-bottom-right,
+.studio-map .mapboxgl-ctrl-bottom-left {
+  /* Mapbox requires the logo and attribution to stay visible; they just have
+     no business being at full strength over the drawing. */
+  opacity: 0.55;
+}
+
+/* The two-finger / ctrl-scroll notice, restyled from Mapbox's default dark
+   slab into something the rest of the page would recognise. */
+.studio-map .mapboxgl-cooperative-gesture-screen {
+  background: color-mix(in srgb, var(--background) 82%, transparent);
+  backdrop-filter: blur(3px);
+  color: var(--foreground);
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: -0.01em;
+}
+
+.studio-pin {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* The stem's foot is the real coordinate; the marker is anchored there. */
+  padding-bottom: 26px;
+}
+
+.studio-pin__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  background: var(--coral);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--background) 70%, transparent);
+}
+
+.studio-pin__ring {
+  position: absolute;
+  top: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  border: 1px solid var(--coral);
+  animation: pin-pulse 2.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.studio-pin__stem {
+  width: 1px;
+  height: 26px;
+  position: absolute;
+  bottom: 0;
+  background: linear-gradient(to bottom, var(--coral), transparent);
+}
+
+.studio-pin__label {
+  position: absolute;
+  bottom: -6px;
+  left: 14px;
+  white-space: nowrap;
+  font-family: var(--font-mono-brand);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--background) 80%, transparent);
+  padding: 3px 8px;
+  backdrop-filter: blur(2px);
+}
+
+@keyframes pin-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  70%,
+  100% {
+    transform: scale(4.2);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio-pin__ring {
+    animation: none;
+    opacity: 0.4;
   }
 }
 

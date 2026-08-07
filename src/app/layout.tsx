@@ -3,6 +3,7 @@ import { Archivo, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import ClickSpark from "@/components/ui/ClickSpark";
+import ContentGuard from "@/components/ui/ContentGuard";
 import { SITE, SITE_URL, STUDIO } from "@/lib/site";
 import { buildGraph } from "@/lib/structured-data";
 
@@ -135,6 +136,10 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(buildGraph()) }}
         />
+
+        {/* Right-click and drag are taken off the imagery — see the component
+            for what that does and does not achieve. */}
+        <ContentGuard />
 
         <SmoothScrollProvider>
           <ClickSpark sparkColor="#ff4d6a" className="flex flex-1 flex-col">

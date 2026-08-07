@@ -36,6 +36,48 @@ so `currentColor`-adjacent placements stay transparent.
 `blum.svg`, …). Monochrome versions if you have them; the Partners grid inverts
 on hover and two-colour logos break there.
 
+### `xteel/` — the product render
+
+| File                  | What it is                                    |
+| --------------------- | --------------------------------------------- |
+| `xteel-exploded.png`  | The exploded panel: skin, honeycomb core, skin |
+
+**Transparent background** — it sits on the cream page and on nothing else, so
+any white box around it will show as a white box. PNG with alpha, or WebP with
+alpha if you can export it; 1600–2000px on the long edge is plenty at the size
+it is shown, and this file should come in under about 400 KB.
+
+Once it is committed, set `USE_XTEEL_RENDER = true` in `src/data/assets.ts`. The
+technology section then shows the render in place of the drawn cross-section,
+with the three callouts laid out beside it. Leave the flag off until the file is
+actually there — the drawn version is the fallback and it is not a placeholder,
+it is a complete answer on its own.
+
+Send more angles or a turntable sequence and this becomes a scroll-scrubbed
+rotation rather than a still. That is the version worth having; it needs frames
+exported at a consistent camera distance, ideally 24–36 of them.
+
+### `catalogue/` — brochures and price lists
+
+PDFs, named by what they are and nothing else: `interione-kitchens.pdf`,
+`interione-finishes.pdf`. Keep each **under 5 MB** — these go out over WhatsApp
+to phones on mobile data, and a 40 MB brochure simply does not get opened. The
+WhatsApp auto-reply reads its copy from `src/data/whatsapp-reply.ts`; see
+[`docs/whatsapp.md`](../../docs/whatsapp.md).
+
+### `video/` — motion
+
+MP4 (H.264) plus a WebM if you have it, and a **poster frame** as a JPEG at the
+same dimensions — the poster is what everyone on a slow connection actually
+sees, so it is not optional. Keep clips short and silent by default; anything
+that autoplays must be muted or the browser will refuse to start it.
+
+Name by subject: `xteel-panel-turntable.mp4`, `studio-jubilee-hills.mp4`.
+
+If a file is over ~10 MB it does not belong in the repo — put it on a CDN or
+Vercel Blob and reference the URL. Git is not a video host, and every clone
+pays for what is committed here forever.
+
 ### `og/` — social share images
 
 `og-default.jpg` at **1200×630**, under 300 KB. Only needed if you want to

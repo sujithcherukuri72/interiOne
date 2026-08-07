@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -9,7 +9,7 @@ import CloseButton from "./CloseButton";
 import Swatch from "./Swatch";
 
 /**
- * The finish detail page â€” the last layer of the stack, opened from the
+ * The finish detail page — the last layer of the stack, opened from the
  * arrow on a listing band and sitting above it at z-80.
  *
  * It always lands on cream, whatever the ground of the band underneath was:
@@ -57,7 +57,7 @@ export default function FinishOverlay({
             data-lenis-prevent
             className="h-full overflow-y-auto overscroll-contain bg-background [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
-            {/* Hero â€” the close button sits over this, so it stays white. */}
+            {/* Hero — the close button sits over this, so it stays white. */}
             <div className="relative h-[62vh] min-h-[380px] w-full overflow-hidden bg-line">
               <motion.div
                 initial={{ scale: 1.12 }}
@@ -82,7 +82,7 @@ export default function FinishOverlay({
                 className="section-shell absolute inset-x-0 bottom-0 pb-10 sm:pb-14"
               >
                 <p className="text-[11px] font-medium tracking-[0.28em] text-white/60 uppercase">
-                  {finish.rangeLabel} â€” {finish.type}
+                  {finish.rangeLabel} — {finish.type}
                 </p>
                 <h2 className="mt-3 text-[clamp(2.25rem,6.5vw,5rem)] leading-[0.95] font-medium tracking-[-0.04em] text-white">
                   {finish.name}
@@ -147,7 +147,7 @@ export default function FinishOverlay({
                 </ul>
               </motion.div>
 
-              {/* Gallery â€” swatch details rather than photographs, until
+              {/* Gallery — swatch details rather than photographs, until
                   studio shoots exist. */}
               <motion.div
                 initial={{ opacity: 0, y: 18 }}

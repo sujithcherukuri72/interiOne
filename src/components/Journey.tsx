@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useRef } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
@@ -104,7 +104,7 @@ export default function Journey() {
         <motion.div {...fadeUp(0.1)} className="mt-10 flex items-center gap-3">
           <span className="h-px flex-1 bg-white/10" />
           <span className="text-[10px] font-medium tracking-[0.28em] text-white/35 uppercase">
-            Day 0 â†’ Day 30
+            Day 0 → Day 30
           </span>
         </motion.div>
       </div>

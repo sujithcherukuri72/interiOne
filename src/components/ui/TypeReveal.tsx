@@ -14,11 +14,12 @@ import { cn } from "@/lib/cn";
 /**
  * Text that types itself in when it scrolls into view.
  *
- * Each character resolves out of a blur rather than simply appearing, and a
- * hairline coral edge rides the reveal head — so it reads as a machine setting
- * the line, not as a fade. That is the point: this copy carries the material
- * argument for the product, and typing it makes the reader take it a word at a
- * time instead of skimming the block.
+ * Each character resolves out of a blur rather than simply appearing, so it
+ * reads as a machine setting the line rather than as a fade. That is the
+ * point: this copy carries the material argument for the product, and typing
+ * it makes the reader take it a word at a time instead of skimming the block.
+ * The coral reveal head is available behind `caret` but off by default — see
+ * the prop.
  *
  * Everything is driven by CSS `animation-delay` off one class flip on the
  * root. A 240-character paragraph is 240 spans; animating those through a
@@ -43,7 +44,11 @@ export type TypeRevealProps = {
   delay?: number;
   /** How long a single character takes to resolve, in milliseconds. */
   duration?: number;
-  /** Leave the coral head off — for quieter, secondary blocks. */
+  /**
+   * Ride a hairline coral edge along the reveal head. Off by default: mid-run
+   * it reads as stripes struck through the sentence rather than as a cursor,
+   * which is not something to do to a paragraph someone is trying to read.
+   */
   caret?: boolean;
   /** Type once and stay set. The default replays on re-entry, like every other section. */
   once?: boolean;
@@ -58,7 +63,7 @@ export default function TypeReveal({
   speed = 16,
   delay = 60,
   duration = 460,
-  caret = true,
+  caret = false,
   once = false,
   amount = 0.3,
 }: TypeRevealProps) {

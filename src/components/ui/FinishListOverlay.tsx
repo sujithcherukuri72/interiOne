@@ -1,20 +1,14 @@
 "use client";
 
 import { useRef } from "react";
-import {
-  AnimatePresence,
-  motion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 import type { Finish, RangeId } from "@/data/finishes";
 import { cn } from "@/lib/cn";
 import { EASE, EASE_UI } from "@/lib/motion";
 import ArrowButton from "./ArrowButton";
 import CloseButton from "./CloseButton";
-import Swatch from "./Swatch";
+import ColourStudy from "./ColourStudy";
 
 /**
  * The listing takeover: one finish per screen, stacked.
@@ -44,73 +38,6 @@ function Rise({
     >
       {children}
     </motion.div>
-  );
-}
-
-/**
- * A frame built from three nested layers, each owning one movement so they
- * compose instead of fighting over `transform` — see the equivalent in the
- * finish overlay's photographic sibling for the full reasoning. Here the
- * innermost layer is a colour swatch rather than a photograph, but the wipe
- * and the drift behave identically.
- */
-function Frame({
-  hex,
-  grain,
-  sheen,
-  code,
-  delay = 0,
-  className,
-  scroller,
-  drift,
-}: {
-  hex: string;
-  grain: string;
-  sheen?: string;
-  code?: string;
-  delay?: number;
-  className?: string;
-  scroller: React.RefObject<HTMLDivElement | null>;
-  drift: number;
-}) {
-  const ref = useRef<HTMLElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    container: scroller,
-    offset: ["start end", "end start"],
-  });
-  const raw = useTransform(scrollYProgress, [0, 1], [drift, -drift]);
-  const y = useSpring(raw, { stiffness: 80, damping: 24, restDelta: 0.5 });
-
-  return (
-    <motion.figure
-      ref={ref}
-      initial={{ clipPath: "inset(100% 0% 0% 0%)" }}
-      whileInView={{ clipPath: "inset(0% 0% 0% 0%)" }}
-      // `once` and a near-zero threshold on purpose: a clip-path wipe that
-      // has not fired leaves the colour completely invisible, so the reveal
-      // must not be able to un-fire or wait on a 20% threshold inside a
-      // nested scroller.
-      viewport={{ once: true, amount: 0.01 }}
-      transition={{ duration: 1.25, ease: EASE, delay }}
-      // The flat colour sits on the figure itself, so the panel reads as the
-      // finish even before the swatch texture paints.
-      style={{ backgroundColor: hex }}
-      className={cn("overflow-hidden", className)}
-    >
-      <motion.div
-        initial={{ y: "-22%" }}
-        whileInView={{ y: "0%" }}
-        viewport={{ once: true, amount: 0.01 }}
-        transition={{ duration: 1.25, ease: EASE, delay }}
-        className="absolute inset-0"
-      >
-        <motion.div style={{ y }} className="absolute inset-x-0 -top-[26%] -bottom-[26%]">
-          <Swatch hex={hex} grain={grain} sheen={sheen} code={code} className="h-full w-full" />
-        </motion.div>
-      </motion.div>
-    </motion.figure>
   );
 }
 
@@ -206,40 +133,14 @@ function Band({
               flipped ? "lg:col-span-6 lg:col-start-1" : "lg:col-span-6 lg:col-start-7",
             )}
           >
-            <div className="relative">
-              <Frame
-                hex={finish.hex}
-                grain={finish.grain}
-                sheen={finish.sheen}
-                code={finish.code}
-                delay={0.1}
-                scroller={scroller}
-                drift={44}
-                className={cn(
-                  "relative h-[min(56vh,30rem)] w-[68%]",
-                  flipped ? "ml-auto" : "",
-                )}
-              />
-
-              <Frame
-                hex={finish.grain}
-                grain={finish.hex}
-                delay={0.28}
-                scroller={scroller}
-                drift={-24}
-                className={cn(
-                  "absolute bottom-[-9%] h-[min(24vh,13rem)] w-[42%]",
-                  flipped ? "left-0" : "right-0",
-                )}
-              />
-            </div>
+            <ColourStudy finish={finish} flipped={flipped} scroller={scroller} />
 
             {/* The colour, stated rather than only shown — two chips and
                 their hex, the way a spec sheet lists them. */}
             <Rise delay={0.4}>
               <dl
                 className={cn(
-                  "mt-[14%] flex flex-wrap items-center gap-x-10 gap-y-5 border-t pt-5",
+                  "mt-10 flex flex-wrap items-center gap-x-10 gap-y-5 border-t pt-5",
                   flipped ? "border-white/20" : "border-foreground/15",
                 )}
               >

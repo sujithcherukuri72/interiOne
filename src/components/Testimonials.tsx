@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 
@@ -45,7 +45,7 @@ export default function Testimonials() {
       <div className="mt-14 flex flex-col gap-5">
         {lanes.map((lane, i) => (
           <div key={i} className="marquee group relative">
-            {/* The lanes bleed off both edges â€” the drift should feel like a
+            {/* The lanes bleed off both edges — the drift should feel like a
                 slice of something longer, not a widget with ends. */}
             <div
               className="marquee-track flex w-max gap-5"
@@ -72,7 +72,7 @@ export default function Testimonials() {
 function Card({ item, duplicate }: { item: Testimonial; duplicate: boolean }) {
   return (
     <figure
-      // The second copy exists only to close the loop â€” it must not be read
+      // The second copy exists only to close the loop — it must not be read
       // out twice.
       aria-hidden={duplicate || undefined}
       className="flex w-[min(82vw,26rem)] shrink-0 flex-col justify-between gap-6 border border-white/12 bg-white/[0.03] p-6 transition-colors duration-500 hover:border-white/25 sm:gap-8 sm:p-8"

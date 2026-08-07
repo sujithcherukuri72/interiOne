@@ -1,8 +1,10 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 
+import { ASSETS, USE_XTEEL_RENDER } from "@/data/assets";
 import { XTEEL_LAYERS } from "@/data/technology";
 import { COMPACT_QUERY, useMediaQuery } from "@/lib/use-media-query";
 
@@ -69,6 +71,15 @@ export default function XteelSection() {
     clamp: true,
   });
 
+  /* The supplied render's own choreography: it arrives, settles and holds.
+     Unused in the drawn fallback, but the hooks run either way — a branch that
+     skips a hook is a different component as far as React is concerned. */
+  const renderScale = useTransform(scrollYProgress, [0, 0.45, 1], [0.9, 1.04, 1.08]);
+  const renderY = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const renderIn = useTransform(scrollYProgress, [0.02, 0.22], [0, 1], {
+    clamp: true,
+  });
+
   const topSkinY = useTransform(open, [0, 1], [0, -SKIN_TRAVEL]);
   const bottomSkinY = useTransform(open, [0, 1], [0, SKIN_TRAVEL]);
   const capX = useTransform(open, [0, 1], [0, CAP_TRAVEL]);
@@ -102,6 +113,32 @@ export default function XteelSection() {
   return (
     <div ref={ref} className="relative h-[220vh] md:h-[280vh]">
       <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center gap-8 overflow-hidden px-5 sm:px-8 md:h-screen md:gap-0 md:px-0">
+        {USE_XTEEL_RENDER ? (
+          /* The real thing. The drawing below was always a stand-in for this:
+             a render shows the honeycomb core and the actual metal, which no
+             amount of vector hatching does. It arrives, settles, and holds
+             while the callouts resolve beside it. */
+          <div className="grid w-full max-w-[72rem] items-center gap-8 md:grid-cols-12 md:gap-12">
+            <motion.div
+              style={{ scale: renderScale, y: renderY, opacity: renderIn }}
+              className="relative mx-auto h-[38svh] w-full md:col-span-6 md:h-[72svh]"
+            >
+              <Image
+                src={ASSETS.xteel.exploded}
+                alt="Exploded view of an Xteel shutter: pre-painted steel skins over a steel-composite honeycomb core, sealed on every edge."
+                fill
+                sizes="(max-width: 768px) 80vw, 40vw"
+                className="object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.18)]"
+              />
+            </motion.div>
+
+            <ul className="w-full border-t border-foreground/15 md:col-span-6">
+              {rows.map((row, i) => (
+                <CompactCallout key={row.step} row={row} open={open} index={i} />
+              ))}
+            </ul>
+          </div>
+        ) : (
         <svg
           viewBox={compact ? COMPACT_VIEWBOX : `0 0 ${W} ${H}`}
           className="w-full max-w-[68rem] shrink-0"
@@ -223,13 +260,14 @@ export default function XteelSection() {
             ))}
 
           {/* Overall thickness dimension, drawn on the left. */}
-          <Dimension open={open} />
+          <Dimension progress={scrollYProgress} />
         </svg>
+        )}
 
         {/* The same three callouts, re-laid as a register for narrow screens.
             Driven off the same `open` value, so a label still cannot arrive
             before the layer it names has finished travelling. */}
-        {compact && (
+        {compact && !USE_XTEEL_RENDER && (
           <ul className="w-full max-w-[34rem] border-t border-foreground/15 md:hidden">
             {rows.map((row, i) => (
               <CompactCallout key={row.step} row={row} open={open} index={i} />
@@ -358,8 +396,14 @@ function Callout({
 }
 
 /** The 20mm overall dimension, drawn the way a shop drawing would. */
-function Dimension({ open }: { open: MotionValue<number> }) {
-  const opacity = useTransform(open, [0.72, 0.95], [0, 1], { clamp: true });
+function Dimension({ progress }: { progress: MotionValue<number> }) {
+  // In once the panel is open, out again when the burner needs the space.
+  const opacity = useTransform(
+    progress,
+    [0.46, 0.56, 0.64, 0.7],
+    [0, 1, 1, 0],
+    { clamp: true }
+  );
   const x = 84;
   const top = MID_Y - CORE_H / 2 - SKIN_H - SKIN_TRAVEL;
   const bottom = MID_Y + CORE_H / 2 + SKIN_H + SKIN_TRAVEL;

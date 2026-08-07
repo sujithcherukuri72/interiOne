@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
@@ -12,7 +12,7 @@ import Shuffle from "./ui/Shuffle";
 import FinishOverlay from "./ui/FinishOverlay";
 
 /**
- * The finishes entry point. The section shows nothing but the three ranges â€”
+ * The finishes entry point. The section shows nothing but the three ranges —
  * no swatch names, no colour chips. Each is a full-bleed band that opens the
  * listing takeover, and the listing in turn opens a finish detail page, so
  * the catalogue is three layers deep and each one is a whole screen.
@@ -39,7 +39,11 @@ function RangeBand({
       viewport={{ once: false, amount: 0.25 }}
       transition={{ duration: 0.9, ease: EASE, delay: index * 0.08 }}
       aria-label={`Browse ${range.label}`}
-      className="group focus-ring relative block h-[62vh] w-full overflow-hidden rounded-2xl text-left md:h-[92dvh]"
+      /* Modula's card, at band scale: 12px corners, a 2px rim that only shows
+         on approach, and their offset drop shadow. The `card-modula` scale is
+         deliberately not used here — a 92dvh panel growing 3% is a lurch, so
+         the movement is given to the photograph instead. */
+      className="group focus-ring relative block h-[62vh] w-full overflow-hidden rounded-xl border-2 border-transparent text-left shadow-[var(--shadow-card)] transition-colors duration-500 hover:border-brown md:h-[92dvh]"
     >
       <Image
         src={range.image}
@@ -48,12 +52,14 @@ function RangeBand({
         sizes="(max-width: 768px) 100vw, 34vw"
         className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
       />
-      {/* Dark enough that the type holds on any placeholder photograph. */}
-      <div className="absolute inset-0 bg-ink/60 transition-colors duration-700 group-hover:bg-ink/50" />
+      {/* Modula's deep brown rather than a neutral ink — it warms the
+          placeholder photography and keeps the two properties in one family. */}
+      <div className="absolute inset-0 bg-brown-deep/65 transition-colors duration-700 group-hover:bg-brown-deep/55" />
 
       <div className="relative flex h-full flex-col justify-between px-5 py-10 sm:px-8 sm:py-12">
-        <p className="text-[11px] font-medium tracking-[0.28em] text-white/55 uppercase">
-          {String(index + 1).padStart(2, "0")} â€”{" "}
+        {/* Their pill tag, carrying the count. */}
+        <p className="w-fit rounded-full bg-white/12 px-3 py-1.5 text-[10px] font-medium tracking-[0.22em] text-white/75 uppercase backdrop-blur-sm">
+          {String(index + 1).padStart(2, "0")} —{" "}
           {String(count).padStart(2, "0")} finishes
         </p>
 

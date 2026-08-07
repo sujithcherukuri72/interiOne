@@ -25,7 +25,7 @@ const PRIMARY = [
   { label: "Planning", href: "#planning" },
   { label: "Finishes", href: "#finishes" },
   { label: "Journey", href: "#journey" },
-  { label: "Showrooms", href: "#showrooms" },
+  { label: "Showroom", href: "#showrooms" },
 ];
 
 const SECONDARY = [

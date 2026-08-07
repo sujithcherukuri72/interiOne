@@ -11,6 +11,7 @@ import Partners from "@/components/Partners";
 import Showrooms from "@/components/Showrooms";
 import Technology from "@/components/Technology";
 import Testimonials from "@/components/Testimonials";
+import WhatsAppButton from "@/components/ui/WhatsAppButton";
 
 export default function Home() {
   return (
@@ -34,6 +35,11 @@ export default function Home() {
         <Faqs />
         <Contact />
       </main>
+
+      {/* Outside `main` because it is fixed furniture, not part of the reading
+          order — and it watches the sections inside `main` to work out what the
+          visitor's first message should say. */}
+      <WhatsAppButton />
     </>
   );
 }

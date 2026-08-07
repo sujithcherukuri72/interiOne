@@ -13,10 +13,10 @@ import { HYDERABAD_AREAS, SITE, SITE_URL, STUDIO } from "@/lib/site";
  * page — markup describing things the page does not show is the fastest way to
  * lose the rich result entirely.
  *
- * Scope is deliberately Hyderabad only. The other six showrooms are named on
- * the page, but the Jubilee Hills studio is the one entity with a verified
- * address, a phone number that is answered and a Business Profile to match
- * against, so it is the only one claiming to be a `LocalBusiness`.
+ * Scope is Hyderabad only, which is now also all the page claims: the Jubilee
+ * Hills studio is the one entity with a verified address, a phone number that
+ * is answered and a Business Profile to match against, so it is the only thing
+ * here claiming to be a `LocalBusiness`.
  */
 
 const ORG_ID = `${SITE_URL}/#organization`;

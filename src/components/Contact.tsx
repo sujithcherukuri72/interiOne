@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 
@@ -21,7 +21,7 @@ const reveal = (delay: number) => ({
   transition: { duration: 0.8, ease: EASE, delay },
 });
 
-/** Small line icons for the contact rows â€” stroked, so they inherit weight. */
+/** Small line icons for the contact rows — stroked, so they inherit weight. */
 function Icon({ name }: { name: "phone" | "mail" | "pin" }) {
   const paths = {
     phone:
@@ -50,7 +50,7 @@ function Icon({ name }: { name: "phone" | "mail" | "pin" }) {
 
 /**
  * The closer. Everything else on the page opens a takeover or a section
- * scroll; this is the one screen with nothing behind it â€” the page simply
+ * scroll; this is the one screen with nothing behind it — the page simply
  * ends here, the way the reference ends on its own last section rather than
  * handing off to a separate footer.
  */
@@ -92,7 +92,7 @@ export default function Contact() {
           ))}
         </motion.div>
 
-        {/* Contact rows â€” icon, then the detail, stacked at the gutter. */}
+        {/* Contact rows — icon, then the detail, stacked at the gutter. */}
         <motion.div
           {...reveal(0.3)}
           className="mt-16 flex flex-col gap-3.5 text-[14px] text-foreground/70"
@@ -125,7 +125,7 @@ export default function Contact() {
           transition={{ duration: 1, ease: EASE }}
           className="mt-16 border-t border-line pt-[6vh] pb-[4vh]"
         >
-          {/* The logo lockup at display size â€” same face, same interlocked
+          {/* The logo lockup at display size — same face, same interlocked
               O's. `leading-[1.15]` and the padding below keep the descenders
               off the legal rule underneath. */}
           <LogoWord
@@ -137,7 +137,7 @@ export default function Contact() {
         {/* Legal bar. */}
         <div className="flex flex-col gap-4 border-t border-line py-7 font-mono text-[10px] tracking-[0.16em] text-muted uppercase sm:flex-row sm:items-center sm:justify-between">
           <p>
-            Â© {new Date().getFullYear()} {BRAND.name} Â· In partnership with{" "}
+            © {new Date().getFullYear()} {BRAND.name} · In partnership with{" "}
             {BRAND.partner}, {BRAND.partnerParent}
           </p>
 

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
@@ -40,7 +40,7 @@ export default function DrawKitchen() {
     <section id="planning" className="bg-background py-[clamp(3.5rem,9vh,7.5rem)]">
       <div className="section-shell">
         <div className="grid gap-y-12 md:grid-cols-12 md:gap-x-8">
-          {/* â”€â”€ Copy column â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ── Copy column ──────────────────────────────────────────── */}
           <div className="flex flex-col justify-between md:col-span-4">
             <div>
               <p className="font-mono text-[11px] tracking-[0.28em] text-foreground/45 uppercase">
@@ -53,7 +53,7 @@ export default function DrawKitchen() {
 
               <p className="mt-6 max-w-[38ch] text-[15px] leading-[1.65] tracking-[-0.01em] text-muted">
                 A designer measures your site, then three costed plans come back
-                within a day. These are the four we start from â€” the walls
+                within a day. These are the four we start from — the walls
                 decide which.
               </p>
             </div>
@@ -83,7 +83,7 @@ export default function DrawKitchen() {
                       </span>
                     </span>
 
-                    {/* The bar is the timer â€” it fills over one cycle. */}
+                    {/* The bar is the timer — it fills over one cycle. */}
                     <span className="absolute inset-x-0 top-[-1px] h-px overflow-hidden">
                       {active && (
                         <motion.span
@@ -104,7 +104,7 @@ export default function DrawKitchen() {
             </div>
           </div>
 
-          {/* â”€â”€ The drawing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ── The drawing ──────────────────────────────────────────── */}
           <div
             className="md:col-span-7 md:col-start-6"
             onMouseEnter={() => setPaused(true)}
@@ -115,7 +115,7 @@ export default function DrawKitchen() {
                 viewBox="0 0 640 420"
                 className="w-full"
                 role="img"
-                aria-label={`${layout.name} kitchen plan â€” ${layout.note}`}
+                aria-label={`${layout.name} kitchen plan — ${layout.note}`}
               >
                 <defs>
                   <pattern
@@ -130,7 +130,7 @@ export default function DrawKitchen() {
 
                 <rect width="640" height="420" fill="url(#plan-grid)" />
 
-                {/* Room shell â€” the one constant across all four plans. */}
+                {/* Room shell — the one constant across all four plans. */}
                 <rect
                   x={ROOM.x}
                   y={ROOM.y}
@@ -218,7 +218,7 @@ export default function DrawKitchen() {
                 </AnimatePresence>
 
                 <span className="font-mono text-[10px] tracking-[0.16em] text-muted uppercase">
-                  Plan Â· Not to scale
+                  Plan · Not to scale
                 </span>
               </div>
             </div>
@@ -228,7 +228,7 @@ export default function DrawKitchen() {
               className="focus-ring mt-8 inline-flex items-center gap-3 rounded-full border border-line px-5 py-2.5 text-[13px] tracking-[-0.005em] text-foreground/75 transition-colors duration-300 hover:border-foreground/40 hover:text-foreground"
             >
               Book a site visit
-              <span aria-hidden="true">â†’</span>
+              <span aria-hidden="true">→</span>
             </a>
           </div>
         </div>
@@ -277,7 +277,7 @@ function FixtureMark({ fixture }: { fixture: Fixture }) {
     );
   }
 
-  // Fridge and tall unit â€” a block with the diagonal that means "appliance".
+  // Fridge and tall unit — a block with the diagonal that means "appliance".
   const w = axis === "h" ? 44 : 30;
   const h = axis === "h" ? 30 : 44;
   return (
