@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 
 import { XTEEL_LAYERS } from "@/data/technology";
+import { COMPACT_QUERY, useMediaQuery } from "@/lib/use-media-query";
 
 /* The drawing is authored at this size and scaled by the viewBox. The width
    is set by the widest callout, not by the panel — the labels are part of the
@@ -30,6 +31,12 @@ const SKIN_TRAVEL = 118;
 const CAP_TRAVEL = 38;
 const CAP_W = 10;
 
+/* On a phone the callout column cannot come with the drawing — scaled to
+   375px, 21px type in a 1120-unit viewBox lands at seven real pixels. So the
+   narrow layout crops the viewBox to the panel alone, which then fills the
+   width at a readable size, and the callouts are re-laid as HTML underneath. */
+const COMPACT_VIEWBOX = "24 0 600 460";
+
 type Row = {
   /** Vertical centre of the label's leader line, exploded. */
   y: number;
@@ -49,6 +56,7 @@ type Row = {
  */
 export default function XteelSection() {
   const ref = useRef<HTMLDivElement>(null);
+  const compact = useMediaQuery(COMPACT_QUERY);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -92,11 +100,11 @@ export default function XteelSection() {
   ];
 
   return (
-    <div ref={ref} className="relative h-[280vh]">
-      <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden">
+    <div ref={ref} className="relative h-[220vh] md:h-[280vh]">
+      <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center gap-8 overflow-hidden px-5 sm:px-8 md:h-screen md:gap-0 md:px-0">
         <svg
-          viewBox={`0 0 ${W} ${H}`}
-          className="w-full max-w-[68rem]"
+          viewBox={compact ? COMPACT_VIEWBOX : `0 0 ${W} ${H}`}
+          className="w-full max-w-[68rem] shrink-0"
           role="img"
           aria-label="Exploded cross-section of an Xteel shutter: pre-painted steel skins over a steel-composite core, sealed on every edge."
         >
@@ -209,15 +217,69 @@ export default function XteelSection() {
           />
 
           {/* ── Callouts ─────────────────────────────────────────────────── */}
-          {rows.map((row, i) => (
-            <Callout key={row.step} row={row} open={open} index={i} />
-          ))}
+          {!compact &&
+            rows.map((row, i) => (
+              <Callout key={row.step} row={row} open={open} index={i} />
+            ))}
 
           {/* Overall thickness dimension, drawn on the left. */}
           <Dimension open={open} />
         </svg>
+
+        {/* The same three callouts, re-laid as a register for narrow screens.
+            Driven off the same `open` value, so a label still cannot arrive
+            before the layer it names has finished travelling. */}
+        {compact && (
+          <ul className="w-full max-w-[34rem] border-t border-foreground/15 md:hidden">
+            {rows.map((row, i) => (
+              <CompactCallout key={row.step} row={row} open={open} index={i} />
+            ))}
+          </ul>
+        )}
       </div>
     </div>
+  );
+}
+
+/** One callout as a table row, for the layout that has no room for leaders. */
+function CompactCallout({
+  row,
+  open,
+  index,
+}: {
+  row: Row;
+  open: MotionValue<number>;
+  index: number;
+}) {
+  const start = 0.45 + index * 0.12;
+  const opacity = useTransform(open, [start, start + 0.28], [0, 1], {
+    clamp: true,
+  });
+  const x = useTransform(open, [start, start + 0.28], [-12, 0], { clamp: true });
+
+  const [material, gauge] = row.spec.split("·").map((s) => s.trim());
+
+  return (
+    <motion.li
+      style={{ opacity, x }}
+      className="flex items-baseline gap-4 border-b border-foreground/15 py-3.5"
+    >
+      <span className="font-mono text-[10px] tracking-[0.18em] text-foreground/35 tabular-nums">
+        {row.step}
+      </span>
+
+      <span className="min-w-0 flex-1">
+        <span className="block text-[15px] font-medium tracking-[-0.02em]">
+          {row.title}
+        </span>
+        <span className="mt-1 block font-mono text-[9.5px] tracking-[0.16em] uppercase">
+          <span className="text-foreground/45">{material}</span>
+          <span className="text-muted"> · </span>
+          {/* The gauge is the number people repeat back — it takes the accent. */}
+          <span className="text-coral">{gauge}</span>
+        </span>
+      </span>
+    </motion.li>
   );
 }
 

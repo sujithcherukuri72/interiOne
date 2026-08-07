@@ -66,16 +66,24 @@ export default function HeroStatement() {
   return (
     <div
       ref={containerRef}
-      className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 sm:px-8"
+      // svh, not vh: on iOS Safari `100vh` is the *expanded* viewport, so with
+      // the URL bar showing the statement is pushed a bar's height out of
+      // frame and the last line reads as cut off.
+      // The statement wants a screen to itself, but on a phone a full one
+      // plus 12vh of padding left a third of it empty above and below the
+      // sentence. It keeps the screen on larger viewports only.
+      className="relative flex min-h-[72svh] items-center justify-center overflow-hidden px-5 py-[clamp(3rem,8vh,7rem)] sm:min-h-[100svh] sm:px-8"
     >
-      <span className="absolute top-8 left-5 text-[11px] tracking-[-0.01em] text-muted uppercase sm:left-8">
+      <span className="absolute top-8 left-5 text-[10px] tracking-[-0.01em] text-muted uppercase sm:left-8 sm:text-[11px]">
         Modula
       </span>
-      <span className="absolute top-8 right-5 text-[11px] tracking-[-0.01em] text-muted uppercase sm:right-8">
+      <span className="absolute top-8 right-5 text-[10px] tracking-[-0.01em] text-muted uppercase sm:right-8 sm:text-[11px]">
         A JSW Enterprise
       </span>
 
-      <p className="relative z-20 mx-auto max-w-[64rem] text-center text-[clamp(2.4rem,4.4vw,4.8rem)] leading-[1.15] font-bold tracking-[-0.035em]">
+      {/* The lower bound was 2.4rem, which set this 107-character sentence in
+          twelve lines on a 360px phone and overran the screen. */}
+      <p className="relative z-20 mx-auto max-w-[64rem] text-center text-[clamp(1.65rem,4.4vw,4.8rem)] leading-[1.15] font-bold tracking-[-0.035em]">
         {TEXT_WORDS.map((word, i) => (
           <ScrollWord
             key={i}

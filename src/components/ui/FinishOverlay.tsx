@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -9,7 +9,7 @@ import CloseButton from "./CloseButton";
 import Swatch from "./Swatch";
 
 /**
- * The finish detail page — the last layer of the stack, opened from the
+ * The finish detail page â€” the last layer of the stack, opened from the
  * arrow on a listing band and sitting above it at z-80.
  *
  * It always lands on cream, whatever the ground of the band underneath was:
@@ -57,7 +57,7 @@ export default function FinishOverlay({
             data-lenis-prevent
             className="h-full overflow-y-auto overscroll-contain bg-background [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
-            {/* Hero — the close button sits over this, so it stays white. */}
+            {/* Hero â€” the close button sits over this, so it stays white. */}
             <div className="relative h-[62vh] min-h-[380px] w-full overflow-hidden bg-line">
               <motion.div
                 initial={{ scale: 1.12 }}
@@ -82,7 +82,7 @@ export default function FinishOverlay({
                 className="section-shell absolute inset-x-0 bottom-0 pb-10 sm:pb-14"
               >
                 <p className="text-[11px] font-medium tracking-[0.28em] text-white/60 uppercase">
-                  {finish.rangeLabel} — {finish.type}
+                  {finish.rangeLabel} â€” {finish.type}
                 </p>
                 <h2 className="mt-3 text-[clamp(2.25rem,6.5vw,5rem)] leading-[0.95] font-medium tracking-[-0.04em] text-white">
                   {finish.name}
@@ -90,7 +90,7 @@ export default function FinishOverlay({
               </motion.div>
             </div>
 
-            <div className="section-shell pt-[9vh] pb-[12vh]">
+            <div className="section-shell pt-[clamp(2.5rem,7vh,5rem)] pb-[clamp(3.5rem,9vh,7.5rem)]">
               <div className="grid gap-y-14 md:grid-cols-12 md:gap-x-10">
                 <motion.div
                   initial={{ opacity: 0, y: 18 }}
@@ -130,7 +130,7 @@ export default function FinishOverlay({
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: EASE, delay: 0.65 }}
-                className="mt-[11vh] grid gap-y-8 md:grid-cols-12 md:gap-x-10"
+                className="mt-[clamp(2.75rem,7vh,6rem)] grid gap-y-8 md:grid-cols-12 md:gap-x-10"
               >
                 <p className="text-[10px] font-medium tracking-[0.28em] text-foreground/45 uppercase md:col-span-3">
                   Suited for
@@ -147,13 +147,13 @@ export default function FinishOverlay({
                 </ul>
               </motion.div>
 
-              {/* Gallery — swatch details rather than photographs, until
+              {/* Gallery â€” swatch details rather than photographs, until
                   studio shoots exist. */}
               <motion.div
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: EASE, delay: 0.75 }}
-                className="mt-[11vh] grid gap-5 sm:grid-cols-2"
+                className="mt-[clamp(2.75rem,7vh,6rem)] grid gap-5 sm:grid-cols-2"
               >
                 {gallery.map((tile, i) => (
                   <figure
@@ -177,7 +177,7 @@ export default function FinishOverlay({
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: EASE, delay: 0.85 }}
-                className="mt-[11vh] border-t border-line pt-10"
+                className="mt-[clamp(2.75rem,7vh,6rem)] border-t border-line pt-10"
               >
                 <p className="text-[clamp(1.15rem,2vw,1.75rem)] leading-[1.25] font-medium tracking-[-0.03em]">
                   Enquire about {finish.name}

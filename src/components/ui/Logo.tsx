@@ -1,3 +1,6 @@
+import Image from "next/image";
+
+import { ASSETS, LOGO_LOCKUP_RATIO, USE_IMAGE_LOGO } from "@/data/assets";
 import { cn } from "@/lib/cn";
 
 /**
@@ -70,17 +73,44 @@ export function LogoWord({
 export default function Logo({
   className,
   tagline = false,
+  variant = "dark",
 }: {
   className?: string;
   tagline?: boolean;
+  /**
+   * Which artwork to use once `USE_IMAGE_LOGO` is on. `light` is the white
+   * lockup for ink panels; `dark` is the ink lockup for the cream page. The
+   * drawn fallback ignores it entirely and takes `currentColor` instead.
+   */
+  variant?: "light" | "dark";
 }) {
+  if (USE_IMAGE_LOGO) {
+    const src =
+      variant === "light" ? ASSETS.logo.lockupLight : ASSETS.logo.lockupDark;
+
+    return (
+      <span className={cn("inline-flex items-center", className)}>
+        {/* Height tracks the caller's font-size the way the drawn lockup does,
+            so nothing at the call sites has to change when this flips on. */}
+        <Image
+          src={src}
+          alt="interiOne"
+          width={Math.round(LOGO_LOCKUP_RATIO * 100)}
+          height={100}
+          priority
+          className="h-[1.9em] w-auto"
+        />
+      </span>
+    );
+  }
+
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
       <LogoMark className="h-[1.4em]" />
       <span className="inline-flex flex-col items-start gap-[0.35em]">
         <LogoWord className="text-[1em]" />
         {tagline && (
-          <span className="text-[0.32em] tracking-[0.42em] uppercase opacity-55">
+          <span className="hidden text-[0.32em] tracking-[0.42em] uppercase opacity-55 sm:inline">
             Design · Craft · Elevate
           </span>
         )}

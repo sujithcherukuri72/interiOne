@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 
@@ -21,7 +21,7 @@ const reveal = (delay: number) => ({
   transition: { duration: 0.8, ease: EASE, delay },
 });
 
-/** Small line icons for the contact rows — stroked, so they inherit weight. */
+/** Small line icons for the contact rows â€” stroked, so they inherit weight. */
 function Icon({ name }: { name: "phone" | "mail" | "pin" }) {
   const paths = {
     phone:
@@ -50,13 +50,13 @@ function Icon({ name }: { name: "phone" | "mail" | "pin" }) {
 
 /**
  * The closer. Everything else on the page opens a takeover or a section
- * scroll; this is the one screen with nothing behind it — the page simply
+ * scroll; this is the one screen with nothing behind it â€” the page simply
  * ends here, the way the reference ends on its own last section rather than
  * handing off to a separate footer.
  */
 export default function Contact() {
   return (
-    <section id="contact" className="bg-background pt-[14vh] text-foreground">
+    <section id="contact" className="bg-background pt-[clamp(3.5rem,9vh,7.5rem)] text-foreground">
       <div className="section-shell">
         <motion.p
           {...reveal(0)}
@@ -65,12 +65,12 @@ export default function Contact() {
           {BRAND.tagline}
         </motion.p>
 
-        <motion.p
+        <motion.h2
           {...reveal(0.08)}
-          className="mt-8 max-w-[26ch] text-[clamp(2.1rem,4.6vw,4.2rem)] leading-[1.05] font-medium tracking-[-0.035em] text-balance"
+          className="mt-8 max-w-[26ch] text-[clamp(1.9rem,4.6vw,4.2rem)] leading-[1.05] font-medium tracking-[-0.035em] text-balance"
         >
-          Book your layout visit
-        </motion.p>
+          Book your layout visit in Hyderabad
+        </motion.h2>
 
         <motion.p
           {...reveal(0.16)}
@@ -92,7 +92,7 @@ export default function Contact() {
           ))}
         </motion.div>
 
-        {/* Contact rows — icon, then the detail, stacked at the gutter. */}
+        {/* Contact rows â€” icon, then the detail, stacked at the gutter. */}
         <motion.div
           {...reveal(0.3)}
           className="mt-16 flex flex-col gap-3.5 text-[14px] text-foreground/70"
@@ -125,7 +125,7 @@ export default function Contact() {
           transition={{ duration: 1, ease: EASE }}
           className="mt-16 border-t border-line pt-[6vh] pb-[4vh]"
         >
-          {/* The logo lockup at display size — same face, same interlocked
+          {/* The logo lockup at display size â€” same face, same interlocked
               O's. `leading-[1.15]` and the padding below keep the descenders
               off the legal rule underneath. */}
           <LogoWord
@@ -137,7 +137,7 @@ export default function Contact() {
         {/* Legal bar. */}
         <div className="flex flex-col gap-4 border-t border-line py-7 font-mono text-[10px] tracking-[0.16em] text-muted uppercase sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {new Date().getFullYear()} {BRAND.name} · In partnership with{" "}
+            Â© {new Date().getFullYear()} {BRAND.name} Â· In partnership with{" "}
             {BRAND.partner}, {BRAND.partnerParent}
           </p>
 
