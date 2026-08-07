@@ -1,59 +1,60 @@
 /** The questions a Hyderabad buyer actually asks, in the order they ask them. */
 export const FAQS = [
   {
-    id: "cost",
-    question: "What does a full kitchen cost?",
+    id: "layout",
+    question: "How do I know which kitchen layout is right for my home?",
     answer:
-      "Most interiOne kitchens land between ₹3.5 and ₹9 lakh, depending on run length, finish range and appliances. The site visit produces three costed plans across that spread, so you are choosing between real numbers rather than a starting price.",
+      "Every home is different. Whether it's a Straight, L-Shaped, U-Shaped, Parallel, Island, or Peninsula kitchen, our designers evaluate your available space, cooking habits, storage needs, and family lifestyle before recommending the ideal layout. The goal is to create a kitchen that feels effortless to use every day—not just beautiful.",
+    tag: "Layout",
+  },
+  {
+    id: "customize",
+    question: "Can I completely customize my kitchen?",
+    answer:
+      "Yes. Every InterioOne kitchen is designed from scratch around your lifestyle. From cabinet finishes, colours, storage solutions, lighting, handles, and appliances to countertops and accessories, every detail is tailored to your preferences, budget, and space.",
+    tag: "Customization",
+  },
+  {
+    id: "cost",
+    question: "How much will my dream kitchen cost?",
+    answer:
+      "The cost depends on the size of your kitchen, chosen materials, finishes, hardware, storage accessories, and appliances. After a free consultation and site measurement, we'll provide a transparent quotation with no hidden surprises, helping you choose the best options within your budget.",
     tag: "Pricing",
   },
   {
-    id: "visit",
-    question: "What happens on the site visit?",
+    id: "materials",
+    question: "Which materials are best for a durable kitchen?",
     answer:
-      "A designer measures the room, checks the plumbing and electrical positions, and talks through how you actually cook. Three costed concepts follow within a day. The visit fee is adjusted in full against your final order.",
-    tag: "Process",
-  },
-  {
-    id: "steel",
-    question: "Why steel instead of plywood?",
-    answer:
-      "Plywood and MDF are organic — termites eat them, moisture swells them, and both fail first at the edges. JSW Xteel® has no organic fibre at all, so there is nothing to feed on and nothing to absorb water. It also carries a UL 94 V-0 fire rating and off-gasses no formaldehyde.",
+      "Choosing the right material depends on your home, usage, and budget. We guide you through options like premium plywood, HDHMR, laminates, acrylic, glass, and more—explaining the pros and cons of each so you can make an informed decision. Every kitchen is built using quality materials and trusted hardware for long-lasting performance.",
     tag: "Material",
   },
   {
-    id: "timeline",
-    question: "Is thirty days realistic?",
+    id: "process",
+    question:
+      "What is the complete process—from consultation to installation?",
     answer:
-      "It is thirty days from design sign-off, not from first enquiry. Panels are cut to your measurements in the factory and arrive ready to install, so site work is assembly rather than fabrication. Delays almost always come from civil work that is not finished, which we flag at the survey.",
-    tag: "Timeline",
+      "It begins with a free consultation and site measurement, followed by 3D design concepts, material selection, quotation approval, manufacturing, and professional installation. Our team manages the entire journey so you enjoy a smooth, hassle-free experience from start to finish.",
+    tag: "Process",
   },
   {
-    id: "warranty",
-    question: "What is covered by the warranty?",
+    id: "maintenance",
+    question: "Will my kitchen be easy to maintain and last for years?",
     answer:
-      "Ten years on the steel carcass and shutters against warping, swelling and termite damage. Hardware carries its manufacturer's warranty, typically five to ten years. Finishes are covered against delamination for the same ten years.",
+      "Absolutely. Our kitchens are designed for everyday Indian cooking and built using durable materials with premium hardware. With basic cleaning and routine care, your kitchen will continue looking elegant and functioning beautifully for years to come. We also provide warranty support and after-sales assistance whenever needed.",
     tag: "Warranty",
   },
   {
-    id: "existing",
-    question: "Can you work with my existing civil work?",
+    id: "visualization",
+    question: "Can I see how my kitchen will look before it's built?",
     answer:
-      "Usually, yes. Counter height, plumbing chases and window positions are all worked around rather than rebuilt. If something genuinely needs to move, you will hear it at the survey with a cost attached, not halfway through installation.",
-    tag: "Site",
+      "Yes. Before manufacturing begins, you'll receive detailed 3D visualizations that let you explore your kitchen's layout, colours, finishes, storage, and overall look. This gives you the confidence to make changes before production starts.",
+    tag: "Design",
   },
   {
-    id: "finishes",
-    question: "Can I see the finishes before deciding?",
+    id: "why-us",
+    question: "Why should I choose InterioOne over other kitchen brands?",
     answer:
-      "Every finish in the catalogue is on a full-size panel at the Jubilee Hills studio. Screens flatten sheen and grain, and sheen is what you live with — it is worth the trip.",
-    tag: "Finishes",
-  },
-  {
-    id: "service",
-    question: "What happens after handover?",
-    answer:
-      "A service check at ninety days, then annual hardware alignment on request. Replacement shutters are cut from the same coil reference, so a panel replaced in year six matches the ones fitted on day thirty.",
-    tag: "Service",
+      "Because we don't believe in one-size-fits-all kitchens. Every InterioOne project is thoughtfully designed around your lifestyle, cooking habits, storage needs, and aesthetic preferences. From personalized design guidance and premium materials to transparent pricing, professional installation, and dependable after-sales support, we focus on creating a kitchen you'll love using every single day.",
+    tag: "Why Us",
   },
 ] as const;

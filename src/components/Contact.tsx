@@ -6,12 +6,7 @@ import { BRAND } from "@/data/brand";
 import { EASE } from "@/lib/motion";
 import { LogoWord } from "@/components/ui/Logo";
 
-const ACTIONS = [
-  { label: "Book a site visit", href: "#showrooms" },
-  { label: "Get 3 free designs", href: "#showrooms" },
-  { label: "Visit the Hyderabad studio", href: "#showrooms" },
-  { label: "See the 30-day programme", href: "#journey" },
-];
+const ACTIONS = [{ label: "Book a site visit", href: "#showrooms" }];
 
 const LEGAL = [
   { label: "Privacy", href: "#contact" },
