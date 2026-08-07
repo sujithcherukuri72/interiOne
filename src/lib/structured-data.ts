@@ -13,9 +13,9 @@ import { HYDERABAD_AREAS, SITE, SITE_URL, STUDIO } from "@/lib/site";
  * page — markup describing things the page does not show is the fastest way to
  * lose the rich result entirely.
  *
- * Scope is Hyderabad only, which is now also all the page claims: the Jubilee
- * Hills studio is the one entity with a verified address, a phone number that
- * is answered and a Business Profile to match against, so it is the only thing
+ * Scope is Hyderabad only, which is now also all the page claims: the Madhapur
+ * studio is the one entity with a verified address, a phone number that is
+ * answered and a Business Profile to match against, so it is the only thing
  * here claiming to be a `LocalBusiness`.
  */
 
@@ -71,18 +71,18 @@ export function buildGraph() {
           "@type": "Organization",
           name: `${BRAND.partner} — ${BRAND.partnerParent}`,
         },
-        // Add the Google Business Profile, Instagram and Justdial URLs here as
-        // they go live. `sameAs` is the strongest single link between this
-        // markup and the Maps listing, and an empty array is worth nothing.
-        sameAs: [],
+        // Add the Google Business Profile and Justdial URLs here as they go
+        // live. `sameAs` is the strongest single link between this markup
+        // and the Maps listing, and an empty array is worth nothing.
+        sameAs: [BRAND.instagramHref],
       },
 
       {
         "@type": ["HomeAndConstructionBusiness", "FurnitureStore"],
         "@id": STUDIO_ID,
-        name: `${SITE.name} — Jubilee Hills Studio`,
+        name: `${SITE.name} — Madhapur Studio`,
         description:
-          "Modular kitchen studio in Jubilee Hills, Hyderabad. Steel-composite kitchens built on JSW Xteel®, with free site measurement and three costed designs.",
+          "Modular kitchen studio in Madhapur, Hyderabad. Steel-composite kitchens built on JSW Xteel®, with free site measurement and three costed designs.",
         url: SITE_URL,
         parentOrganization: { "@id": ORG_ID },
         telephone: STUDIO.phone,

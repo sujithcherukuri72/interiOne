@@ -18,7 +18,7 @@ import { SITE_URL } from "@/lib/site";
 /* Paths are site-relative here and made absolute at send time — Meta's servers
    fetch them, not the visitor's browser, so they resolve against SITE_URL. */
 
-export const WELCOME = `Thanks for writing in — this is the ${BRAND.name} studio in Jubilee Hills.
+export const WELCOME = `Thanks for writing in — this is the ${BRAND.name} studio in Madhapur.
 
 We build kitchens on JSW Xteel®: a steel-composite core instead of plywood, so nothing swells, nothing burns and there is nothing for termites to feed on.
 

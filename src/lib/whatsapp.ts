@@ -28,7 +28,7 @@ const SECTION_MESSAGES: Record<string, string> = {
   finishes: `Hi ${BRAND.name} — I'd like to see the finish range.`,
   estimate: `Hi ${BRAND.name} — I used the estimator on your site and would like this costed properly.`,
   journey: `Hi ${BRAND.name} — I'd like to know how the 30-day installation works.`,
-  showrooms: `Hi ${BRAND.name} — I'd like to visit the Jubilee Hills studio.`,
+  showrooms: `Hi ${BRAND.name} — I'd like to visit the Madhapur studio.`,
   faq: `Hi ${BRAND.name} — I have a question about your kitchens.`,
   contact: `Hi ${BRAND.name} — I'd like to book a site visit.`,
 };

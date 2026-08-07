@@ -159,6 +159,14 @@ export default function MenuOverlay({
                   >
                     {BRAND.email}
                   </a>
+                  <a
+                    href={BRAND.instagramHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="focus-ring w-fit rounded transition-colors duration-300 hover:text-white"
+                  >
+                    {BRAND.instagram}
+                  </a>
                 </motion.div>
               </div>
             </div>

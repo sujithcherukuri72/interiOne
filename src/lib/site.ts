@@ -16,20 +16,20 @@ export const SITE_URL = (
 /**
  * The flagship studio — the entity every local signal points at.
  *
- * `latitude`/`longitude` are the Jubilee Hills Road No. 36 block. Replace them
+ * `latitude`/`longitude` are the Kavuri Hills, Madhapur block. Replace them
  * with the exact pin from the Google Business Profile before launch: Maps
  * matches a listing to a site partly on how well these agree, and "close
  * enough" is measurably worse than exact.
  */
 export const STUDIO = {
-  streetAddress: "Road No. 36, Jubilee Hills",
+  streetAddress: "1st Floor, Plot No. 33, Kavuri Hills, Madhapur",
   locality: "Hyderabad",
   region: "Telangana",
   regionCode: "IN-TG",
   postalCode: "500033",
   country: "IN",
-  latitude: 17.4239,
-  longitude: 78.411,
+  latitude: 17.4326,
+  longitude: 78.3921,
   phone: BRAND.phone,
   email: BRAND.email,
   /** Schema.org day tokens for Mon–Sun 10:00–20:00, as the showroom data says. */
@@ -46,14 +46,14 @@ export const SITE = {
   title: "Modular Kitchens in Hyderabad | interiOne",
   titleTemplate: "%s | interiOne Hyderabad",
   description:
-    "Steel-composite modular kitchens in Hyderabad, built on JSW Xteel® — termite proof, fire safe and completely plywood free. Free site visit and three costed designs from the Jubilee Hills studio. Installed in 30 days.",
+    "Steel-composite modular kitchens in Hyderabad, built on JSW Xteel® — termite proof, fire safe and completely plywood free. Free site visit and three costed designs from the Madhapur studio. Installed in 30 days.",
   /**
    * Short share blurb. The meta description above is written for the SERP;
    * this one is written for a WhatsApp preview, which is where most of this
    * traffic actually shares links.
    */
   shareDescription:
-    "Termite-proof steel kitchens, designed in Jubilee Hills and installed in 30 days.",
+    "Termite-proof steel kitchens, designed in Madhapur and installed in 30 days.",
 } as const;
 
 /**

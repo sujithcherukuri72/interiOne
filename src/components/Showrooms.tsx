@@ -26,7 +26,7 @@ export default function Showrooms() {
               structured data only ever claimed this one, and the page and the
               markup have to agree. */}
           <h2 className="mt-8 max-w-[36ch] text-[clamp(1.5rem,2.6vw,2.4rem)] leading-[1.2] font-medium tracking-[-0.03em] text-balance">
-            One studio. Jubilee Hills, Hyderabad.
+            One studio. Kavuri Hills, Madhapur.
           </h2>
           <p className="mt-4 max-w-[46ch] text-[14px] leading-[1.6] tracking-[-0.01em] text-foreground/60">
             Put your hand on the finish first. Then book a designer to your
@@ -104,7 +104,7 @@ export default function Showrooms() {
           </h3>
 
           <p className="mt-5 max-w-[62ch] text-[14px] leading-[1.65] tracking-[-0.01em] text-foreground/70">
-            The Jubilee Hills studio covers the whole city. A designer measures
+            The Madhapur studio covers the whole city. A designer measures
             on site anywhere inside the Outer Ring Road at no charge, and three
             costed plans follow within a day.
           </p>

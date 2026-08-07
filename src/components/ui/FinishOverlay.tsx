@@ -195,6 +195,14 @@ export default function FinishOverlay({
                   >
                     {BRAND.email}
                   </a>
+                  <a
+                    href={BRAND.instagramHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="focus-ring rounded transition-colors duration-300 hover:text-foreground"
+                  >
+                    {BRAND.instagram}
+                  </a>
                 </div>
               </motion.div>
             </div>

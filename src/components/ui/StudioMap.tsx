@@ -88,7 +88,7 @@ function useLazyInit(
 }
 
 /**
- * The Jubilee Hills studio, on a live map.
+ * The Madhapur studio, on a live map.
  *
  * Mapbox GL renders it when a Mapbox token is configured, the Google Maps
  * JavaScript API when a Google key is, and a drawn schematic when neither is —
