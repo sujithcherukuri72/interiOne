@@ -30,6 +30,18 @@ export type Layout = {
 
 export const LAYOUTS: Layout[] = [
   {
+    id: "straight",
+    name: "Straight",
+    note: "One wall. The smallest footprint that still works properly.",
+    runLength: "10 ft run",
+    runs: [{ x: 40, y: 40, w: 440, h: 46 }],
+    fixtures: [
+      { kind: "sink", x: 150, y: 63, axis: "h" },
+      { kind: "hob", x: 330, y: 63, axis: "h" },
+      { kind: "fridge", x: 540, y: 63, axis: "h" },
+    ],
+  },
+  {
     id: "l-shape",
     name: "L-Shape",
     note: "The default for a 2BHK corner. Two working walls, a clear exit.",

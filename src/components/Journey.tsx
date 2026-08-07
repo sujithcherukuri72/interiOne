@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
@@ -35,21 +35,21 @@ export default function Journey() {
   });
 
   return (
-    <section id="journey" className="bg-ink py-[14vh] text-white">
+    <section id="journey" className="bg-ink py-[clamp(3.5rem,9vh,7.5rem)] text-white">
       <div className="section-shell">
         <motion.div {...fadeUp(0)}>
           <p className="text-[10px] font-medium tracking-[0.28em] text-white/45 uppercase">
             The 30-Day Programme
           </p>
-          <p className="mt-8 max-w-[36ch] text-[clamp(1.5rem,2.6vw,2.4rem)] leading-[1.2] font-medium tracking-[-0.03em] text-balance">
+          <h2 className="mt-8 max-w-[36ch] text-[clamp(1.5rem,2.6vw,2.4rem)] leading-[1.2] font-medium tracking-[-0.03em] text-balance">
             Eight steps. Thirty days. No surprises.
-          </p>
+          </h2>
           <p className="mt-4 max-w-[42ch] text-[14px] leading-[1.6] tracking-[-0.01em] text-white/55">
             Every stage dated, priced and signed off before the next begins.
           </p>
         </motion.div>
 
-        <div ref={railRef} className="relative mt-[8vh]">
+        <div ref={railRef} className="relative mt-[clamp(2.25rem,5.5vh,4.5rem)]">
           <div className="pointer-events-none absolute top-0 bottom-0 left-5 w-px bg-white/10 md:left-[27px]" />
           <motion.div
             className="pointer-events-none absolute top-0 left-5 w-px origin-top md:left-[27px]"
@@ -104,7 +104,7 @@ export default function Journey() {
         <motion.div {...fadeUp(0.1)} className="mt-10 flex items-center gap-3">
           <span className="h-px flex-1 bg-white/10" />
           <span className="text-[10px] font-medium tracking-[0.28em] text-white/35 uppercase">
-            Day 0 → Day 30
+            Day 0 â†’ Day 30
           </span>
         </motion.div>
       </div>

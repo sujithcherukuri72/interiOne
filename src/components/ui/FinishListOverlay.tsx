@@ -88,14 +88,21 @@ function Frame({
       ref={ref}
       initial={{ clipPath: "inset(100% 0% 0% 0%)" }}
       whileInView={{ clipPath: "inset(0% 0% 0% 0%)" }}
-      viewport={{ once: false, amount: 0.2 }}
+      // `once` and a near-zero threshold on purpose: a clip-path wipe that
+      // has not fired leaves the colour completely invisible, so the reveal
+      // must not be able to un-fire or wait on a 20% threshold inside a
+      // nested scroller.
+      viewport={{ once: true, amount: 0.01 }}
       transition={{ duration: 1.25, ease: EASE, delay }}
-      className={cn("overflow-hidden bg-line", className)}
+      // The flat colour sits on the figure itself, so the panel reads as the
+      // finish even before the swatch texture paints.
+      style={{ backgroundColor: hex }}
+      className={cn("overflow-hidden", className)}
     >
       <motion.div
         initial={{ y: "-22%" }}
         whileInView={{ y: "0%" }}
-        viewport={{ once: false, amount: 0.2 }}
+        viewport={{ once: true, amount: 0.01 }}
         transition={{ duration: 1.25, ease: EASE, delay }}
         className="absolute inset-0"
       >
@@ -226,6 +233,74 @@ function Band({
                 )}
               />
             </div>
+
+            {/* The colour, stated rather than only shown — two chips and
+                their hex, the way a spec sheet lists them. */}
+            <Rise delay={0.4}>
+              <dl
+                className={cn(
+                  "mt-[14%] flex flex-wrap items-center gap-x-10 gap-y-5 border-t pt-5",
+                  flipped ? "border-white/20" : "border-foreground/15",
+                )}
+              >
+                {[
+                  { label: "Body", value: finish.hex },
+                  { label: "Grain", value: finish.grain },
+                ].map((chip) => (
+                  <div key={chip.label} className="flex items-center gap-3">
+                    <span
+                      aria-hidden="true"
+                      style={{ backgroundColor: chip.value }}
+                      className={cn(
+                        "h-7 w-7 rounded-full",
+                        flipped ? "ring-1 ring-white/25" : "ring-1 ring-foreground/15",
+                      )}
+                    />
+                    <div>
+                      <dt
+                        className={cn(
+                          "font-mono text-[9.5px] tracking-[0.2em] uppercase",
+                          flipped ? "text-white/45" : "text-foreground/45",
+                        )}
+                      >
+                        {chip.label}
+                      </dt>
+                      <dd className="font-mono text-[12px] tracking-[0.08em] uppercase">
+                        {chip.value}
+                      </dd>
+                    </div>
+                  </div>
+                ))}
+
+                <div>
+                  <dt
+                    className={cn(
+                      "font-mono text-[9.5px] tracking-[0.2em] uppercase",
+                      flipped ? "text-white/45" : "text-foreground/45",
+                    )}
+                  >
+                    Sheen
+                  </dt>
+                  <dd className="font-mono text-[12px] tracking-[0.08em] uppercase">
+                    {finish.sheen}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt
+                    className={cn(
+                      "font-mono text-[9.5px] tracking-[0.2em] uppercase",
+                      flipped ? "text-white/45" : "text-foreground/45",
+                    )}
+                  >
+                    Code
+                  </dt>
+                  <dd className="font-mono text-[12px] tracking-[0.08em] uppercase">
+                    {finish.code}
+                  </dd>
+                </div>
+              </dl>
+            </Rise>
           </div>
         </div>
       </div>

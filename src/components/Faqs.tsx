@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -10,7 +10,7 @@ import { FAQS } from "@/data/faqs";
  * An index, not an accordion.
  *
  * Each row is numbered like a drawing register, and opening one indents it
- * and drops a coral rule down the answer — so an open question reads as a
+ * and drops a coral rule down the answer â€” so an open question reads as a
  * marked-up page rather than a box that grew. One open at a time keeps the
  * list scannable, which is the whole job of an FAQ.
  */
@@ -21,10 +21,10 @@ export default function Faqs() {
   const marked = FAQS.find((f) => f.id === (hovered ?? openId));
 
   return (
-    <section id="faq" className="bg-background py-[14vh]">
+    <section id="faq" className="bg-background py-[clamp(3.5rem,9vh,7.5rem)]">
       <div className="section-shell">
         <div className="grid gap-y-14 md:grid-cols-12 md:gap-x-8">
-          {/* ── Sticky index head ────────────────────────────────────── */}
+          {/* â”€â”€ Sticky index head â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <div className="md:col-span-4">
             <div className="md:sticky md:top-[18vh]">
               <p className="font-mono text-[11px] tracking-[0.28em] text-foreground/45 uppercase">
@@ -35,7 +35,7 @@ export default function Faqs() {
                 Everything people ask before they sign
               </h2>
 
-              {/* The tag of whatever row you are pointing at — a quiet
+              {/* The tag of whatever row you are pointing at â€” a quiet
                   read-out that makes the list feel instrumented. */}
               <div className="mt-10 flex h-6 items-center gap-3">
                 <span className="h-1.5 w-1.5 rounded-full bg-coral" />
@@ -60,7 +60,7 @@ export default function Faqs() {
             </div>
           </div>
 
-          {/* ── The register ─────────────────────────────────────────── */}
+          {/* â”€â”€ The register â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <div className="md:col-span-7 md:col-start-6">
             <ul className="border-t border-line">
               {FAQS.map((faq, i) => {
@@ -100,7 +100,7 @@ export default function Faqs() {
                           {faq.question}
                         </span>
 
-                        {/* Plus rotating to minus — one bar turns, the other
+                        {/* Plus rotating to minus â€” one bar turns, the other
                             fades, so the mark never looks like it spun. */}
                         <span
                           aria-hidden="true"

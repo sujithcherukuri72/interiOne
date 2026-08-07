@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
@@ -12,7 +12,7 @@ import Shuffle from "./ui/Shuffle";
 import FinishOverlay from "./ui/FinishOverlay";
 
 /**
- * The finishes entry point. The section shows nothing but the three ranges —
+ * The finishes entry point. The section shows nothing but the three ranges â€”
  * no swatch names, no colour chips. Each is a full-bleed band that opens the
  * listing takeover, and the listing in turn opens a finish detail page, so
  * the catalogue is three layers deep and each one is a whole screen.
@@ -53,7 +53,7 @@ function RangeBand({
 
       <div className="relative flex h-full flex-col justify-between px-5 py-10 sm:px-8 sm:py-12">
         <p className="text-[11px] font-medium tracking-[0.28em] text-white/55 uppercase">
-          {String(index + 1).padStart(2, "0")} —{" "}
+          {String(index + 1).padStart(2, "0")} â€”{" "}
           {String(count).padStart(2, "0")} finishes
         </p>
 
@@ -129,18 +129,18 @@ export default function Finishes() {
   }, [openRange, openFinish]);
 
   return (
-    <section id="finishes" className="bg-background pt-[14vh] pb-[14vh]">
+    <section id="finishes" className="bg-background pt-[clamp(3.5rem,9vh,7.5rem)] pb-[clamp(3.5rem,9vh,7.5rem)]">
       <div className="section-shell">
         <p className="text-[10px] font-medium tracking-[0.28em] text-foreground/45 uppercase">
           Finishes
         </p>
-        <p className="mt-8 max-w-[34ch] text-[clamp(1rem,1.35vw,1.35rem)] leading-[1.5] tracking-[-0.015em] text-balance">
+        <h2 className="mt-8 max-w-[34ch] text-[clamp(1rem,1.35vw,1.35rem)] leading-[1.5] font-normal tracking-[-0.015em] text-balance">
           Three ranges, one Xteel core underneath. Choose the one you are
           looking for and the whole catalogue opens.
-        </p>
+        </h2>
       </div>
 
-      <div className="section-shell mt-[8vh] grid gap-4 sm:gap-6 md:grid-cols-3">
+      <div className="section-shell mt-[clamp(2.25rem,5.5vh,4.5rem)] grid gap-4 sm:gap-6 md:grid-cols-3">
         {ranges.map((range, i) => (
           <RangeBand
             key={range.range}

@@ -1,5 +1,6 @@
 import Contact from "@/components/Contact";
 import DrawKitchen from "@/components/DrawKitchen";
+import Estimator from "@/components/Estimator";
 import Faqs from "@/components/Faqs";
 import Finishes from "@/components/Finishes";
 import Hero from "@/components/Hero";
@@ -22,6 +23,9 @@ export default function Home() {
         <Technology />
         <DrawKitchen />
         <Finishes />
+        {/* Once they have picked a layout and a finish, the number is the
+            next question they ask. */}
+        <Estimator />
         <Journey />
         {/* Proof lands right after the programme it is vouching for. */}
         <Testimonials />

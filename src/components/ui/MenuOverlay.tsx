@@ -30,6 +30,7 @@ const PRIMARY = [
 
 const SECONDARY = [
   [
+    { label: "Estimate", href: "#estimate" },
     { label: "Partners", href: "#partners" },
     { label: "Warranty", href: "#technology" },
     { label: "Careers", href: "#contact" },
@@ -65,7 +66,11 @@ export default function MenuOverlay({
             {/* Matches the bar geometry underneath, so the wordmark does not
                 shift when the panel drops over it. */}
             <div className="flex h-[72px] shrink-0 items-center justify-between">
-              <Logo className="text-[17px] text-white" tagline />
+              <Logo
+                className="text-[15px] text-white sm:text-[17px]"
+                variant="light"
+                tagline
+              />
               {/* Pulled out to the gutter edge, the way the reference hangs it. */}
               <div className="-mr-4">
                 <CloseButton onClick={onClose} />

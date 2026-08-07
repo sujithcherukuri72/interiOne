@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -13,7 +13,7 @@ export default function Partners() {
   const [active, setActive] = useState<string | null>(null);
 
   return (
-    <section id="partners" className="bg-background py-[14vh]">
+    <section id="partners" className="bg-background py-[clamp(3.5rem,9vh,7.5rem)]">
       <div className="section-shell">
         <motion.div
           initial={{ opacity: 0, y: 32 }}
@@ -24,16 +24,16 @@ export default function Partners() {
           <p className="text-[10px] font-medium tracking-[0.28em] text-foreground/45 uppercase">
             Hardware & Appliance Network
           </p>
-          <p className="mt-8 max-w-[36ch] text-[clamp(1.5rem,2.6vw,2.4rem)] leading-[1.2] font-medium tracking-[-0.03em] text-balance">
+          <h2 className="mt-8 max-w-[36ch] text-[clamp(1.5rem,2.6vw,2.4rem)] leading-[1.2] font-medium tracking-[-0.03em] text-balance">
             The parts you touch every day.
-          </p>
+          </h2>
           <p className="mt-4 max-w-[46ch] text-[14px] leading-[1.6] tracking-[-0.01em] text-foreground/60">
             A kitchen fails at its moving parts. Ours are specified at design
             stage, not on site.
           </p>
         </motion.div>
 
-        <div className="mt-[8vh] grid gap-px overflow-hidden rounded-2xl bg-line sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-[clamp(2.25rem,5.5vh,4.5rem)] grid gap-px overflow-hidden rounded-2xl bg-line sm:grid-cols-2 lg:grid-cols-3">
           {PARTNERS.map((partner, i) => {
             const isActive = active === partner.id;
             const accent = ACCENTS[i % ACCENTS.length];
@@ -46,7 +46,22 @@ export default function Partners() {
                 transition={{ duration: 0.8, ease: EASE, delay: i * 0.06 }}
                 onMouseEnter={() => setActive(partner.id)}
                 onMouseLeave={() => setActive(null)}
-                className="group relative min-h-[240px] overflow-hidden bg-background p-8"
+                // The detail only existed on hover, which meant it existed
+                // only on desktop. A tap toggles the same panel, so the copy
+                // is reachable on the phones most of this traffic arrives on.
+                onClick={() =>
+                  setActive((current) =>
+                    current === partner.id ? null : partner.id,
+                  )
+                }
+                // Keyboard gets the same reveal on focus that a pointer gets
+                // on hover. The card is content rather than a control â€” it
+                // navigates nowhere â€” so it is made reachable rather than
+                // dressed up as a button.
+                tabIndex={0}
+                onFocus={() => setActive(partner.id)}
+                onBlur={() => setActive(null)}
+                className="group focus-ring relative min-h-[220px] cursor-pointer overflow-hidden bg-background p-6 sm:min-h-[240px] sm:p-8"
               >
                 <motion.span
                   aria-hidden="true"

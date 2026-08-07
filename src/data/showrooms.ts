@@ -5,7 +5,7 @@ export const CITIES = [
     name: "Hyderabad",
     state: "Telangana",
     address: "Road No. 36, Jubilee Hills",
-    phone: "+91 40 4000 2026",
+    phone: "+91 88585 58752",
     flagship: true,
     hours: "Mon–Sun · 10:00–20:00",
   },

@@ -26,7 +26,9 @@ export default function Nav() {
 
   // After the page-load entrance animation completes, switch to the fast
   // scroll-responsive transition so hide/show feels instant, not sluggish.
-  const hasEntered = useRef(false);
+  // State rather than a ref: this is read while rendering to choose the
+  // transition, which is exactly what a ref must not be used for.
+  const [hasEntered, setHasEntered] = useState(false);
 
   useEffect(() => {
     const measure = () => {
@@ -86,13 +88,11 @@ export default function Nav() {
         initial={{ y: -72, opacity: 0 }}
         animate={navHidden ? { y: -72, opacity: 0 } : { y: 0, opacity: 1 }}
         transition={
-          hasEntered.current
+          hasEntered
             ? { duration: 0.38, ease: EASE_UI }
             : { duration: 0.9, ease: EASE, delay: 0.2 }
         }
-        onAnimationComplete={() => {
-          hasEntered.current = true;
-        }}
+        onAnimationComplete={() => setHasEntered(true)}
         style={{
           mixBlendMode: "difference",
           pointerEvents: navHidden ? "none" : "auto",
@@ -101,7 +101,7 @@ export default function Nav() {
       >
         <div className="section-shell flex h-[72px] items-center justify-between">
           <Link href="/" aria-label="interiOne — home" className="focus-ring rounded">
-            <Logo className="text-[17px] text-white" />
+            <Logo className="text-[15px] text-white sm:text-[17px]" variant="light" />
           </Link>
 
           <MenuToggle onClick={() => setOpen(true)} expanded={open} />
