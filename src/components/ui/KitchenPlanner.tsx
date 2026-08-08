@@ -1403,16 +1403,16 @@ function FinishStep({
               {style.name} board
             </h3>
             <div className="grid grid-cols-3 gap-2">
-              {style.moodboard.slice(0, 6).map((src, i) => (
+              {style.moodboard.slice(0, 6).map((shot, i) => (
                 <motion.span
-                  key={src}
+                  key={shot.src}
                   initial={{ opacity: 0, scale: 0.94 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, ease: EASE, delay: i * 0.05 }}
                   className="relative block aspect-square overflow-hidden rounded-lg"
                 >
                   <Image
-                    src={src}
+                    src={shot.src}
                     alt=""
                     fill
                     sizes="12vw"

@@ -19,6 +19,10 @@ import Logo from "./Logo";
  *
  * Hovering any one label recedes the others to 30% (see `.menu-list` in
  * globals.css) — the list dims around whatever you are pointing at.
+ *
+ * The sheet is glass (`.glass-sheet-ink`) rather than solid ink, so the section
+ * you opened it over stays faintly legible behind the labels — the menu reads as
+ * something laid over the page rather than as a different page.
  */
 
 const PRIMARY = [
@@ -63,12 +67,26 @@ export default function MenuOverlay({
           exit={{ opacity: 0, transition: { duration: 0.35, delay: 0.15 } }}
           transition={{ duration: 0.3, ease: EASE_UI }}
           data-lenis-prevent
-          className="fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-ink"
+          className="glass-sheet-ink fixed inset-0 z-[60] overflow-y-auto overscroll-contain"
           role="dialog"
           aria-modal="true"
           aria-label="Site menu"
         >
-          <div className="section-shell flex min-h-full flex-col">
+          {/* Warmth inside the pane. The blur behind the sheet picks up whatever
+              section you opened the menu over, which on a page this cream can be
+              close to flat grey — these two slow fields give the glass something
+              of its own to carry. Fixed, not absolute: the sheet scrolls, and a
+              light source that scrolls with the content reads as a printed
+              gradient rather than as depth. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none fixed inset-0 overflow-hidden"
+          >
+            <span className="absolute -top-[15%] -left-[10%] block h-[55vmax] w-[55vmax] rounded-full bg-brown opacity-[0.22] blur-[90px]" />
+            <span className="absolute -right-[12%] -bottom-[18%] block h-[45vmax] w-[45vmax] rounded-full bg-coral opacity-[0.14] blur-[90px]" />
+          </div>
+
+          <div className="section-shell relative flex min-h-full flex-col">
             {/* Matches the bar geometry underneath, so the wordmark does not
                 shift when the panel drops over it. */}
             <div className="flex h-[72px] shrink-0 items-center justify-between">

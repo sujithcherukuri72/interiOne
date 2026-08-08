@@ -646,6 +646,42 @@ svg {
     inset 0 1px 0 0 rgba(255, 255, 255, 0.16);
 }
 
+/**
+ * The same material at full-screen scale, for the navigation takeover.
+ *
+ * Separate from `.glass-ink` because a sheet is not a panel: no border, no drop
+ * shadow, nothing to imply an edge, since the edge is the viewport. The ink is
+ * carried at 0.86→0.78 rather than the panel's 0.82→0.72 — the page behind this
+ * is cream with photographs in it, and a lighter mix leaves white type sitting
+ * on whatever happened to be underneath.
+ */
+.glass-sheet-ink {
+  background: linear-gradient(
+    150deg,
+    rgba(20, 18, 17, 0.86) 0%,
+    rgba(58, 26, 26, 0.8) 55%,
+    rgba(20, 18, 17, 0.88) 100%
+  );
+  backdrop-filter: blur(30px) saturate(1.25);
+  -webkit-backdrop-filter: blur(30px) saturate(1.25);
+}
+
+/**
+ * Firefox before 103 and anything else without the property gets a near-opaque
+ * sheet instead. Without this the fallback is 20%-transparent ink over a cream
+ * page, which is not a design choice — it is unreadable.
+ */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-sheet-ink {
+    background: linear-gradient(
+      150deg,
+      rgba(20, 18, 17, 0.97) 0%,
+      rgba(58, 26, 26, 0.96) 55%,
+      rgba(20, 18, 17, 0.98) 100%
+    );
+  }
+}
+
 /* Selected state for a glass control — brown rim, brighter pane. */
 .glass-on {
   background: linear-gradient(

@@ -8,6 +8,7 @@ import { EASE } from "@/lib/motion";
 import { LAYOUTS, ROOM, type Fixture, type Run } from "@/data/layouts";
 import { KITCHEN_STYLES } from "@/data/kitchen-styles";
 import KitchenPlanner from "./ui/KitchenPlanner";
+import StyleOverlay from "./ui/StyleOverlay";
 import {
   CoverflowCarousel,
   type CoverflowSlide,
@@ -24,6 +25,7 @@ export default function DrawKitchen() {
   const [paused, setPaused] = useState(false);
   const [plannerOpen, setPlannerOpen] = useState(false);
   const [styleFromCarousel, setStyleFromCarousel] = useState<string | null>(null);
+  const [exploreStyleId, setExploreStyleId] = useState<string | null>(null);
   const reduced = useReducedMotion();
   const layout = LAYOUTS[index];
 
@@ -267,10 +269,17 @@ export default function DrawKitchen() {
           The plans above answer "where does everything go". This answers
           "what will it look like" — the same question in the other order,
           and the one most people actually arrive with. */}
-      <StyleCarousel onBuild={(id) => {
-        setStyleFromCarousel(id);
-        setPlannerOpen(true);
-      }} />
+      <StyleCarousel onExplore={setExploreStyleId} />
+
+      <StyleOverlay
+        style={KITCHEN_STYLES.find((s) => s.id === exploreStyleId) ?? null}
+        onClose={() => setExploreStyleId(null)}
+        onBuild={(id) => {
+          setExploreStyleId(null);
+          setStyleFromCarousel(id);
+          setPlannerOpen(true);
+        }}
+      />
 
       {/* Keyed on the style so a different one starts a fresh plan — the
           planner seeds its own state from the prop and never syncs to it. */}
@@ -292,8 +301,13 @@ export default function DrawKitchen() {
  * through a set of pictures without committing to any of them. Copy and the
  * call to action hang off whichever card is centred, so the whole block reads
  * as one thing rather than a gallery with a button under it.
+ *
+ * The button opens the style's own detail page rather than the planner
+ * directly — browsing six moodboards and starting a six-step form used to be
+ * the same tap, and "Build a glam kitchen" is a heavier commitment than
+ * whatever you were doing a second ago flipping through the rake.
  */
-function StyleCarousel({ onBuild }: { onBuild: (id: string) => void }) {
+function StyleCarousel({ onExplore }: { onExplore: (id: string) => void }) {
   const [index, setIndex] = useState(0);
   const style = KITCHEN_STYLES[index] ?? KITCHEN_STYLES[0];
 
@@ -346,10 +360,10 @@ function StyleCarousel({ onBuild }: { onBuild: (id: string) => void }) {
 
           <button
             type="button"
-            onClick={() => onBuild(style.id)}
+            onClick={() => onExplore(style.id)}
             className="focus-ring inline-flex items-center gap-3 rounded-full bg-brown px-6 py-3 text-[13px] tracking-[-0.005em] text-white transition-opacity duration-300 hover:opacity-90"
           >
-            Build a {style.name.toLowerCase()} kitchen
+            Explore {style.name.toLowerCase()} kitchens
             <ArrowRight size={15} strokeWidth={1.75} />
           </button>
         </div>
