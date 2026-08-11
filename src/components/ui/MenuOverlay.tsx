@@ -8,6 +8,7 @@ import { EASE, EASE_UI } from "@/lib/motion";
 import { useOverlayLock } from "@/lib/overlay";
 import CloseButton from "./CloseButton";
 import Logo from "./Logo";
+import ModulaLockup from "./ModulaMark";
 
 /**
  * Full-screen navigation takeover.
@@ -191,6 +192,13 @@ export default function MenuOverlay({
                   >
                     {BRAND.instagram}
                   </a>
+
+                  {/* The same credit the bar carries, kept in the takeover so
+                      the panel does not read as a page with no parentage. */}
+                  <ModulaLockup
+                    variant="light"
+                    className="mt-5 text-[12px] text-white"
+                  />
                 </motion.div>
               </div>
             </div>

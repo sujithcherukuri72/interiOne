@@ -32,9 +32,24 @@ so `currentColor`-adjacent placements stay transparent.
 
 ### `brand/` — partner and certification marks
 
-`modula.svg`, `jsw.svg`, and any hardware-partner logos (`hettich.svg`,
-`blum.svg`, …). Monochrome versions if you have them; the Partners grid inverts
-on hover and two-colour logos break there.
+Hardware-partner logos (`hettich.svg`, `blum.svg`, …). Monochrome versions if
+you have them; the Partners grid inverts on hover and two-colour logos break
+there.
+
+The two marks the page actually credits — Modula and JSW — live in `icons/`
+alongside our own, and are wired up in `data/assets.ts` under `ASSETS.brand`:
+
+| File                       | What it is                                    |
+| -------------------------- | --------------------------------------------- |
+| `modula-logo-brown.png`    | Modula lockup for the cream page               |
+| `modula-logo-white.png`    | The same lockup reversed, for ink and video    |
+| `india-jsw-removedbg.png`  | JSW mark, set inline inside "A JSW Enterprise" |
+
+All three are **trimmed to the artwork** — no transparent margin. The lockup
+component sizes them in `em`, so any padding baked into the file would show up
+as the mark sitting too small beside its caption. The two Modula colourways are
+supplied as separate files rather than one filtered in CSS: the mark is a solid
+tile with the arrow knocked out of it, so `invert` turns it inside out.
 
 ### `xteel/` — the product render
 

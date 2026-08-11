@@ -9,6 +9,7 @@ import { useLenis } from "./SmoothScrollProvider";
 import MenuOverlay from "./ui/MenuOverlay";
 import MenuToggle from "./ui/MenuToggle";
 import Logo from "./ui/Logo";
+import ModulaLockup from "./ui/ModulaMark";
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
@@ -113,13 +114,27 @@ export default function Nav() {
             : "border-line bg-background/70 text-foreground"
         }`}
       >
-        <div className="section-shell flex h-[72px] items-center justify-between">
+        <div className="section-shell flex h-[72px] items-center justify-between gap-4">
           <Link href="/" aria-label="interiOne — home" className="focus-ring rounded">
             <Logo
               className="text-[17px] sm:text-[19px]"
               variant={onHero ? "light" : "dark"}
             />
           </Link>
+
+          {/* The manufacturing partner, centred between the two — far enough
+              from our own mark that the bar reads as one brand credited by
+              another, not as a pair of logos sharing a corner. It follows the
+              same ground switch as the type: white artwork over the video,
+              brown once the cream page arrives underneath.
+
+              Below `md` the bar has room for our wordmark and the toggle and
+              nothing else, so this drops rather than shrinking to illegible —
+              the statement section carries the same credit a screen later. */}
+          <ModulaLockup
+            variant={onHero ? "light" : "dark"}
+            className="hidden text-[11px] md:inline-flex"
+          />
 
           <MenuToggle onClick={() => setOpen(true)} expanded={open} />
         </div>

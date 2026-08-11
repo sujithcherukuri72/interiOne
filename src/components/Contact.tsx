@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { BRAND } from "@/data/brand";
 import { EASE } from "@/lib/motion";
 import GildedWordmark from "@/components/ui/GildedWordmark";
+import ModulaLockup from "@/components/ui/ModulaMark";
 
 const ACTIONS = [{ label: "Book a site visit", href: "#showrooms" }];
 
@@ -149,11 +150,20 @@ export default function Contact() {
           />
         </motion.div>
 
+        {/* The partner credit, given its own line above the legal bar rather
+            than run into it as words: at 10px mono the marks would have been
+            smaller than the type they were crediting. */}
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-4 border-t border-line py-7">
+          <span className="font-mono text-[10px] tracking-[0.16em] text-muted uppercase">
+            In partnership with
+          </span>
+          <ModulaLockup className="text-[13px] text-foreground" />
+        </div>
+
         {/* Legal bar. */}
         <div className="flex flex-col gap-4 border-t border-line py-7 font-mono text-[10px] tracking-[0.16em] text-muted uppercase sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {new Date().getFullYear()} {BRAND.name} · In partnership with{" "}
-            {BRAND.partner}, {BRAND.partnerParent}
+            © {new Date().getFullYear()} {BRAND.name}
           </p>
 
           <div className="flex items-center gap-7">

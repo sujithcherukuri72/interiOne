@@ -3,6 +3,8 @@
 import { useRef } from "react";
 import { MotionValue, motion, useScroll, useTransform } from "framer-motion";
 
+import { JswEnterprise, ModulaLogo } from "./ui/ModulaMark";
+
 /* ─── scroll-animation text ──────────────────────────────────────────────── */
 
 const FULL_TEXT =
@@ -74,12 +76,11 @@ export default function HeroStatement() {
       // sentence. It keeps the screen on larger viewports only.
       className="relative flex min-h-[72svh] items-center justify-center overflow-hidden px-5 py-[clamp(3rem,8vh,7rem)] sm:min-h-[100svh] sm:px-8"
     >
-      <span className="absolute top-8 left-5 text-[10px] tracking-[-0.01em] text-muted uppercase sm:left-8 sm:text-[11px]">
-        Modula
-      </span>
-      <span className="absolute top-8 right-5 text-[10px] tracking-[-0.01em] text-muted uppercase sm:right-8 sm:text-[11px]">
-        A JSW Enterprise
-      </span>
+      {/* The two corner credits, now set as the marks themselves. Both sit on
+          the same optical line: the logo's height and the caption's cap-height
+          are both driven off `text-[11px]`, so they align without nudging. */}
+      <ModulaLogo className="absolute top-8 left-5 text-[10px] sm:left-8 sm:text-[11px]" />
+      <JswEnterprise className="absolute top-8 right-5 text-[10px] tracking-[0.06em] text-muted uppercase sm:right-8 sm:text-[11px]" />
 
       {/* The lower bound was 2.4rem, which set this 107-character sentence in
           twelve lines on a 360px phone and overran the screen. */}
