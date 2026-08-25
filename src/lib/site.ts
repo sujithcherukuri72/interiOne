@@ -8,10 +8,36 @@ import { BRAND } from "@/data/brand";
  * footer, the JSON-LD and Google Business Profile.
  */
 
-/** Set `NEXT_PUBLIC_SITE_URL` per environment; previews must not claim prod URLs. */
+/**
+ * The origin this deployment calls itself, in falling order of authority:
+ *
+ *   1. `NEXT_PUBLIC_SITE_URL` — set this once the real domain is live.
+ *   2. Vercel's own domain for the deployment, which it injects for us.
+ *   3. The intended production domain.
+ *
+ * The middle step is not a nicety. Canonical tags, the sitemap, `robots.txt`
+ * and every `@id` in the JSON-LD graph are built from this, and a deployment
+ * that canonicalises to a domain which does not resolve yet is a deployment
+ * Google will not index at all.
+ */
+const VERCEL_HOST =
+  process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL ||
+  process.env.NEXT_PUBLIC_VERCEL_URL;
+
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.interione.in"
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (VERCEL_HOST ? `https://${VERCEL_HOST}` : "https://www.interione.in")
 ).replace(/\/$/, "");
+
+/**
+ * Preview builds must never be indexed — a second crawlable copy of the whole
+ * site competes with the real one for the same Hyderabad queries.
+ *
+ * Server-read only: `VERCEL_ENV` is unprefixed, so it is empty in the browser.
+ * Only `robots.ts` and the metadata block in `app/layout.tsx` use it, and both
+ * run on the server.
+ */
+export const IS_PREVIEW = process.env.VERCEL_ENV === "preview";
 
 /**
  * The flagship studio — the entity every local signal points at.

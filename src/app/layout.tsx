@@ -5,7 +5,7 @@ import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import ClickSpark from "@/components/ui/ClickSpark";
 import ContentGuard from "@/components/ui/ContentGuard";
 import Preloader from "@/components/ui/Preloader";
-import { SITE, SITE_URL, STUDIO } from "@/lib/site";
+import { IS_PREVIEW, SITE, SITE_URL, STUDIO } from "@/lib/site";
 import { buildGraph } from "@/lib/structured-data";
 
 const archivo = Archivo({
@@ -82,17 +82,25 @@ export const metadata: Metadata = {
     description: SITE.shareDescription,
   },
 
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
-  },
+  // A preview build is a second full copy of the site. Letting one into the
+  // index splits the Hyderabad queries between two URLs and helps neither.
+  robots: IS_PREVIEW
+    ? { index: false, follow: false }
+    : {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+          "max-video-preview": -1,
+        },
+      },
+
+  // The Search Console token. Unprefixed, because it is rendered server-side
+  // and has no business in the client bundle; unset simply omits the tag.
+  verification: { google: process.env.GOOGLE_SITE_VERIFICATION || undefined },
 
   // Phone numbers are already marked up as `tel:` links; leaving Safari's
   // auto-detection on top of that restyles them into blue system links.

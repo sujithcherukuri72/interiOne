@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { SITE_URL } from "@/lib/site";
+import { IS_PREVIEW, SITE_URL } from "@/lib/site";
 
 /**
  * Wide open, with one exception.
@@ -10,6 +10,11 @@ import { SITE_URL } from "@/lib/site";
  * else on a one-page marketing site should be crawlable, including the images.
  */
 export default function robots(): MetadataRoute.Robots {
+  // Previews are shut out wholesale — see `IS_PREVIEW` in lib/site.ts.
+  if (IS_PREVIEW) {
+    return { rules: [{ userAgent: "*", disallow: "/" }] };
+  }
+
   return {
     rules: [
       {

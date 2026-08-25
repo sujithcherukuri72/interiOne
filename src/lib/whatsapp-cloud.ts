@@ -14,7 +14,7 @@ import "server-only";
  * message and a different problem.
  */
 
-const GRAPH_VERSION = process.env.WHATSAPP_GRAPH_VERSION ?? "v23.0";
+const GRAPH_VERSION = process.env.WHATSAPP_GRAPH_VERSION || "v23.0";
 
 export const WHATSAPP_CONFIG = {
   phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID ?? "",

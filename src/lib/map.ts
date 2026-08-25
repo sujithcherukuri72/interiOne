@@ -31,7 +31,7 @@ export const GOOGLE_MAPS_API_KEY =
  * page's warm palette — a hosted custom style would let us bake that in.
  */
 export const MAPBOX_STYLE =
-  process.env.NEXT_PUBLIC_MAPBOX_STYLE ?? "mapbox://styles/mapbox/light-v11";
+  process.env.NEXT_PUBLIC_MAPBOX_STYLE || "mapbox://styles/mapbox/light-v11";
 
 /** The studio pin. Coordinates live in `lib/site.ts` with the rest of the NAP. */
 export const MAP_VIEW = {
