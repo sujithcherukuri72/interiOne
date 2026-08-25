@@ -41,9 +41,13 @@ function RangeBand({
       aria-label={`Browse ${range.label}`}
       /* Modula's card, at band scale: 12px corners, a 2px rim that only shows
          on approach, and their offset drop shadow. The `card-modula` scale is
-         deliberately not used here — a 92dvh panel growing 3% is a lurch, so
-         the movement is given to the photograph instead. */
-      className="group focus-ring relative block h-[62vh] w-full overflow-hidden rounded-xl border-2 border-transparent text-left shadow-[var(--shadow-card)] transition-colors duration-500 hover:border-brown md:h-[92dvh]"
+         deliberately not used here — a tall panel growing 3% is a lurch, so
+         the movement is given to the photograph instead.
+
+         Two thirds of the fold rather than the whole of it: at 92dvh a single
+         tier filled the screen, and the set only reads as a choice of three
+         when more than one of them is visible at once. */
+      className="group focus-ring relative block h-[42vh] w-full overflow-hidden rounded-xl border-2 border-transparent text-left shadow-[var(--shadow-card)] transition-colors duration-500 hover:border-brown md:h-[64dvh]"
     >
       <Image
         src={range.image}
@@ -56,7 +60,7 @@ function RangeBand({
           placeholder photography and keeps the two properties in one family. */}
       <div className="absolute inset-0 bg-brown-deep/65 transition-colors duration-700 group-hover:bg-brown-deep/55" />
 
-      <div className="relative flex h-full flex-col justify-between px-5 py-10 sm:px-8 sm:py-12">
+      <div className="relative flex h-full flex-col justify-between px-5 py-7 sm:px-7 sm:py-9">
         {/* Their pill tag, carrying the count. */}
         <p className="w-fit rounded-full bg-white/12 px-3 py-1.5 text-[10px] font-medium tracking-[0.22em] text-white/75 uppercase backdrop-blur-sm">
           {String(index + 1).padStart(2, "0")} —{" "}
@@ -69,16 +73,16 @@ function RangeBand({
             tag="h3"
             text={range.label}
             textAlign="left"
-            className="text-[clamp(2rem,4.4vw,4.25rem)] leading-[0.9] font-bold tracking-[-0.045em] text-white uppercase"
+            className="text-[clamp(1.6rem,3.1vw,2.9rem)] leading-[0.9] font-bold tracking-[-0.045em] text-white uppercase"
           />
 
-          <p className="mt-6 max-w-[38ch] text-[clamp(0.9rem,1.05vw,1rem)] leading-[1.6] tracking-[-0.01em] text-white/65 text-balance">
+          <p className="mt-4 max-w-[36ch] text-[clamp(0.85rem,0.95vw,0.95rem)] leading-[1.55] tracking-[-0.01em] text-white/65 text-balance">
             {range.blurb}
           </p>
 
           <span
             aria-hidden="true"
-            className="mt-9 inline-flex items-center gap-3 text-[11px] font-medium tracking-[0.28em] text-white/55 uppercase transition-colors duration-300 group-hover:text-white"
+            className="mt-6 inline-flex items-center gap-3 text-[11px] font-medium tracking-[0.28em] text-white/55 uppercase transition-colors duration-300 group-hover:text-white"
           >
             <Shuffle
               {...SHUFFLE_HOVER_PRESET}

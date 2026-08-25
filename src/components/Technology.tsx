@@ -48,7 +48,10 @@ export default function Technology() {
         <div className="grid gap-y-6 md:grid-cols-12 md:gap-x-8">
           <motion.p
             {...fadeUp(0)}
-            className="font-mono text-[10px] tracking-[0.24em] text-foreground/45 uppercase sm:text-[11px] sm:tracking-[0.28em] md:col-span-3"
+            // Set in the identity serif rather than the mono eyebrow: it sits
+            // beside the statement as a margin note, and the two faces
+            // together read as a page rather than as a spec sheet.
+            className="font-serif text-[clamp(1.5rem,2.2vw,2.1rem)] leading-none tracking-[0.01em] text-brown italic md:col-span-3"
           >
             Technology
           </motion.p>

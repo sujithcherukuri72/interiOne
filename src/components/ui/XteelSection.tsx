@@ -1,7 +1,6 @@
     "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
 import {
   motion,
   useScroll,
@@ -101,8 +100,15 @@ export default function XteelSection() {
     [0, 5, 5, XTEEL_FRAMES.length - 1],
     { clamp: true }
   );
-  const renderIn = useTransform(scrollYProgress, [0.02, 0.14], [0, 1], {
-    clamp: true,
+  /* Eleven frames is a low frame rate, and a low frame rate is what makes a
+     sequence read as steps rather than as movement. A camera solves this with
+     shutter time: anything that moves inside one exposure is blurred. So the
+     stack is blurred by how far it is *between* frames — nothing on a frame,
+     rising to a pixel and a half at the midpoint. It costs one filter and it
+     is the difference between a slideshow and a video. */
+  const filter = useTransform(frame, (v) => {
+    const between = v - Math.floor(v);
+    return `blur(${(Math.sin(between * Math.PI) * 1.5).toFixed(2)}px)`;
   });
 
   const topSkinY = useTransform(open, [0, 1], [0, -SKIN_TRAVEL]);
@@ -136,7 +142,7 @@ export default function XteelSection() {
   ];
 
   return (
-    <div ref={ref} className="relative h-[165vh] md:h-[200vh]">
+    <div ref={ref} className="relative h-[135vh] md:h-[160vh]">
       <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center gap-8 overflow-hidden px-5 sm:px-8 md:h-screen md:gap-0 md:px-0">
         {USE_XTEEL_RENDER ? (
           /* The real thing. The drawing below was always a stand-in for this:
@@ -144,8 +150,11 @@ export default function XteelSection() {
              amount of vector hatching does. It arrives, settles, and holds
              while the callouts resolve beside it. */
           <div className="grid w-full max-w-[72rem] items-center gap-8 md:grid-cols-12 md:gap-12">
+            {/* Solid from the first paint. It used to fade up out of the
+                section, which meant the panel — the whole point of the band —
+                was a blank space until the scroll had already started. */}
             <motion.div
-              style={{ opacity: renderIn }}
+              style={{ filter }}
               className="relative mx-auto h-[46svh] w-full md:col-span-7 md:h-[80svh]"
               role="img"
               aria-label="Exploded view of an Xteel shutter: white pre-painted steel skins over a steel-composite honeycomb core, sealed on every edge."
@@ -155,11 +164,15 @@ export default function XteelSection() {
               ))}
             </motion.div>
 
-            <ul className="w-full border-t border-foreground/15 md:col-span-5">
-              {rows.map((row, i) => (
-                <CompactCallout key={row.step} row={row} open={open} index={i} />
-              ))}
-            </ul>
+            <div className="w-full md:col-span-5">
+              <PanelWordmark />
+
+              <ul className="mt-7 w-full border-t border-foreground/15">
+                {rows.map((row, i) => (
+                  <CompactCallout key={row.step} row={row} open={open} index={i} />
+                ))}
+              </ul>
+            </div>
           </div>
         ) : (
         <svg
@@ -331,14 +344,20 @@ export default function XteelSection() {
  * One frame of the render, cross-dissolved with its neighbour.
  *
  * Eleven frames over a screen and a half of scroll is not enough to cut
- * between — hard switching reads as a slideshow. So each frame's opacity is a
- * triangle centred on its own index: at 3.4 the fourth frame is at 0.6 and the
- * fifth at 0.4, and the panel edges that moved between them blur across the
- * gap instead of jumping it. The frames carry alpha, so the two never sum
- * above 1 where they overlap and the join stays clean against the section.
+ * between — hard switching reads as a slideshow — so consecutive frames are
+ * blended. The blend is a *stack*, not a pair of triangles: every frame at or
+ * behind the playhead sits at full opacity, and only the next one fades in
+ * over the top of it.
  *
- * Every frame is in the DOM at once, so the browser has already decoded the
- * next one by the time the scroll reaches it.
+ * The triangle version this replaces put two frames at half opacity at the
+ * midpoint, and since the renders carry alpha, half of each is exactly what
+ * you saw — two translucent panels in different positions, the section
+ * showing through both. That is the tearing: it is not dropped frames, it is
+ * the dissolve itself. Fading one opaque frame over another never dips below
+ * a solid panel.
+ *
+ * Every frame is in the DOM at once and eagerly fetched, at the same URLs the
+ * preloader warms, so no frame is still arriving when the scroll reaches it.
  */
 function Frame({
   src,
@@ -349,9 +368,16 @@ function Frame({
   index: number;
   frame: MotionValue<number>;
 }) {
-  const opacity = useTransform(frame, (v) =>
-    Math.max(0, 1 - Math.abs(v - index))
-  );
+  // Two frames on screen, never more: the one the playhead is on, at full
+  // opacity, and the next one fading in over it. Leaving the earlier frames
+  // switched on underneath is what fanned every past position of the panel
+  // out behind the current one.
+  const opacity = useTransform(frame, (v) => {
+    const base = Math.floor(v);
+    if (index === base) return 1;
+    if (index === base + 1) return v - base;
+    return 0;
+  });
 
   return (
     <motion.div
@@ -360,18 +386,43 @@ function Frame({
       // one thing here that will drop frames on a mid-range phone.
       className="absolute inset-0 will-change-[opacity]"
     >
-      <Image
+      {/* Deliberately not `next/image`: these are 10–75KB webp files already,
+          and the optimiser would serve them from `/_next/image?url=…` — a
+          different URL from the one the preloader fetched, so every frame
+          would be downloaded twice and arrive late. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src={src}
         alt=""
-        fill
-        /* The two resting states — closed and fully exploded — are what the
-           section is caught on if someone lands mid-page, so neither waits for
-           an intersection. The nine in between are only ever seen in passing. */
-        priority={index === 0 || index === 5}
-        sizes="(max-width: 768px) 90vw, 46vw"
-        className="object-contain"
+        loading="eager"
+        decoding="async"
+        fetchPriority={index === 0 || index === 5 ? "high" : "low"}
+        className="absolute inset-0 h-full w-full object-contain"
       />
     </motion.div>
+  );
+}
+
+/**
+ * The panel's name, set the way Modula sets it on their own sheet: a small
+ * serif italic article, the name in heavy uppercase with its middle pair
+ * dropped to the brown, and "panel" trailing off the end in italic again.
+ */
+function PanelWordmark() {
+  return (
+    <p className="leading-none">
+      <span className="block pl-1 font-serif text-[clamp(1.1rem,1.6vw,1.5rem)] text-muted italic">
+        the
+      </span>
+
+      <span className="mt-1 block text-[clamp(2.4rem,4.6vw,4rem)] font-bold tracking-[-0.02em] text-foreground uppercase">
+        XT<span className="text-brown">EE</span>L
+      </span>
+
+      <span className="-mt-2 block text-right font-serif text-[clamp(1.3rem,2vw,1.9rem)] text-brown italic">
+        panel
+      </span>
+    </p>
   );
 }
 
@@ -385,17 +436,16 @@ function CompactCallout({
   open: MotionValue<number>;
   index: number;
 }) {
+  // Readable from the outset — the layer names are the content of this band,
+  // not a reward for scrolling. Only the small slide is left.
   const start = 0.45 + index * 0.12;
-  const opacity = useTransform(open, [start, start + 0.28], [0, 1], {
-    clamp: true,
-  });
   const x = useTransform(open, [start, start + 0.28], [-12, 0], { clamp: true });
 
   const [material, gauge] = row.spec.split("·").map((s) => s.trim());
 
   return (
     <motion.li
-      style={{ opacity, x }}
+      style={{ x }}
       className="flex items-baseline gap-4 border-b border-foreground/15 py-3.5"
     >
       <span className="font-mono text-[10px] tracking-[0.18em] text-foreground/35 tabular-nums">

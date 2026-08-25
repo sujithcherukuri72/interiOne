@@ -83,6 +83,27 @@ export const SITE = {
 } as const;
 
 /**
+ * Every way the brand gets typed.
+ *
+ * The name is set as "interiOne" but the wordmark reads "interio1", the email
+ * is @interio1.com and the Instagram handle is @interio.1 — so a person who
+ * has seen the brand anywhere will search at least four different strings for
+ * it. These go into `alternateName` on the Organization and the WebSite,
+ * which is how you tell Google that all of them are one entity instead of
+ * hoping it works that out from a fuzzy match.
+ */
+export const BRAND_VARIANTS = [
+  "interiOne",
+  "Interione",
+  "Interi One",
+  "interio1",
+  "Interio 1",
+  "interio.1",
+  "interiOne Hyderabad",
+  "interiOne Modular Kitchens",
+] as const;
+
+/**
  * The service area, as Hyderabad actually names itself.
  *
  * These are the phrases people type — "modular kitchen Kondapur", not

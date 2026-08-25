@@ -48,7 +48,16 @@ export default function DrawKitchen() {
   }, []);
 
   return (
-    <section id="planning" className="bg-background py-[clamp(3.5rem,9vh,7.5rem)]">
+    <>
+      {/* ── Styles ───────────────────────────────────────────────────
+          "What will it look like" is the question most people arrive with,
+          so it is asked before "where does everything go". Its own section
+          now, and its own anchor, rather than a tail on the planning band. */}
+      <section id="styles" className="bg-background pt-[clamp(3.5rem,9vh,7.5rem)]">
+        <StyleCarousel onExplore={setExploreStyleId} />
+      </section>
+
+    <section id="planning" className="border-t border-line bg-background py-[clamp(3.5rem,9vh,7.5rem)]">
       <div className="section-shell">
         <div className="grid gap-y-12 md:grid-cols-12 md:gap-x-8">
           {/* ── Copy column ──────────────────────────────────────────── */}
@@ -265,12 +274,6 @@ export default function DrawKitchen() {
         </div>
       </div>
 
-      {/* ── Styles ───────────────────────────────────────────────────
-          The plans above answer "where does everything go". This answers
-          "what will it look like" — the same question in the other order,
-          and the one most people actually arrive with. */}
-      <StyleCarousel onExplore={setExploreStyleId} />
-
       <StyleOverlay
         style={KITCHEN_STYLES.find((s) => s.id === exploreStyleId) ?? null}
         onClose={() => setExploreStyleId(null)}
@@ -290,6 +293,7 @@ export default function DrawKitchen() {
         initialStyleId={styleFromCarousel}
       />
     </section>
+    </>
   );
 }
 
@@ -319,7 +323,7 @@ function StyleCarousel({ onExplore }: { onExplore: (id: string) => void }) {
   }));
 
   return (
-    <div className="mt-[clamp(3rem,8vh,6rem)] border-t border-line pt-[clamp(2.5rem,6vh,4.5rem)]">
+    <div>
       <div className="section-shell">
         <p className="font-mono text-[11px] tracking-[0.28em] text-foreground/45 uppercase">
           Styles

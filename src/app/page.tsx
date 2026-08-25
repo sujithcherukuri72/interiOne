@@ -24,8 +24,10 @@ export default function Home() {
       <main className="flex flex-1 flex-col">
         <Hero />
         <HeroStatement />
-        <DrawKitchen />
+        {/* The material argument first — what the kitchen is made of — then
+            what it looks like, then where everything goes. */}
         <Technology />
+        <DrawKitchen />
         <Finishes />
         {/* Once they have picked a layout and a finish, the number is the
             next question they ask. */}

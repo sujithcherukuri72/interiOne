@@ -48,6 +48,11 @@ export const metadata: Metadata = {
   // Carries no ranking weight at Google, but Bing and several Indian
   // directories still read it, and the list costs nothing to keep accurate.
   keywords: [
+    // The brand itself first — the query this site must own outright.
+    "interiOne",
+    "interiOne Hyderabad",
+    "interio1",
+    "interiOne modular kitchens",
     "modular kitchen Hyderabad",
     "modular kitchens in Hyderabad",
     "steel modular kitchen Hyderabad",

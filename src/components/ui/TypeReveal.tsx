@@ -38,7 +38,12 @@ export type TypeRevealProps = {
   /** Rendered element. Copy blocks are paragraphs; headings pass their level. */
   as?: "p" | "h1" | "h2" | "h3" | "h4" | "span" | "div";
   className?: string;
-  /** Milliseconds between one character starting and the next. */
+  /**
+   * Milliseconds between one character starting and the next. At 16 a
+   * 300-character paragraph took the better part of five seconds to set,
+   * which is longer than anyone waits to read a sentence they can already
+   * half-see.
+   */
   speed?: number;
   /** Milliseconds before the first character fires, once in view. */
   delay?: number;
@@ -60,9 +65,9 @@ export default function TypeReveal({
   text,
   as = "p",
   className,
-  speed = 16,
-  delay = 60,
-  duration = 460,
+  speed = 7,
+  delay = 40,
+  duration = 300,
   caret = false,
   once = false,
   amount = 0.3,

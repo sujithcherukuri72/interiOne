@@ -2,7 +2,13 @@ import { ASSETS, LOGO_MARK_SIZE } from "@/data/assets";
 import { BRAND } from "@/data/brand";
 import { FAQS } from "@/data/faqs";
 import { XTEEL_FEATURES } from "@/data/technology";
-import { HYDERABAD_AREAS, SITE, SITE_URL, STUDIO } from "@/lib/site";
+import {
+  BRAND_VARIANTS,
+  HYDERABAD_AREAS,
+  SITE,
+  SITE_URL,
+  STUDIO,
+} from "@/lib/site";
 
 /**
  * The JSON-LD graph for the site.
@@ -57,6 +63,8 @@ export function buildGraph() {
         "@id": ORG_ID,
         name: SITE.name,
         legalName: SITE.legalName,
+        // Every spelling of the name is the same company — see BRAND_VARIANTS.
+        alternateName: [...BRAND_VARIANTS],
         url: SITE_URL,
         email: STUDIO.email,
         telephone: STUDIO.phone,
@@ -189,6 +197,8 @@ export function buildGraph() {
         "@id": WEBSITE_ID,
         url: SITE_URL,
         name: SITE.name,
+        // What Google draws on for the site name shown above the result.
+        alternateName: [...BRAND_VARIANTS],
         description: SITE.description,
         publisher: { "@id": ORG_ID },
         inLanguage: "en-IN",

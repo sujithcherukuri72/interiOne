@@ -14,6 +14,9 @@ import { EASE } from "@/lib/motion";
  */
 const GOLD = "#b78a3c";
 
+/** How far the card has to be thrown before it counts as a swipe. */
+const SWIPE = 60;
+
 /** Only the filmed stories go on the stage; the rest run in the lane below. */
 const FILMED = TESTIMONIALS.filter((t) => t.film);
 
@@ -26,6 +29,8 @@ const CUT = `polygon(0 0, 100% 0, 100% calc(100% - ${FOLD}), calc(100% - ${FOLD}
  * time on a cut-corner card, the quote pinned beside it on paper, and a gold
  * hairline arcing between the two so they read as one object. Underneath, the
  * written quotes keep drifting past in two lanes.
+ *
+ * Three ways through it — swipe the card, the arrows, or the dots.
  */
 export default function Testimonials() {
   const [i, setI] = useState(0);
@@ -122,7 +127,22 @@ export default function Testimonials() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -24 }}
                 transition={{ duration: 0.7, ease: EASE }}
-                className="relative aspect-[4/5] w-full overflow-hidden bg-ink sm:aspect-[5/4]"
+                // Swipe the card to change story. Direction-locked and
+                // constrained to snap back, so a vertical drag that starts on
+                // the video still scrolls the page instead of tugging the card.
+                drag="x"
+                dragDirectionLock
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.16}
+                dragMomentum={false}
+                onDragEnd={(_, info) => {
+                  // Throw distance, not just displacement — a short flick and
+                  // a long slow drag should both count.
+                  const throwX = info.offset.x + info.velocity.x * 0.2;
+                  if (throwX < -SWIPE) go(1);
+                  else if (throwX > SWIPE) go(-1);
+                }}
+                className="relative aspect-[4/5] w-full cursor-grab touch-pan-y overflow-hidden bg-ink active:cursor-grabbing sm:aspect-[5/4]"
                 style={{ clipPath: CUT }}
               >
                 <video
@@ -134,7 +154,9 @@ export default function Testimonials() {
                   loop
                   playsInline
                   preload="metadata"
-                  className="absolute inset-0 h-full w-full object-cover"
+                  // Inert: it has no controls, and letting it swallow pointer
+                  // events would put a dead zone over the whole swipe target.
+                  className="pointer-events-none absolute inset-0 h-full w-full object-cover"
                 />
 
                 {/* Enough ink to hold the gold rules and the caption. */}
