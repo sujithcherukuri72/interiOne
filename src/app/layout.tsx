@@ -103,9 +103,16 @@ export const metadata: Metadata = {
         },
       },
 
-  // The Search Console token. Unprefixed, because it is rendered server-side
-  // and has no business in the client bundle; unset simply omits the tag.
-  verification: { google: process.env.GOOGLE_SITE_VERIFICATION || undefined },
+  // The Search Console token, committed rather than configured: it is a
+  // public string that ships in the HTML of every page anyway, and a
+  // verification that depends on someone remembering a dashboard setting is a
+  // verification that breaks the first time the project is redeployed clean.
+  // The env var still wins, for a second property or a re-verification.
+  verification: {
+    google:
+      process.env.GOOGLE_SITE_VERIFICATION ||
+      "KXIN7rDH0zwlj7hM-nim0ehFYbIZ8lWvGaPmpJ8TfRY",
+  },
 
   // Phone numbers are already marked up as `tel:` links; leaving Safari's
   // auto-detection on top of that restyles them into blue system links.
