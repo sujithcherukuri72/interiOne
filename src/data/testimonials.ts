@@ -14,7 +14,17 @@ export type Testimonial = {
   detail: string;
   /** The layout they ended up with, tying back to the plan section. */
   layout: string;
+  /** A filmed version of the story, if one was shot. */
+  film?: string;
 };
+
+/**
+ * The studio film — the loop that plays beside the written stories rather than
+ * one owner's account. Remote (Cloudinary) on purpose: these are tens of
+ * megabytes and have no business in the repo or the deploy.
+ */
+export const EPITOME_FILM =
+  "https://res.cloudinary.com/fbel0u69/video/upload/v1787644674/epitome-video.webm";
 
 export const TESTIMONIALS: Testimonial[] = [
   {
@@ -24,6 +34,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Rajesh & Sunitha K.",
     detail: "3BHK · Gachibowli",
     layout: "L-Shape",
+    film: "https://res.cloudinary.com/fbel0u69/video/upload/v1787644704/1.mp4",
   },
   {
     id: "t2",
@@ -40,6 +51,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Arun V.",
     detail: "Villa · Kokapet",
     layout: "Island",
+    film: "https://res.cloudinary.com/fbel0u69/video/upload/v1787644699/4.mp4",
   },
   {
     id: "t4",
@@ -64,6 +76,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Deepika N.",
     detail: "4BHK · Jubilee Hills",
     layout: "Island",
+    film: "https://res.cloudinary.com/fbel0u69/video/upload/v1787644719/3.mp4",
   },
   {
     id: "t7",

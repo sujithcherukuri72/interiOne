@@ -24,8 +24,8 @@ export default function Home() {
       <main className="flex flex-1 flex-col">
         <Hero />
         <HeroStatement />
-        <Technology />
         <DrawKitchen />
+        <Technology />
         <Finishes />
         {/* Once they have picked a layout and a finish, the number is the
             next question they ask. */}

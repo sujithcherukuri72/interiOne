@@ -4,6 +4,7 @@ import "./globals.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import ClickSpark from "@/components/ui/ClickSpark";
 import ContentGuard from "@/components/ui/ContentGuard";
+import Preloader from "@/components/ui/Preloader";
 import { SITE, SITE_URL, STUDIO } from "@/lib/site";
 import { buildGraph } from "@/lib/structured-data";
 
@@ -140,6 +141,10 @@ export default function RootLayout({
         {/* Right-click and drag are taken off the imagery — see the component
             for what that does and does not achieve. */}
         <ContentGuard />
+
+        {/* Holds the page behind a light loader until the hero still, the logos
+            and the Xteel frame run are actually in the browser. */}
+        <Preloader />
 
         <SmoothScrollProvider>
           <ClickSpark sparkColor="#ff4d6a" className="flex flex-1 flex-col">

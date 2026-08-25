@@ -1,10 +1,16 @@
-"use client";
+    "use client";
 
 import { useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from "framer-motion";
 
-import { ASSETS, USE_XTEEL_RENDER } from "@/data/assets";
+import { USE_XTEEL_RENDER, XTEEL_FRAMES } from "@/data/assets";
 import { XTEEL_LAYERS } from "@/data/technology";
 import { COMPACT_QUERY, useMediaQuery } from "@/lib/use-media-query";
 
@@ -71,12 +77,31 @@ export default function XteelSection() {
     clamp: true,
   });
 
-  /* The supplied render's own choreography: it arrives, settles and holds.
-     Unused in the drawn fallback, but the hooks run either way — a branch that
-     skips a hook is a different component as far as React is concerned. */
-  const renderScale = useTransform(scrollYProgress, [0, 0.45, 1], [0.9, 1.04, 1.08]);
-  const renderY = useTransform(scrollYProgress, [0, 1], [40, -40]);
-  const renderIn = useTransform(scrollYProgress, [0.02, 0.22], [0, 1], {
+  /* The render's own choreography: the panel pulls apart over the first half
+     of the scroll, holds open while the callouts resolve, then closes again on
+     the way out. Frame 0100 — index 5 — is the fully exploded one, so the hold
+     sits on it. Unused in the drawn fallback, but the hooks run either way — a
+     branch that skips a hook is a different component as far as React is
+     concerned.
+
+     The spring is the difference between this reading as an animation and as a
+     slideshow. A wheel notch on a desktop and a flick on a phone both deliver
+     scroll in coarse jumps, which lands the raw progress two frames further on
+     with nothing in between; the spring turns each jump into a short glide, so
+     the dissolve below always has intermediate values to work with. */
+  const scrub = useSpring(scrollYProgress, {
+    stiffness: 90,
+    damping: 26,
+    mass: 0.35,
+    restDelta: 0.0005,
+  });
+  const frame = useTransform(
+    scrub,
+    [0.05, 0.52, 0.78, 1],
+    [0, 5, 5, XTEEL_FRAMES.length - 1],
+    { clamp: true }
+  );
+  const renderIn = useTransform(scrollYProgress, [0.02, 0.14], [0, 1], {
     clamp: true,
   });
 
@@ -111,7 +136,7 @@ export default function XteelSection() {
   ];
 
   return (
-    <div ref={ref} className="relative h-[220vh] md:h-[280vh]">
+    <div ref={ref} className="relative h-[165vh] md:h-[200vh]">
       <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center gap-8 overflow-hidden px-5 sm:px-8 md:h-screen md:gap-0 md:px-0">
         {USE_XTEEL_RENDER ? (
           /* The real thing. The drawing below was always a stand-in for this:
@@ -120,19 +145,17 @@ export default function XteelSection() {
              while the callouts resolve beside it. */
           <div className="grid w-full max-w-[72rem] items-center gap-8 md:grid-cols-12 md:gap-12">
             <motion.div
-              style={{ scale: renderScale, y: renderY, opacity: renderIn }}
-              className="relative mx-auto h-[38svh] w-full md:col-span-6 md:h-[72svh]"
+              style={{ opacity: renderIn }}
+              className="relative mx-auto h-[46svh] w-full md:col-span-7 md:h-[80svh]"
+              role="img"
+              aria-label="Exploded view of an Xteel shutter: white pre-painted steel skins over a steel-composite honeycomb core, sealed on every edge."
             >
-              <Image
-                src={ASSETS.xteel.exploded}
-                alt="Exploded view of an Xteel shutter: pre-painted steel skins over a steel-composite honeycomb core, sealed on every edge."
-                fill
-                sizes="(max-width: 768px) 80vw, 40vw"
-                className="object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.18)]"
-              />
+              {XTEEL_FRAMES.map((src, i) => (
+                <Frame key={src} src={src} index={i} frame={frame} />
+              ))}
             </motion.div>
 
-            <ul className="w-full border-t border-foreground/15 md:col-span-6">
+            <ul className="w-full border-t border-foreground/15 md:col-span-5">
               {rows.map((row, i) => (
                 <CompactCallout key={row.step} row={row} open={open} index={i} />
               ))}
@@ -171,10 +194,13 @@ export default function XteelSection() {
               <stop offset="100%" stopColor="#a8a293" />
             </linearGradient>
 
+            {/* Cream, the colour the panels actually ship in. Sitting on the
+                cream section they need the shading and the hairline below to
+                read as solid metal rather than as a hole in the page. */}
             <linearGradient id="xteel-skin" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#26262a" />
-              <stop offset="55%" stopColor="#3d3d42" />
-              <stop offset="100%" stopColor="#1c1c1f" />
+              <stop offset="0%" stopColor="#efe7da" />
+              <stop offset="45%" stopColor="var(--cream)" />
+              <stop offset="100%" stopColor="#e5dccc" />
             </linearGradient>
           </defs>
 
@@ -218,22 +244,44 @@ export default function XteelSection() {
           </g>
 
           {/* ── Skins ────────────────────────────────────────────────────── */}
-          <motion.rect
-            style={{ y: topSkinY }}
-            x={PANEL_X}
-            y={coreTop - SKIN_H}
-            width={PANEL_W}
-            height={SKIN_H}
-            fill="url(#xteel-skin)"
-          />
-          <motion.rect
-            style={{ y: bottomSkinY }}
-            x={PANEL_X}
-            y={coreBottom}
-            width={PANEL_W}
-            height={SKIN_H}
-            fill="url(#xteel-skin)"
-          />
+          <motion.g style={{ y: topSkinY }}>
+            <rect
+              x={PANEL_X}
+              y={coreTop - SKIN_H}
+              width={PANEL_W}
+              height={SKIN_H}
+              fill="url(#xteel-skin)"
+            />
+            <rect
+              x={PANEL_X}
+              y={coreTop - SKIN_H}
+              width={PANEL_W}
+              height={SKIN_H}
+              fill="none"
+              stroke="var(--foreground)"
+              strokeWidth="1"
+              opacity="0.35"
+            />
+          </motion.g>
+          <motion.g style={{ y: bottomSkinY }}>
+            <rect
+              x={PANEL_X}
+              y={coreBottom}
+              width={PANEL_W}
+              height={SKIN_H}
+              fill="url(#xteel-skin)"
+            />
+            <rect
+              x={PANEL_X}
+              y={coreBottom}
+              width={PANEL_W}
+              height={SKIN_H}
+              fill="none"
+              stroke="var(--foreground)"
+              strokeWidth="1"
+              opacity="0.35"
+            />
+          </motion.g>
 
           {/* ── Sealed edges — the accent, because it is the closed system ── */}
           <motion.rect
@@ -276,6 +324,54 @@ export default function XteelSection() {
         )}
       </div>
     </div>
+  );
+}
+
+/**
+ * One frame of the render, cross-dissolved with its neighbour.
+ *
+ * Eleven frames over a screen and a half of scroll is not enough to cut
+ * between — hard switching reads as a slideshow. So each frame's opacity is a
+ * triangle centred on its own index: at 3.4 the fourth frame is at 0.6 and the
+ * fifth at 0.4, and the panel edges that moved between them blur across the
+ * gap instead of jumping it. The frames carry alpha, so the two never sum
+ * above 1 where they overlap and the join stays clean against the section.
+ *
+ * Every frame is in the DOM at once, so the browser has already decoded the
+ * next one by the time the scroll reaches it.
+ */
+function Frame({
+  src,
+  index,
+  frame,
+}: {
+  src: string;
+  index: number;
+  frame: MotionValue<number>;
+}) {
+  const opacity = useTransform(frame, (v) =>
+    Math.max(0, 1 - Math.abs(v - index))
+  );
+
+  return (
+    <motion.div
+      style={{ opacity }}
+      // Promoted up front: compositing eleven stacked layers per frame is the
+      // one thing here that will drop frames on a mid-range phone.
+      className="absolute inset-0 will-change-[opacity]"
+    >
+      <Image
+        src={src}
+        alt=""
+        fill
+        /* The two resting states — closed and fully exploded — are what the
+           section is caught on if someone lands mid-page, so neither waits for
+           an intersection. The nine in between are only ever seen in passing. */
+        priority={index === 0 || index === 5}
+        sizes="(max-width: 768px) 90vw, 46vw"
+        className="object-contain"
+      />
+    </motion.div>
   );
 }
 

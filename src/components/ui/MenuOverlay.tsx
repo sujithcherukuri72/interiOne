@@ -27,8 +27,8 @@ import ModulaLockup from "./ModulaMark";
  */
 
 const PRIMARY = [
-  { label: "Technology", href: "#technology" },
   { label: "Planning", href: "#planning" },
+  { label: "Technology", href: "#technology" },
   { label: "Finishes", href: "#finishes" },
   { label: "Journey", href: "#journey" },
   { label: "Showroom", href: "#showrooms" },

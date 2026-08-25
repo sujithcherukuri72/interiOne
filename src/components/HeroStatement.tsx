@@ -1,8 +1,10 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { MotionValue, motion, useScroll, useTransform } from "framer-motion";
 
+import { ASSETS, MODULA_CORNER_SIZE } from "@/data/assets";
 import { JswEnterprise, ModulaLogo } from "./ui/ModulaMark";
 
 /* ─── scroll-animation text ──────────────────────────────────────────────── */
@@ -79,22 +81,66 @@ export default function HeroStatement() {
       {/* The two corner credits, now set as the marks themselves. Both sit on
           the same optical line: the logo's height and the caption's cap-height
           are both driven off `text-[11px]`, so they align without nudging. */}
-      <ModulaLogo className="absolute top-8 left-5 text-[10px] sm:left-8 sm:text-[11px]" />
+      <ModulaLogo className="absolute top-8 left-5 text-[17px] sm:left-8 sm:text-[24px]" />
       <JswEnterprise className="absolute top-8 right-5 text-[10px] tracking-[0.06em] text-muted uppercase sm:right-8 sm:text-[11px]" />
 
-      {/* The lower bound was 2.4rem, which set this 107-character sentence in
-          twelve lines on a 360px phone and overran the screen. */}
-      <p className="relative z-20 mx-auto max-w-[64rem] text-center text-[clamp(1.65rem,4.4vw,4.8rem)] leading-[1.15] font-bold tracking-[-0.035em]">
-        {TEXT_WORDS.map((word, i) => (
-          <ScrollWord
-            key={i}
-            word={word}
-            index={i}
-            isLast={i === N - 1}
-            progress={progress}
-          />
-        ))}
-      </p>
+      {/* The block is only here to give the corner mark something to hang off:
+          it is pinned to the *sentence's* top-right corner, not the section's,
+          so it stays with the type instead of drifting out to the margin on a
+          wide screen — and stays clear of the JSW credit up in the real one. */}
+      <div className="relative z-20 mx-auto w-full max-w-[64rem]">
+        <CornerMark progress={progress} />
+
+        {/* The lower bound was 2.4rem, which set this 107-character sentence in
+            twelve lines on a 360px phone and overran the screen. */}
+        <p className="relative z-10 text-center text-[clamp(1.65rem,4.4vw,4.8rem)] leading-[1.15] font-bold tracking-[-0.035em]">
+          {TEXT_WORDS.map((word, i) => (
+            <ScrollWord
+              key={i}
+              word={word}
+              index={i}
+              isLast={i === N - 1}
+              progress={progress}
+            />
+          ))}
+        </p>
+      </div>
     </div>
+  );
+}
+
+/**
+ * The Modula device, hung off the sentence's top-right corner.
+ *
+ * It rides the same progress value as the type: while the words are still warm
+ * grey the mark is turned and faint, and it swings level and settles as the
+ * sentence resolves to ink — so it reads as part of the statement landing
+ * rather than as a sticker parked in the corner. Purely decorative, hence
+ * `aria-hidden`; the brand is already named in the credit top-left.
+ */
+function CornerMark({ progress }: { progress: MotionValue<number> }) {
+  const rotate = useTransform(progress, [0, 1], [-22, 0]);
+  const scale = useTransform(progress, [0, 1], [0.84, 1]);
+  const opacity = useTransform(progress, [0, 0.55, 1], [0, 0.7, 1]);
+
+  return (
+    <motion.div
+      aria-hidden="true"
+      style={{ rotate, scale, opacity }}
+      /* `bottom-full` parks it wholly above the sentence's first line and
+         right-aligned to its right edge, so it can carry the mark's full brown
+         without fighting the type — the earlier version overlapped the text and
+         had to be faded to a grey smudge to stay legible. */
+      className="pointer-events-none absolute right-0 bottom-full mb-[clamp(0.9rem,2.4vw,2.25rem)] w-[clamp(3.25rem,6.5vw,6rem)] origin-bottom-right select-none"
+    >
+      <Image
+        src={ASSETS.brand.modulaCorner}
+        alt=""
+        width={MODULA_CORNER_SIZE.width}
+        height={MODULA_CORNER_SIZE.height}
+        sizes="160px"
+        className="h-auto w-full"
+      />
+    </motion.div>
   );
 }
