@@ -1,5 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
+import {
+  Cormorant_Garamond,
+  JetBrains_Mono,
+  Montserrat,
+  Nunito_Sans,
+} from "next/font/google";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import ClickSpark from "@/components/ui/ClickSpark";
@@ -8,10 +13,19 @@ import Preloader from "@/components/ui/Preloader";
 import { IS_PREVIEW, SITE, SITE_URL, STUDIO } from "@/lib/site";
 import { buildGraph } from "@/lib/structured-data";
 
-const archivo = Archivo({
-  variable: "--font-archivo",
+/** Modula's primary face — headings are set in it, Black at the top end. */
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  display: "swap",
+});
+
+/** Modula's secondary face — body copy, subheads, everything read at length. */
+const nunitoSans = Nunito_Sans({
+  variable: "--font-nunito-sans",
+  subsets: ["latin"],
+  weight: ["300", "400", "600", "700"],
   display: "swap",
 });
 
@@ -149,7 +163,7 @@ export default function RootLayout({
       // en-IN, not en: the copy is priced in rupees and written for Hyderabad,
       // and the region subtag is one of the signals that says so.
       lang="en-IN"
-      className={`${archivo.variable} ${cormorant.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${nunitoSans.variable} ${cormorant.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         {/* One graph for the whole operation — see lib/structured-data.ts. */}

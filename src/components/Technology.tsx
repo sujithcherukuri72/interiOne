@@ -8,9 +8,9 @@ import { XTEEL_FEATURES } from "@/data/technology";
 import TypeReveal from "./ui/TypeReveal";
 import XteelSection from "./ui/XteelSection";
 
-/* The two typed statements. Held as plain strings rather than JSX because
-   TypeReveal splits them character by character — markup in the middle would
-   have nowhere to go. */
+/* The two revealed statements. Held as plain strings rather than JSX because
+   TypeReveal splits them word by word — markup in the middle would have
+   nowhere to go. */
 const TECH_LEAD =
   "Every shutter is built from JSW Xteel® — a steel-composite core that replaces plywood and MDF entirely. No organic fibre means nothing for termites to feed on and nothing for moisture to swell, so the panel stays flat on the hundredth wipe-down as it did on the first.";
 
@@ -56,8 +56,8 @@ export default function Technology() {
             Technology
           </motion.p>
 
-          {/* Typed rather than faded: this is the material argument, and it
-              should be read a word at a time. */}
+          {/* Revealed a word at a time rather than faded as a block: this is
+              the material argument, and it should be read, not skimmed. */}
           <TypeReveal
             text={TECH_LEAD}
             className="max-w-[46ch] text-[clamp(1.15rem,2.2vw,1.9rem)] leading-[1.5] tracking-[-0.015em] text-pretty sm:leading-[1.55] md:col-span-9"
@@ -84,6 +84,7 @@ export default function Technology() {
 
           <TypeReveal
             text={TECH_SAFETY}
+            stagger={38}
             className="max-w-[42ch] text-[clamp(1.05rem,1.8vw,1.65rem)] leading-[1.5] tracking-[-0.015em] text-pretty md:col-span-9"
           />
         </div>

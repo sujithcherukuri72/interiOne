@@ -33,7 +33,10 @@
   --cream-cool: #f1f0ef;
   --shadow-card: 5px 5px 5px 0 rgba(0, 0, 0, 0.25);
 
-  --font-display: var(--font-archivo), "Helvetica Neue", Arial, sans-serif;
+  /* Modula's type pair: Montserrat sets every heading, Nunito Sans carries
+     the reading copy. Same two faces as the identity sheet, same roles. */
+  --font-display: var(--font-montserrat), "Helvetica Neue", Arial, sans-serif;
+  --font-body: var(--font-nunito-sans), "Helvetica Neue", Arial, sans-serif;
 
   /* The identity faces: serif carries the logo and footer wordmark, mono the
      legal line under it. */
@@ -59,7 +62,8 @@
   --color-brown-deep: var(--brown-deep);
   --color-cream: var(--cream);
   --color-cream-cool: var(--cream-cool);
-  --font-sans: var(--font-display);
+  --font-sans: var(--font-body);
+  --font-body: var(--font-body);
   --font-display: var(--font-display);
   --font-serif: var(--font-serif-brand);
   --font-mono: var(--font-mono-brand);
@@ -68,8 +72,19 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-synthesis-weight: none;
+}
+
+/* Headings take the primary face; the sheet sets them heavy, so the tracking
+   comes in a touch to stop the wide Montserrat counters from opening up. */
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
 }
 
 /* Scrollbar hidden everywhere — Lenis drives scroll, so the native track is
@@ -331,81 +346,56 @@ svg {
 }
 
 /* --------------------------------------------------------------------------
-   Typing reveal — see components/ui/TypeReveal.tsx.
+   Word reveal — see components/ui/TypeReveal.tsx.
 
-   One class flip on the root starts several hundred character spans, each
-   offset by its own inline `animation-delay`. Keeping the whole thing in CSS
-   means the main thread does nothing at all while it runs.
+   One class flip on the root starts every word span, each offset by its own
+   inline `animation-delay`. Keeping the whole thing in CSS means the main
+   thread does nothing at all while it runs.
    -------------------------------------------------------------------------- */
 .type-reveal-word {
-  /* Atomic, so a character can never be left stranded on the next line. The
-     break opportunities are the real spaces rendered between these boxes. */
+  /* Atomic, so a word can never be broken across a line. The break
+     opportunities are the real spaces rendered between these boxes. */
   display: inline-block;
   white-space: nowrap;
+
+  /* The mask the word is struck up from behind. It cuts at the box edge, and
+     a box tight to the baseline clips descenders — so pad the box out, then
+     pull the layout back by the same amount so nothing moves. */
+  overflow: hidden;
+  padding: 0.12em 0.06em 0.18em;
+  margin: -0.12em -0.06em -0.18em;
 }
 
-.type-reveal-char {
-  /* Hidden until its own delay elapses — this is the "not yet typed" state,
-     and it is also what the block looks like before it enters the viewport. */
+.type-reveal-inner {
+  display: inline-block;
+  /* The pre-reveal state, and also what the block looks like before it
+     enters the viewport. */
   opacity: 0;
+  will-change: transform, opacity;
 }
 
-.type-reveal[data-typing="on"] .type-reveal-char {
-  animation:
-    type-in var(--tr-duration, 460ms) cubic-bezier(0.16, 1, 0.3, 1) both,
-    /* Four characters wide. Any shorter and the head is a flicker; any
-       longer and it stops being a head and becomes a coral underline
-       running through a third of the paragraph. */
-      type-caret calc(var(--tr-speed, 16ms) * 4) steps(1, end) both;
+.type-reveal[data-revealed="on"] .type-reveal-inner {
+  animation: word-mask var(--tr-duration, 900ms) cubic-bezier(0.16, 1, 0.3, 1)
+    both;
 }
 
-/* Quieter blocks opt out of the coral head and just resolve. */
-.type-reveal[data-caret="off"][data-typing="on"] .type-reveal-char {
-  animation: type-in var(--tr-duration, 460ms) cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes type-in {
-  0% {
+@keyframes word-mask {
+  from {
     opacity: 0;
-    /* Relative to the character's own size, so the same curve reads correctly
-       at 1rem in a caption and at 2rem in a lead paragraph. */
-    filter: blur(0.3em);
-    transform: translateY(0.12em);
+    transform: translateY(105%);
   }
-  /* Opacity is spent early and the blur is spent slowly. A key lands, then
-     the letter it struck resolves — which is the order a machine does it in,
-     and it is also what puts a lit character under the coral head instead of
-     an invisible one. */
-  22% {
+  to {
     opacity: 1;
-  }
-  100% {
-    opacity: 1;
-    filter: blur(0);
     transform: none;
   }
 }
 
-/* The reveal head. A box-shadow rather than a border, so the coral edge costs
-   no layout and the line does not reflow as it travels. Its window is a few
-   characters wide — long enough to read as a moving mark, short enough that it
-   never smears across the whole block. */
-@keyframes type-caret {
-  from {
-    box-shadow: 0.05em 0 0 0 var(--coral);
-  }
-  to {
-    box-shadow: 0 0 0 0 transparent;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .type-reveal-char {
+  .type-reveal-inner {
     opacity: 1;
   }
 
-  .type-reveal[data-typing="on"] .type-reveal-char,
-  .type-reveal[data-caret="off"][data-typing="on"] .type-reveal-char {
+  .type-reveal[data-revealed="on"] .type-reveal-inner {
     animation: none;
   }
 }
