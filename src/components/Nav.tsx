@@ -97,14 +97,17 @@ export default function Nav() {
 
       <motion.header
         initial={{ y: -72, opacity: 0 }}
-        animate={navHidden ? { y: -72, opacity: 0 } : { y: 0, opacity: 1 }}
+        // Off the top while the takeover is open: the overlay sets its own
+        // wordmark in the same place, and two of them through the glass is what
+        // read as the marks being merged.
+        animate={navHidden || open ? { y: -72, opacity: 0 } : { y: 0, opacity: 1 }}
         transition={
           hasEntered
             ? { duration: 0.38, ease: EASE_UI }
             : { duration: 0.9, ease: EASE, delay: 0.2 }
         }
         onAnimationComplete={() => setHasEntered(true)}
-        style={{ pointerEvents: navHidden ? "none" : "auto" }}
+        style={{ pointerEvents: navHidden || open ? "none" : "auto" }}
         /* Glass, not a slab. `difference` blending used to invert the bar
            against whatever was behind it, which meant it could never simply be
            translucent — and over a video that is the one thing it should be. */
@@ -128,12 +131,12 @@ export default function Nav() {
               same ground switch as the type: white artwork over the video,
               brown once the cream page arrives underneath.
 
-              Below `md` the bar has room for our wordmark and the toggle and
+              Below `lg` the bar has room for our wordmark and the toggle and
               nothing else, so this drops rather than shrinking to illegible —
               the statement section carries the same credit a screen later. */}
           <ModulaLockup
             variant={onHero ? "light" : "dark"}
-            className="hidden text-[11px] md:inline-flex"
+            className="hidden text-[11px] lg:inline-flex"
           />
 
           <MenuToggle onClick={() => setOpen(true)} expanded={open} />

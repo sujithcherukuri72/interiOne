@@ -341,6 +341,7 @@ function StyleCarousel({ onExplore }: { onExplore: (id: string) => void }) {
           showNavigation
           showPagination
           cardWidth="clamp(200px, 46vw, 380px)"
+          autoplay={4500}
           label="interiOne kitchen styles"
           cardClassName="rounded-2xl"
         />

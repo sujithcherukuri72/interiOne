@@ -105,7 +105,7 @@ export default function MenuOverlay({
 
             {/* The long labels ("TECHNOLOGY") set the column ratio — at 1fr
                 each they overrun the utility links. */}
-            <div className="mt-auto grid grid-cols-1 items-end gap-14 pt-20 pb-14 lg:grid-cols-[1.35fr_1fr]">
+            <div className="mt-auto grid grid-cols-1 items-end gap-10 pt-12 pb-12 lg:grid-cols-[1.35fr_1fr]">
               <nav className="menu-list flex flex-col">
                 {PRIMARY.map((item, i) => (
                   <div
@@ -133,7 +133,7 @@ export default function MenuOverlay({
                       <Link
                         href={item.href}
                         onClick={onClose}
-                        className="menu-link focus-ring block text-[clamp(2.25rem,7vw,6rem)] leading-[0.95] font-medium tracking-[-0.035em] whitespace-nowrap text-white uppercase"
+                        className="menu-link focus-ring block text-[clamp(1.6rem,5vw,4rem)] leading-[1.05] font-medium tracking-[-0.035em] whitespace-nowrap text-white uppercase"
                       >
                         {item.label}
                       </Link>
@@ -157,7 +157,7 @@ export default function MenuOverlay({
                           key={item.label}
                           href={item.href}
                           onClick={onClose}
-                          className="focus-ring w-fit text-[15px] tracking-[-0.01em] text-white/60 transition-colors duration-300 hover:text-white"
+                          className="focus-ring w-fit text-[13.5px] tracking-[-0.01em] text-white/60 transition-colors duration-300 hover:text-white"
                         >
                           {item.label}
                         </Link>

@@ -645,15 +645,21 @@ svg {
  * is cream with photographs in it, and a lighter mix leaves white type sitting
  * on whatever happened to be underneath.
  */
+/* Glass, properly: a thin ink tint doing the legibility work, a heavy blur
+   doing the rest, and a lit top edge so the sheet has a surface. The tint is
+   lighter than it was — the section behind stays readable as shape and colour
+   rather than as text competing with the labels. */
 .glass-sheet-ink {
   background: linear-gradient(
     150deg,
-    rgba(20, 18, 17, 0.86) 0%,
-    rgba(58, 26, 26, 0.8) 55%,
-    rgba(20, 18, 17, 0.88) 100%
+    rgba(20, 18, 17, 0.62) 0%,
+    rgba(58, 26, 26, 0.55) 55%,
+    rgba(20, 18, 17, 0.66) 100%
   );
-  backdrop-filter: blur(30px) saturate(1.25);
-  -webkit-backdrop-filter: blur(30px) saturate(1.25);
+  backdrop-filter: blur(44px) saturate(1.4) brightness(0.72);
+  -webkit-backdrop-filter: blur(44px) saturate(1.4) brightness(0.72);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 /**

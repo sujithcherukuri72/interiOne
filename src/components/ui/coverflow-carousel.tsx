@@ -33,6 +33,8 @@ export interface CoverflowCarouselProps {
   /** Space between cards, as a fraction of card width. */
   gap?: number;
   loop?: boolean;
+  /** Milliseconds between automatic advances. 0 — the default — is off. */
+  autoplay?: number;
   showCaption?: boolean;
   showPagination?: boolean;
   showNavigation?: boolean;
@@ -58,6 +60,7 @@ export function CoverflowCarousel({
   cardWidth = "clamp(148px, 22vw, 260px)",
   gap = 0.05,
   loop = true,
+  autoplay = 0,
   showCaption = false,
   showPagination = false,
   showNavigation = false,
@@ -251,6 +254,20 @@ export function CoverflowCarousel({
     observer.observe(frame);
     return () => observer.disconnect();
   }, [paint]);
+
+  // Autoplay. Held while a drag is in flight and while the tab is in the
+  // background, and off entirely for anyone who has asked for less motion —
+  // a carousel that moves on its own is exactly what that setting means.
+  React.useEffect(() => {
+    if (!autoplay) return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+
+    const timer = setInterval(() => {
+      if (dragRef.current || document.hidden) return;
+      nudge(1);
+    }, autoplay);
+    return () => clearInterval(timer);
+  }, [autoplay, nudge]);
 
   React.useEffect(
     () => () => {

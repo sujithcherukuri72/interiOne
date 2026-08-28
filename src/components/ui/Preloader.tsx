@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Layers, RefreshCw, Shield, Sparkles, Zap } from "lucide-react";
 
 import { ASSETS, XTEEL_FRAMES } from "@/data/assets";
 import { HERO_MEDIA, KITCHEN_STYLES } from "@/data/kitchen-styles";
@@ -29,19 +30,18 @@ const CRITICAL = [
 ];
 
 /**
- * The four chapters, dealt as a small stack of cards — one per quarter of the
- * load. Set in the page's own materials rather than as a spinner: cream stock,
- * a brown hairline, Modula's offset shadow, the name in the identity serif.
+ * The four cards the deck holds. The chrome around them is the supplied
+ * loader's, untouched — only the copy on the cards is ours.
  *
- * ponytail: driven off `progress`, not off an interval. A timed cycle would
- * deal cards the visitor never sees on a warm cache, and would be out of step
- * with the bar underneath it on a cold one.
+ * ponytail: dealt off `progress`, not off an interval. A timed cycle would
+ * deal cards nobody sees on a warm cache, and would run out of step with the
+ * percentage in the footer on a cold one.
  */
 const CHAPTERS = [
-  { step: "01", title: "Identity", note: "Design · Craft · Elevate", tone: "bg-cream" },
-  { step: "02", title: "The Panel", note: "JSW Xteel® core", tone: "bg-[var(--tan)]/45" },
-  { step: "03", title: "The Kitchen", note: "Layouts & finishes", tone: "bg-surface" },
-  { step: "04", title: "The Studio", note: "Hyderabad showrooms", tone: "bg-cream-cool" },
+  { code: "IO_01", title: "Identity", color: "bg-amber-300", icon: Sparkles },
+  { code: "IO_02", title: "The Panel", color: "bg-cyan-300", icon: Shield },
+  { code: "IO_03", title: "The Kitchen", color: "bg-rose-300", icon: Zap },
+  { code: "IO_04", title: "The Studio", color: "bg-emerald-300", icon: Layers },
 ];
 
 /** Never hold the visitor longer than this, however slow the connection. */
@@ -97,9 +97,11 @@ export default function Preloader() {
     window.scrollTo(0, 0);
   }, [done]);
 
-  // Which chapter is on top. Clamped one short of the end so the stack never
-  // empties — the last card holds while the bar finishes.
-  const deck = Math.min(CHAPTERS.length - 1, Math.floor(progress / 25));
+  // The deck, current chapter on top. Sliced by progress and clamped one
+  // short of the end, so the stack never empties before the door opens.
+  const stack = CHAPTERS.slice(
+    Math.min(CHAPTERS.length - 1, Math.floor(progress / 25))
+  ).reverse();
 
   return (
     <AnimatePresence>
@@ -124,83 +126,89 @@ export default function Preloader() {
             }}
           />
 
-          <div className="relative flex w-[min(28rem,78vw)] flex-col items-center">
-            {/* The stack. Cards leave as each quarter of the load completes,
-                so the top card is always the chapter currently arriving. */}
-            <div className="relative mb-2 h-[clamp(8rem,26vw,10rem)] w-[min(21rem,74vw)]">
-              <AnimatePresence mode="popLayout">
-                {CHAPTERS.slice(deck).map((chapter, depth) => (
-                  <motion.div
-                    key={chapter.step}
-                    layout
-                    initial={false}
-                    animate={{
-                      x: depth * 7,
-                      y: depth * -7,
-                      rotate: (depth % 2 ? 1.4 : -1.4) * depth,
-                      scale: 1 - depth * 0.035,
-                    }}
-                    exit={{ x: -150, y: 12, rotate: -7, opacity: 0 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 26 }}
-                    style={{
-                      zIndex: CHAPTERS.length - depth,
-                      boxShadow: "var(--shadow-card)",
-                    }}
-                    className={`absolute inset-0 flex flex-col justify-between rounded-xl border border-brown/20 p-[clamp(1rem,4vw,1.5rem)] ${chapter.tone}`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <span className="font-mono text-[10px] tracking-[0.24em] text-brown">
-                        {chapter.step}
-                      </span>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={ASSETS.logo.mark}
-                        alt=""
-                        aria-hidden="true"
-                        className="h-6 w-auto"
-                      />
-                    </div>
-
-                    <div>
-                      <p className="font-serif text-[clamp(1.5rem,6vw,2.1rem)] leading-none text-foreground italic">
-                        {chapter.title}
-                      </p>
-                      <p className="mt-2 font-mono text-[9.5px] tracking-[0.2em] text-muted uppercase">
-                        {chapter.note}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-
-            <p className="mt-7 text-[10px] font-medium tracking-[0.32em] text-brown uppercase">
-              Loading your experience
-            </p>
-
-            <div className="mt-6 flex w-full items-end justify-between">
-              <span className="font-serif text-[clamp(2.5rem,9vw,4rem)] leading-none tabular-nums text-foreground">
-                {String(progress).padStart(2, "0")}
-              </span>
-              <span className="pb-2 font-mono text-[10px] tracking-[0.2em] text-muted">
-                %
+          {/* The supplied loader box, kept as drawn — only the copy on the
+              cards is ours, and the footer badge carries the real figure. */}
+          <div className="relative flex w-[min(20rem,86vw)] flex-col gap-5 border-[3.5px] border-black bg-white p-5 font-mono shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <div className="flex items-center justify-between border-b-[3px] border-black pb-3">
+              <div className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-full border border-black bg-red-400" />
+                <span className="h-2.5 w-2.5 rounded-full border border-black bg-yellow-400" />
+                <span className="h-2.5 w-2.5 rounded-full border border-black bg-green-400" />
+              </div>
+              <span className="bg-black px-2 py-0.5 text-[10px] font-black tracking-widest text-white uppercase">
+                LOADING...
               </span>
             </div>
 
-            <div className="mt-4 h-px w-full bg-brown/20">
+            <div className="relative flex h-44 w-full items-center justify-center overflow-hidden border-[3px] border-black bg-zinc-900 shadow-[inset_0px_3px_8px_rgba(0,0,0,0.4)]">
               <div
-                className="h-px transition-[width] duration-500 ease-out"
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 opacity-20"
                 style={{
-                  width: `${progress}%`,
-                  background:
-                    "linear-gradient(90deg, var(--coral), var(--sky), var(--signal))",
+                  backgroundImage:
+                    "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+                  backgroundSize: "12px 12px",
                 }}
               />
+
+              <div className="relative flex h-32 w-36 items-center justify-center">
+                <AnimatePresence mode="popLayout">
+                  {stack.map((chapter, i) => {
+                    const depth = stack.length - 1 - i;
+                    const Icon = chapter.icon;
+
+                    return (
+                      <motion.div
+                        key={chapter.code}
+                        layout
+                        initial={{ x: -120, y: -10, rotate: -15, opacity: 0, scale: 0.85 }}
+                        animate={{
+                          x: depth * -4,
+                          y: depth * -4,
+                          rotate: (i % 2 === 0 ? 1 : -1) * (depth * 2),
+                          scale: 1 - depth * 0.04,
+                          opacity: 1,
+                        }}
+                        exit={{ x: 120, y: 10, rotate: 15, opacity: 0, scale: 0.85 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 24 }}
+                        style={{ zIndex: i }}
+                        className={`absolute inset-0 flex flex-col justify-between border-[3px] border-black p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${chapter.color}`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="bg-black px-1 py-0.5 text-[9px] font-black text-white">
+                            {chapter.code}
+                          </span>
+                          <Icon size={14} className="stroke-[2.5]" />
+                        </div>
+
+                        {/* A <p>, not an <h4>: the page's heading rule would
+                            pull this off the mono face the box is set in. */}
+                        <p className="my-auto text-sm leading-tight font-black uppercase">
+                          {chapter.title}
+                        </p>
+
+                        <div className="flex items-center justify-between border-t-2 border-black pt-1 text-[8px] font-black">
+                          <span>STATUS</span>
+                          <span className="h-2 w-2 animate-pulse rounded-full bg-black" />
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </div>
             </div>
 
-            <p className="mt-4 self-start font-mono text-[10px] tracking-[0.18em] text-muted/70 uppercase">
-              Kitchens, finishes &amp; frames
-            </p>
+            <div className="flex items-center justify-between border-[2.5px] border-black bg-zinc-100 p-2.5 text-xs font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+              <div className="flex items-center gap-2">
+                <RefreshCw size={12} className="animate-spin text-black" />
+                <span className="text-[10px] tracking-wider uppercase">
+                  LOADING EXPERIENCE
+                </span>
+              </div>
+              <span className="bg-black px-1.5 py-0.5 text-[10px] text-yellow-300 tabular-nums">
+                {String(progress).padStart(2, "0")}%
+              </span>
+            </div>
           </div>
         </motion.div>
       )}

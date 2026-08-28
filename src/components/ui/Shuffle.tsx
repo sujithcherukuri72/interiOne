@@ -106,6 +106,33 @@ const Shuffle = ({
     };
   }, []);
 
+  /*
+   * Every strip is sized in *pixels*, measured once. So a viewport that
+   * changes width after the build — a rotation, a desktop resize, devtools —
+   * leaves each character in a box built for the old font-size, which is the
+   * wide, gap-toothed line you get when a fluid `clamp()` heading shrinks
+   * underneath its own strips. Re-run the build when the width settles.
+   *
+   * Width only, and debounced: on iOS the URL bar collapsing changes the
+   * height on nearly every scroll, and rebuilding the hero mid-scroll would
+   * be worse than the bug.
+   */
+  const [viewportWidth, setViewportWidth] = useState(() =>
+    typeof window === "undefined" ? 0 : window.innerWidth
+  );
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const onResize = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => setViewportWidth(window.innerWidth), 180);
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
+
   const scrollTriggerStart = useMemo(() => {
     const startPct = (1 - threshold) * 100;
     const mm = /^(-?\d+(?:\.\d+)?)(px|em|rem|%)?$/.exec(rootMargin || "");
@@ -481,6 +508,7 @@ const Shuffle = ({
         ease,
         scrollTriggerStart,
         fontsLoaded,
+        viewportWidth,
         shuffleDirection,
         shuffleTimes,
         animationMode,
