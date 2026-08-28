@@ -100,16 +100,9 @@ export default function XteelSection() {
     [0, 5, 5, XTEEL_FRAMES.length - 1],
     { clamp: true }
   );
-  /* Eleven frames is a low frame rate, and a low frame rate is what makes a
-     sequence read as steps rather than as movement. A camera solves this with
-     shutter time: anything that moves inside one exposure is blurred. So the
-     stack is blurred by how far it is *between* frames — nothing on a frame,
-     rising to a pixel and a half at the midpoint. It costs one filter and it
-     is the difference between a slideshow and a video. */
-  const filter = useTransform(frame, (v) => {
-    const between = v - Math.floor(v);
-    return `blur(${(Math.sin(between * Math.PI) * 1.5).toFixed(2)}px)`;
-  });
+  /* ponytail: the between-frames motion blur was removed — it read as the
+     panel going soft on every scroll rather than as shutter time. The spring
+     on `scrub` above is what keeps the dissolve smooth; that is enough. */
 
   const topSkinY = useTransform(open, [0, 1], [0, -SKIN_TRAVEL]);
   const bottomSkinY = useTransform(open, [0, 1], [0, SKIN_TRAVEL]);
@@ -142,32 +135,31 @@ export default function XteelSection() {
   ];
 
   return (
-    <div ref={ref} className="relative h-[135vh] md:h-[160vh]">
-      <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center gap-8 overflow-hidden px-5 sm:px-8 md:h-screen md:gap-0 md:px-0">
+    <div ref={ref} className="relative h-[122vh] md:h-[138vh]">
+      <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center gap-[clamp(1rem,3vh,2rem)] overflow-hidden px-5 sm:px-8 md:h-screen md:gap-0 md:px-0">
         {USE_XTEEL_RENDER ? (
           /* The real thing. The drawing below was always a stand-in for this:
              a render shows the honeycomb core and the actual metal, which no
              amount of vector hatching does. It arrives, settles, and holds
              while the callouts resolve beside it. */
-          <div className="grid w-full max-w-[72rem] items-center gap-8 md:grid-cols-12 md:gap-12">
+          <div className="grid w-full max-w-[72rem] items-center gap-[clamp(1.25rem,3vh,2rem)] md:grid-cols-12 md:gap-10">
             {/* Solid from the first paint. It used to fade up out of the
                 section, which meant the panel — the whole point of the band —
                 was a blank space until the scroll had already started. */}
-            <motion.div
-              style={{ filter }}
-              className="relative mx-auto h-[46svh] w-full md:col-span-7 md:h-[80svh]"
+            <div
+              className="relative mx-auto h-[40svh] w-full md:col-span-7 md:h-[70svh]"
               role="img"
               aria-label="Exploded view of an Xteel shutter: white pre-painted steel skins over a steel-composite honeycomb core, sealed on every edge."
             >
               {XTEEL_FRAMES.map((src, i) => (
                 <Frame key={src} src={src} index={i} frame={frame} />
               ))}
-            </motion.div>
+            </div>
 
             <div className="w-full md:col-span-5">
               <PanelWordmark />
 
-              <ul className="mt-7 w-full border-t border-foreground/15">
+              <ul className="mt-[clamp(1rem,2.5vh,1.75rem)] w-full border-t border-foreground/15">
                 {rows.map((row, i) => (
                   <CompactCallout key={row.step} row={row} open={open} index={i} />
                 ))}
@@ -446,17 +438,17 @@ function CompactCallout({
   return (
     <motion.li
       style={{ x }}
-      className="flex items-baseline gap-4 border-b border-foreground/15 py-3.5"
+      className="flex items-baseline gap-[clamp(0.75rem,1.5vw,1rem)] border-b border-foreground/15 py-[clamp(0.6rem,1.3vh,0.875rem)]"
     >
-      <span className="font-mono text-[10px] tracking-[0.18em] text-foreground/35 tabular-nums">
+      <span className="font-mono text-[clamp(9px,0.7vw,10px)] tracking-[0.18em] text-foreground/35 tabular-nums">
         {row.step}
       </span>
 
       <span className="min-w-0 flex-1">
-        <span className="block text-[15px] font-medium tracking-[-0.02em]">
+        <span className="block text-[clamp(0.875rem,1.05vw,1rem)] font-medium tracking-[-0.02em]">
           {row.title}
         </span>
-        <span className="mt-1 block font-mono text-[9.5px] tracking-[0.16em] uppercase">
+        <span className="mt-1 block font-mono text-[clamp(8.5px,0.68vw,9.5px)] tracking-[0.16em] uppercase">
           <span className="text-foreground/45">{material}</span>
           <span className="text-muted"> · </span>
           {/* The gauge is the number people repeat back — it takes the accent. */}

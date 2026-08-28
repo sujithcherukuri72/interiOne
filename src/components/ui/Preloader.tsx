@@ -28,6 +28,22 @@ const CRITICAL = [
   ...KITCHEN_STYLES.map((s) => s.hero),
 ];
 
+/**
+ * The four chapters, dealt as a small stack of cards — one per quarter of the
+ * load. Set in the page's own materials rather than as a spinner: cream stock,
+ * a brown hairline, Modula's offset shadow, the name in the identity serif.
+ *
+ * ponytail: driven off `progress`, not off an interval. A timed cycle would
+ * deal cards the visitor never sees on a warm cache, and would be out of step
+ * with the bar underneath it on a cold one.
+ */
+const CHAPTERS = [
+  { step: "01", title: "Identity", note: "Design · Craft · Elevate", tone: "bg-cream" },
+  { step: "02", title: "The Panel", note: "JSW Xteel® core", tone: "bg-[var(--tan)]/45" },
+  { step: "03", title: "The Kitchen", note: "Layouts & finishes", tone: "bg-surface" },
+  { step: "04", title: "The Studio", note: "Hyderabad showrooms", tone: "bg-cream-cool" },
+];
+
 /** Never hold the visitor longer than this, however slow the connection. */
 const MAX_WAIT = 12_000;
 /** ...and never flash the loader on a warm cache. */
@@ -81,6 +97,10 @@ export default function Preloader() {
     window.scrollTo(0, 0);
   }, [done]);
 
+  // Which chapter is on top. Clamped one short of the end so the stack never
+  // empties — the last card holds while the bar finishes.
+  const deck = Math.min(CHAPTERS.length - 1, Math.floor(progress / 25));
+
   return (
     <AnimatePresence>
       {!done && (
@@ -105,14 +125,54 @@ export default function Preloader() {
           />
 
           <div className="relative flex w-[min(28rem,78vw)] flex-col items-center">
-            <motion.img
-              src={ASSETS.logo.mark}
-              alt=""
-              aria-hidden="true"
-              className="h-16 w-auto"
-              animate={{ y: [0, -6, 0] }}
-              transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-            />
+            {/* The stack. Cards leave as each quarter of the load completes,
+                so the top card is always the chapter currently arriving. */}
+            <div className="relative mb-2 h-[clamp(8rem,26vw,10rem)] w-[min(21rem,74vw)]">
+              <AnimatePresence mode="popLayout">
+                {CHAPTERS.slice(deck).map((chapter, depth) => (
+                  <motion.div
+                    key={chapter.step}
+                    layout
+                    initial={false}
+                    animate={{
+                      x: depth * 7,
+                      y: depth * -7,
+                      rotate: (depth % 2 ? 1.4 : -1.4) * depth,
+                      scale: 1 - depth * 0.035,
+                    }}
+                    exit={{ x: -150, y: 12, rotate: -7, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 260, damping: 26 }}
+                    style={{
+                      zIndex: CHAPTERS.length - depth,
+                      boxShadow: "var(--shadow-card)",
+                    }}
+                    className={`absolute inset-0 flex flex-col justify-between rounded-xl border border-brown/20 p-[clamp(1rem,4vw,1.5rem)] ${chapter.tone}`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <span className="font-mono text-[10px] tracking-[0.24em] text-brown">
+                        {chapter.step}
+                      </span>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={ASSETS.logo.mark}
+                        alt=""
+                        aria-hidden="true"
+                        className="h-6 w-auto"
+                      />
+                    </div>
+
+                    <div>
+                      <p className="font-serif text-[clamp(1.5rem,6vw,2.1rem)] leading-none text-foreground italic">
+                        {chapter.title}
+                      </p>
+                      <p className="mt-2 font-mono text-[9.5px] tracking-[0.2em] text-muted uppercase">
+                        {chapter.note}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
 
             <p className="mt-7 text-[10px] font-medium tracking-[0.32em] text-brown uppercase">
               Loading your experience

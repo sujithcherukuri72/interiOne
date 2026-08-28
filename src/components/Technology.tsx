@@ -36,7 +36,7 @@ const ICON_MOTION: Record<keyof typeof ICONS, string> = {
 
 export default function Technology() {
   return (
-    <section id="technology" className="bg-surface pt-[clamp(3.5rem,9vh,7.5rem)] pb-[clamp(3.5rem,9vh,7.5rem)]">
+    <section id="technology" className="bg-surface pt-[clamp(3.5rem,9vh,7.5rem)] pb-[clamp(2.75rem,6.5vh,5.5rem)]">
       <div className="section-shell">
         {/* The section's real heading. The design leads on the statement
             itself rather than a title, so the heading carries the structure
@@ -72,7 +72,7 @@ export default function Technology() {
       <div className="section-shell">
         {/* A shop-drawing note rather than a photograph: the claim is a
             certification, so it is set as one. */}
-        <div className="mt-[clamp(2rem,4.5vh,4rem)] grid gap-y-6 border-t border-foreground/15 pt-10 md:grid-cols-12 md:gap-x-8 md:pt-12">
+        <div className="mt-[clamp(1.25rem,3vh,2.5rem)] grid gap-y-5 border-t border-foreground/15 pt-[clamp(1.75rem,4vh,2.75rem)] md:grid-cols-12 md:gap-x-8">
           <motion.div {...fadeUp(0)} className="md:col-span-3">
             <p className="font-mono text-[10px] tracking-[0.2em] text-coral uppercase sm:text-[11px] sm:tracking-[0.22em]">
               UL 94 V-0
@@ -93,14 +93,14 @@ export default function Technology() {
             Each icon animates the thing the panel is immune to — the flame
             gutters, the droplet beads — which is the whole argument in one
             gesture, and it is what the flat version was missing. */}
-        <div className="mt-[clamp(2.5rem,6.5vh,5.5rem)] grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-[clamp(1.75rem,4.5vh,3.5rem)] grid gap-[clamp(0.75rem,1.5vw,1rem)] sm:grid-cols-2 lg:grid-cols-4">
           {XTEEL_FEATURES.map((feature, i) => {
             const Icon = ICONS[feature.icon as keyof typeof ICONS];
             return (
               <motion.div
                 key={feature.id}
                 {...fadeUp(i * 0.08)}
-                className="prop-card group bg-cream/70 p-6"
+                className="prop-card group bg-cream/70 p-[clamp(1.1rem,2.2vw,1.5rem)]"
               >
                 <span
                   aria-hidden="true"
@@ -112,20 +112,20 @@ export default function Technology() {
                   size={24}
                   strokeWidth={1.5}
                   aria-hidden="true"
-                  className="prop-icon mt-6 text-foreground/70"
+                  className="prop-icon mt-[clamp(1rem,2.4vh,1.5rem)] size-[clamp(20px,2vw,24px)] text-foreground/70"
                   data-motion={ICON_MOTION[feature.icon as keyof typeof ICONS]}
                   // Staggered so the four are never in step — in step they read
                   // as one widget blinking, not as four separate claims.
                   style={{ animationDelay: `${i * 0.9}s` }}
                 />
 
-                <h3 className="mt-5 text-[17px] font-medium tracking-[-0.02em]">
+                <h3 className="mt-[clamp(0.9rem,2vh,1.25rem)] text-[clamp(1rem,1.15vw,1.1rem)] font-medium tracking-[-0.02em]">
                   {feature.title}
                 </h3>
-                <p className="mt-1.5 font-mono text-[10.5px] tracking-[0.18em] text-brown uppercase">
+                <p className="mt-1.5 font-mono text-[clamp(9.5px,0.72vw,10.5px)] tracking-[0.18em] text-brown uppercase">
                   {feature.claim}
                 </p>
-                <p className="mt-3 text-[13.5px] leading-[1.55] tracking-[-0.01em] text-foreground/70">
+                <p className="mt-[clamp(0.6rem,1.4vh,0.75rem)] text-[clamp(12.5px,0.95vw,13.5px)] leading-[1.55] tracking-[-0.01em] text-foreground/70">
                   {feature.description}
                 </p>
               </motion.div>
