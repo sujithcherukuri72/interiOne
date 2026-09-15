@@ -48,3 +48,6 @@ export function messageForSection(section?: string | null) {
 export function whatsappLink(message = DEFAULT_MESSAGE) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
+
+/** Every "Book a site visit" button opens the chat straight away, prefilled. */
+export const BOOK_VISIT_LINK = whatsappLink(SECTION_MESSAGES.contact);

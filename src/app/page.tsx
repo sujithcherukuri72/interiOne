@@ -11,6 +11,7 @@ import Partners from "@/components/Partners";
 import Showrooms from "@/components/Showrooms";
 import Technology from "@/components/Technology";
 import Testimonials from "@/components/Testimonials";
+import WhatWeDo from "@/components/WhatWeDo";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
 
 export default function Home() {
@@ -24,6 +25,8 @@ export default function Home() {
       <main className="flex flex-1 flex-col">
         <Hero />
         <HeroStatement />
+        {/* The plain answer to "what do they sell?" before any of the detail. */}
+        <WhatWeDo />
         {/* The material argument first — what the kitchen is made of — then
             what it looks like, then where everything goes. */}
         <Technology />

@@ -4,10 +4,11 @@ import { motion } from "framer-motion";
 
 import { BRAND } from "@/data/brand";
 import { EASE } from "@/lib/motion";
+import { BOOK_VISIT_LINK } from "@/lib/whatsapp";
 import GildedWordmark from "@/components/ui/GildedWordmark";
 import ModulaLockup from "@/components/ui/ModulaMark";
 
-const ACTIONS = [{ label: "Book a site visit", href: "#showrooms" }];
+const ACTIONS = [{ label: "Book a site visit", href: BOOK_VISIT_LINK }];
 
 const LEGAL = [
   { label: "Privacy", href: "#contact" },
@@ -88,6 +89,8 @@ export default function Contact() {
             <a
               key={action.label}
               href={action.href}
+              target="_blank"
+              rel="noreferrer noopener"
               className="focus-ring rounded-full border border-line px-5 py-2.5 text-[13px] tracking-[-0.005em] text-foreground/75 transition-colors duration-300 hover:border-foreground/40 hover:text-foreground"
             >
               {action.label}

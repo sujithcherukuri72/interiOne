@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- plain CJS build script, run by hand with node. */
 /* Repaint the Xteel render frames: the steel skins go white, the composite
    core is left exactly as shot. A pixel counts as skin if it is warm — the
    render's greige ramps r > g > b, while every core tone is neutral or

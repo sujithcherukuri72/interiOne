@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 import { EASE } from "@/lib/motion";
+import { BOOK_VISIT_LINK } from "@/lib/whatsapp";
 import { LAYOUTS, ROOM, type Fixture, type Run } from "@/data/layouts";
 import { KITCHEN_STYLES } from "@/data/kitchen-styles";
 import KitchenPlanner from "./ui/KitchenPlanner";
@@ -264,7 +265,9 @@ export default function DrawKitchen() {
             </div>
 
             <a
-              href="#contact"
+              href={BOOK_VISIT_LINK}
+              target="_blank"
+              rel="noreferrer noopener"
               className="focus-ring mt-8 inline-flex items-center gap-3 rounded-full border border-line px-5 py-2.5 text-[13px] tracking-[-0.005em] text-foreground/75 transition-colors duration-300 hover:border-foreground/40 hover:text-foreground"
             >
               Book a site visit

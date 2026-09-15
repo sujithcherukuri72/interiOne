@@ -793,7 +793,7 @@ svg {
    saturated thing on the block.
    -------------------------------------------------------------------------- */
 .studio-map .mapboxgl-canvas {
-  filter: grayscale(0.6) sepia(0.3) brightness(1.03) contrast(1.02);
+  filter: sepia(0.35) saturate(0.8) brightness(0.95);
 }
 
 .studio-map .mapboxgl-ctrl-bottom-right,

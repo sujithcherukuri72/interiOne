@@ -364,7 +364,7 @@ function MapFrame({
         </MapButton>
       </div>
 
-      <span className="pointer-events-none absolute bottom-4 left-4 font-mono text-[10px] tracking-[0.16em] text-foreground/45 uppercase">
+      <span className="pointer-events-none absolute bottom-4 left-4 font-mono text-[10px] tracking-[0.16em] text-cream/50 uppercase">
         {MAP_COORDS_LABEL}
       </span>
     </div>
