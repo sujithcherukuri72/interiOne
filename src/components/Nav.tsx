@@ -118,7 +118,17 @@ export default function Nav() {
         }`}
       >
         <div className="section-shell flex h-[72px] items-center justify-between gap-4">
-          <Link href="/" aria-label="interiOne — home" className="focus-ring rounded">
+          <Link
+            href="/"
+            aria-label="interiOne — home"
+            className="focus-ring rounded"
+            // Already on the one page: glide back to the hero instead of a no-op navigation.
+            onClick={(e) => {
+              e.preventDefault();
+              if (lenisRef.current) lenisRef.current.scrollTo(0);
+              else window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
             <Logo
               className="text-[17px] sm:text-[19px]"
               variant={onHero ? "light" : "dark"}

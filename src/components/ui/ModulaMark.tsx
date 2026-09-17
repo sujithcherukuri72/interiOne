@@ -95,14 +95,21 @@ export function ModulaLogo({
   className?: string;
 }) {
   return (
-    <Image
-      src={variant === "light" ? ASSETS.brand.modulaWhite : ASSETS.brand.modulaBrown}
-      alt="Modula"
-      width={MODULA_LOGO_SIZE.width}
-      height={MODULA_LOGO_SIZE.height}
-      sizes="160px"
-      className={cn("h-[1.65em] w-auto", className)}
-    />
+    <a
+      href="https://www.modula.in"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn("inline-flex shrink-0", className)}
+    >
+      <Image
+        src={variant === "light" ? ASSETS.brand.modulaWhite : ASSETS.brand.modulaBrown}
+        alt="Modula"
+        width={MODULA_LOGO_SIZE.width}
+        height={MODULA_LOGO_SIZE.height}
+        sizes="160px"
+        className="h-[1.65em] w-auto"
+      />
+    </a>
   );
 }
 

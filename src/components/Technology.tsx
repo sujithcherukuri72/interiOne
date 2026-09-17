@@ -5,12 +5,9 @@ import { Droplets, Flame, Leaf, ShieldCheck } from "lucide-react";
 
 import { EASE } from "@/lib/motion";
 import { XTEEL_FEATURES } from "@/data/technology";
-import TypeReveal from "./ui/TypeReveal";
 import XteelSection from "./ui/XteelSection";
 
-/* The two revealed statements. Held as plain strings rather than JSX because
-   TypeReveal splits them word by word — markup in the middle would have
-   nowhere to go. */
+/* The two statements, set static — no word-by-word reveal. */
 const TECH_LEAD =
   "Every shutter is built from JSW Xteel® — a steel-composite core that replaces plywood and MDF entirely. No organic fibre means nothing for termites to feed on and nothing for moisture to swell, so the panel stays flat on the hundredth wipe-down as it did on the first.";
 
@@ -56,12 +53,11 @@ export default function Technology() {
             Technology
           </motion.p>
 
-          {/* Revealed a word at a time rather than faded as a block: this is
-              the material argument, and it should be read, not skimmed. */}
-          <TypeReveal
-            text={TECH_LEAD}
+          <p
             className="max-w-[46ch] text-[clamp(1.15rem,2.2vw,1.9rem)] leading-[1.5] tracking-[-0.015em] text-pretty sm:leading-[1.55] md:col-span-9"
-          />
+          >
+            {TECH_LEAD}
+          </p>
         </div>
       </div>
 
@@ -82,11 +78,9 @@ export default function Technology() {
             </p>
           </motion.div>
 
-          <TypeReveal
-            text={TECH_SAFETY}
-            stagger={38}
-            className="max-w-[42ch] text-[clamp(1.05rem,1.8vw,1.65rem)] leading-[1.5] tracking-[-0.015em] text-pretty md:col-span-9"
-          />
+          <p className="max-w-[42ch] text-[clamp(1.05rem,1.8vw,1.65rem)] leading-[1.5] tracking-[-0.015em] text-pretty md:col-span-9">
+            {TECH_SAFETY}
+          </p>
         </div>
 
         {/* The four properties, as cards rather than as a row of paragraphs.
