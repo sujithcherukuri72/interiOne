@@ -88,6 +88,15 @@ export function buildGraph() {
         // live. `sameAs` is the strongest single link between this markup
         // and the Maps listing, and an empty array is worth nothing.
         sameAs: [BRAND.instagramHref],
+        knowsAbout: [
+          "Modular kitchens",
+          "Kitchen interior design",
+          "Kitchen renovation",
+          "Steel-composite kitchen cabinets",
+          "JSW Xteel",
+          "Termite-proof kitchens",
+          "Fire-safe kitchens",
+        ],
       },
 
       {

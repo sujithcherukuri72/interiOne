@@ -75,7 +75,7 @@ export default function WhatWeDo() {
       <div className="section-shell">
         <motion.p
           {...fadeUp(0)}
-          className="text-[10px] font-medium tracking-[0.28em] text-brown uppercase"
+          className="eyebrow"
         >
           What we do, plainly
         </motion.p>

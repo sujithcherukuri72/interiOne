@@ -64,7 +64,7 @@ export default function DrawKitchen() {
           {/* ── Copy column ──────────────────────────────────────────── */}
           <div className="flex flex-col justify-between md:col-span-4">
             <div>
-              <p className="font-mono text-[11px] tracking-[0.28em] text-foreground/45 uppercase">
+              <p className="eyebrow">
                 Planning
               </p>
 
@@ -328,7 +328,7 @@ function StyleCarousel({ onExplore }: { onExplore: (id: string) => void }) {
   return (
     <div>
       <div className="section-shell">
-        <p className="font-mono text-[11px] tracking-[0.28em] text-foreground/45 uppercase">
+        <p className="eyebrow">
           Styles
         </p>
         <h3 className="mt-6 max-w-[20ch] text-[clamp(1.5rem,2.6vw,2.4rem)] leading-[1.1] font-medium tracking-[-0.03em] text-balance">

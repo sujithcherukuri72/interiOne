@@ -64,7 +64,7 @@ export default function Contact() {
       <div className="section-shell">
         <motion.p
           {...reveal(0)}
-          className="font-mono text-[10px] font-medium tracking-[0.28em] text-muted uppercase"
+          className="eyebrow"
         >
           {BRAND.tagline}
         </motion.p>

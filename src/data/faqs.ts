@@ -11,7 +11,7 @@ export const FAQS = [
     id: "customize",
     question: "Can I completely customize my kitchen?",
     answer:
-      "Yes. Every InterioOne kitchen is designed from scratch around your lifestyle. From cabinet finishes, colours, storage solutions, lighting, handles, and appliances to countertops and accessories, every detail is tailored to your preferences, budget, and space.",
+      "Yes. Every interiOne kitchen is designed from scratch around your lifestyle. From cabinet finishes, colours, storage solutions, lighting, handles, and appliances to countertops and accessories, every detail is tailored to your preferences, budget, and space.",
     tag: "Customization",
   },
   {
@@ -52,9 +52,9 @@ export const FAQS = [
   },
   {
     id: "why-us",
-    question: "Why should I choose InterioOne over other kitchen brands?",
+    question: "Why should I choose interiOne over other kitchen brands?",
     answer:
-      "Because we don't believe in one-size-fits-all kitchens. Every InterioOne project is thoughtfully designed around your lifestyle, cooking habits, storage needs, and aesthetic preferences. From personalized design guidance and premium materials to transparent pricing, professional installation, and dependable after-sales support, we focus on creating a kitchen you'll love using every single day.",
+      "Because we don't believe in one-size-fits-all kitchens. Every interiOne project is thoughtfully designed around your lifestyle, cooking habits, storage needs, and aesthetic preferences. From personalized design guidance and premium materials to transparent pricing, professional installation, and dependable after-sales support, we focus on creating a kitchen you'll love using every single day.",
     tag: "Why Us",
   },
 ] as const;

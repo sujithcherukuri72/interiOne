@@ -148,6 +148,24 @@ svg {
   user-select: none;
 }
 
+/* Every section opens with the same label: one face, one size, one colour.
+   Brown rather than a 45% grey — at this size and tracking the old muted
+   greys were the one thing on the page you had to hunt for. */
+.eyebrow {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--brown);
+}
+
+@media (min-width: 640px) {
+  .eyebrow {
+    font-size: 12px;
+  }
+}
+
 /* The single horizontal gutter every full-width section aligns to. */
 .section-shell {
   width: 100%;

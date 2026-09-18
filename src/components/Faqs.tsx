@@ -27,7 +27,7 @@ export default function Faqs() {
           {/* ── Sticky index head ────────────────────────────────────── */}
           <div className="md:col-span-4">
             <div className="md:sticky md:top-[18vh]">
-              <p className="font-mono text-[11px] tracking-[0.28em] text-foreground/45 uppercase">
+              <p className="eyebrow">
                 Questions
               </p>
 

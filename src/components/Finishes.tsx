@@ -141,7 +141,7 @@ export default function Finishes() {
   return (
     <section id="finishes" className="bg-background pt-[clamp(3.5rem,9vh,7.5rem)] pb-[clamp(3.5rem,9vh,7.5rem)]">
       <div className="section-shell">
-        <p className="text-[10px] font-medium tracking-[0.28em] text-foreground/45 uppercase">
+        <p className="eyebrow">
           Finishes
         </p>
         <h2 className="mt-8 max-w-[34ch] text-[clamp(1rem,1.35vw,1.35rem)] leading-[1.5] font-normal tracking-[-0.015em] text-balance">

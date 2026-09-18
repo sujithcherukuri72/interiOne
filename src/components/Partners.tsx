@@ -21,7 +21,7 @@ export default function Partners() {
           viewport={{ once: false, margin: "-80px" }}
           transition={{ duration: 0.8, ease: EASE }}
         >
-          <p className="text-[10px] font-medium tracking-[0.28em] text-foreground/45 uppercase">
+          <p className="eyebrow">
             Hardware & Appliance Network
           </p>
           <h2 className="mt-8 max-w-[36ch] text-[clamp(1.5rem,2.6vw,2.4rem)] leading-[1.2] font-medium tracking-[-0.03em] text-balance">

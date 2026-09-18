@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { areaPath } from "@/data/areas";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Clock, MapPin, Phone } from "lucide-react";
@@ -33,7 +35,7 @@ export default function Showrooms() {
           viewport={{ once: false, margin: "-80px" }}
           transition={{ duration: 0.8, ease: EASE }}
         >
-          <p className="text-[10px] font-medium tracking-[0.28em] text-foreground/45 uppercase">
+          <p className="eyebrow">
             Showroom
           </p>
           {/* One studio, said plainly. The old line claimed seven cities; the
@@ -176,11 +178,14 @@ export default function Showrooms() {
 
           <ul className="mt-6 flex flex-wrap gap-x-2 gap-y-2">
             {HYDERABAD_AREAS.map((area) => (
-              <li
-                key={area}
-                className="rounded-full border border-line px-3 py-1.5 text-[12.5px] tracking-[-0.005em] text-foreground/60"
-              >
-                {area}
+              <li key={area}>
+                <Link
+                  href={areaPath(area)}
+                  title={`Modular kitchens in ${area}`}
+                  className="focus-ring block rounded-full border border-line px-3 py-1.5 text-[12.5px] tracking-[-0.005em] text-foreground/60 transition-colors hover:text-foreground"
+                >
+                  {area}
+                </Link>
               </li>
             ))}
           </ul>

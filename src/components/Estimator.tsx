@@ -54,7 +54,7 @@ export default function Estimator() {
           viewport={{ once: false, margin: "-100px" }}
           transition={{ duration: 0.8, ease: EASE }}
         >
-          <p className="font-mono text-[11px] tracking-[0.28em] text-foreground/45 uppercase">
+          <p className="eyebrow">
             Estimate
           </p>
           <h2 className="mt-8 max-w-[20ch] text-[clamp(1.9rem,3.4vw,3rem)] leading-[1.05] font-medium tracking-[-0.035em] text-balance">

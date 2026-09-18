@@ -79,6 +79,23 @@ export const metadata: Metadata = {
     "JSW Xteel kitchen",
     "Modula modular kitchen",
     "plywood free kitchen Hyderabad",
+    // Broader intent — people search "interiors" and "interior designers"
+    // long before they know the word "modular".
+    "kitchen interiors Hyderabad",
+    "kitchen interior designers Hyderabad",
+    "home interiors Hyderabad",
+    "interior designers Hyderabad",
+    "kitchen renovation Hyderabad",
+    "kitchen cabinets Hyderabad",
+    "best modular kitchen Hyderabad",
+    "modular kitchen near me",
+    "modular kitchen Kokapet",
+    "modular kitchen Narsingi",
+    "modular kitchen Financial District",
+    "modular kitchen Madhapur",
+    "modular kitchen for new flat Hyderabad",
+    "fire proof kitchen",
+    "waterproof kitchen cabinets",
   ],
 
   alternates: {

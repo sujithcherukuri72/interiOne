@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { AREAS, areaPath } from "@/data/areas";
 import { SITE_URL } from "@/lib/site";
 
 /**
@@ -19,5 +20,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 1,
     },
+    ...AREAS.map((area) => ({
+      url: `${SITE_URL}${areaPath(area.name)}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
   ];
 }
