@@ -4,11 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
-import { ArrowLeft, ArrowRight, Check, Minus, Plus } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
 import {
   APPLIANCES,
-  CABINETS_BY_TIER,
   COUNTER_MATERIALS,
   COUNTER_THICKNESS,
   DRAWER_HARDWARE,
@@ -16,10 +15,8 @@ import {
   OPENING_STYLES,
   PLINTH,
   SPLASHBACKS,
-  TIER_LABELS,
   getUnit,
   type Appliance,
-  type CabinetTier,
   type CabinetUnit,
   type CounterMaterial,
   type HardwareId,
@@ -36,12 +33,12 @@ import { EASE, EASE_UI } from "@/lib/motion";
 import { useOverlayLock } from "@/lib/overlay";
 import { whatsappLink } from "@/lib/whatsapp";
 import {
+  STORAGE_ACCESSORIES,
   WALL_HEIGHT,
+  autoFillWalls,
   billOfMaterials,
   emptyWall,
   planSummary,
-  remaining,
-  rowFor,
   runWidth,
   tierBand,
   toMm,
@@ -85,7 +82,7 @@ const STEPS = [
   { id: "style", label: "Style", question: "What should it feel like?" },
   { id: "shape", label: "Shape", question: "What shape is the room?" },
   { id: "space", label: "Space", question: "How much wall have you got?" },
-  { id: "units", label: "Cabinets", question: "What goes along the wall?" },
+  { id: "extras", label: "Accessories", question: "What goes inside it?" },
   { id: "finish", label: "Finish", question: "How should it be finished?" },
   { id: "result", label: "Your kitchen", question: "Your kitchen, drawn." },
 ] as const;
@@ -116,9 +113,6 @@ const card: Variants = {
   hidden: { opacity: 0, y: 26 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
 };
-
-let seq = 0;
-const nextKey = () => `u${++seq}`;
 
 /**
  * Each unit paired with how far along the wall it starts.
@@ -168,7 +162,7 @@ export default function KitchenPlanner({
     startingWalls(ESTIMATOR_LAYOUTS[1].id)
   );
   const [activeWall, setActiveWall] = useState(0);
-  const [activeTier, setActiveTier] = useState<CabinetTier>("lower");
+  const [accessories, setAccessories] = useState<string[]>(["bottle", "corner"]);
   const [range, setRange] = useState<RangeId>("premier");
   const [finishSlug, setFinishSlug] = useState<string | null>(null);
   /** null means "the same as the base units" — the common case. */
@@ -211,17 +205,30 @@ export default function KitchenPlanner({
     };
   }, [finish, upperSlug, counterId, metalId, splashId, opening, range]);
 
+  /**
+   * The cabinets, laid out for them.
+   *
+   * `walls` now carries only what the customer measured; the run itself is
+   * derived from those lengths, the accessories they picked and the hardware —
+   * so it can never drift out of step with an answer they changed two screens
+   * ago, which is what a separate cabinets step could not guarantee.
+   */
+  const laidWalls = useMemo(
+    () => autoFillWalls(walls, { accessories, hardware }),
+    [walls, accessories, hardware]
+  );
+
   const plan: Plan = useMemo(
-    () => ({ layoutId, walls, range, opening, counterId, appliances }),
-    [layoutId, walls, range, opening, counterId, appliances]
+    () => ({ layoutId, walls: laidWalls, range, opening, counterId, appliances }),
+    [layoutId, laidWalls, range, opening, counterId, appliances]
   );
 
   const sums = useMemo(() => totals(plan, range), [plan, range]);
   const bom = useMemo(() => billOfMaterials(plan, range), [plan, range]);
   const issues = useMemo(() => warnings(plan), [plan]);
 
-  const wall = walls[Math.min(activeWall, walls.length - 1)];
-  const placedCount = walls.reduce(
+  const wall = laidWalls[Math.min(activeWall, laidWalls.length - 1)];
+  const placedCount = laidWalls.reduce(
     (sum, w) => sum + w.rows.lower.length + w.rows.upper.length + w.rows.loft.length,
     0
   );
@@ -289,52 +296,7 @@ export default function KitchenPlanner({
       })
     );
 
-  const addUnit = (unit: CabinetUnit, width: number) => {
-    const row = rowFor(unit);
-    setWalls((prev) =>
-      prev.map((w, i) =>
-        i === activeWall
-          ? {
-              ...w,
-              rows: {
-                ...w.rows,
-                [row]: [
-                  ...w.rows[row],
-                  { key: nextKey(), unitId: unit.id, width, hardware },
-                ],
-              },
-            }
-          : w
-      )
-    );
-  };
-
-  const mutateRow = (row: RowTier, fn: (units: PlacedUnit[]) => PlacedUnit[]) =>
-    setWalls((prev) =>
-      prev.map((w, i) =>
-        i === activeWall ? { ...w, rows: { ...w.rows, [row]: fn(w.rows[row]) } } : w
-      )
-    );
-
-  const removeUnit = (row: RowTier, key: string) =>
-    mutateRow(row, (units) => units.filter((u) => u.key !== key));
-
-  const moveUnit = (row: RowTier, key: string, by: number) =>
-    mutateRow(row, (units) => {
-      const at = units.findIndex((u) => u.key === key);
-      const to = at + by;
-      if (at < 0 || to < 0 || to >= units.length) return units;
-      const next = [...units];
-      const [moved] = next.splice(at, 1);
-      next.splice(to, 0, moved);
-      return next;
-    });
-
-  const editorRow: RowTier = activeTier === "tall" ? "lower" : activeTier;
-
-  const canAdvance =
-    (step !== 2 || walls.every((w) => w.lengthFt > 0)) &&
-    (step !== 3 || placedCount > 0);
+  const canAdvance = step !== 2 || walls.every((w) => w.lengthFt > 0);
 
   const ui = (
     <AnimatePresence>
@@ -478,18 +440,16 @@ export default function KitchenPlanner({
                 )}
 
                 {step === 3 && (
-                  <UnitsStep
-                    walls={walls}
-                    wall={wall}
+                  <ExtrasStep
+                    accessories={accessories}
+                    setAccessories={setAccessories}
+                    appliances={appliances}
+                    setAppliances={setAppliances}
+                    hardware={hardware}
+                    setHardware={setHardware}
+                    opening={opening}
+                    setOpening={setOpening}
                     palette={palette}
-                    activeWall={activeWall}
-                    setActiveWall={setActiveWall}
-                    activeTier={activeTier}
-                    setActiveTier={setActiveTier}
-                    editorRow={editorRow}
-                    onAdd={addUnit}
-                    onRemove={removeUnit}
-                    onMove={moveUnit}
                   />
                 )}
 
@@ -508,12 +468,6 @@ export default function KitchenPlanner({
                     setMetalId={setMetalId}
                     splashId={splashId}
                     setSplashId={setSplashId}
-                    hardware={hardware}
-                    setHardware={setHardware}
-                    opening={opening}
-                    setOpening={setOpening}
-                    appliances={appliances}
-                    setAppliances={setAppliances}
                     style={style}
                   />
                 )}
@@ -521,7 +475,7 @@ export default function KitchenPlanner({
                 {step === 5 && (
                   <ResultStep
                     plan={plan}
-                    walls={walls}
+                    walls={laidWalls}
                     wall={wall}
                     activeWall={activeWall}
                     setActiveWall={setActiveWall}
@@ -834,271 +788,192 @@ function SpaceStep({
     </div>
   );
 }
+/* ── Step 4 · accessories ────────────────────────────────────────────────── */
 
-/* ── Step 4 · cabinets ───────────────────────────────────────────────────── */
-
-function UnitsStep({
-  walls,
-  wall,
+/**
+ * What goes inside the kitchen, now that nobody lays out the cabinets.
+ *
+ * Four decisions on one screen, in the order they get made: the storage that
+ * changes the run, the appliances that have to be planned around, and the two
+ * details every drawer and door in the kitchen inherits.
+ */
+function ExtrasStep({
+  accessories,
+  setAccessories,
+  appliances,
+  setAppliances,
+  hardware,
+  setHardware,
+  opening,
+  setOpening,
   palette,
-  activeWall,
-  setActiveWall,
-  activeTier,
-  setActiveTier,
-  editorRow,
-  onAdd,
-  onRemove,
-  onMove,
 }: {
-  walls: PlannerWall[];
-  wall: PlannerWall;
+  accessories: string[];
+  setAccessories: (fn: (prev: string[]) => string[]) => void;
+  appliances: string[];
+  setAppliances: (fn: (prev: string[]) => string[]) => void;
+  hardware: HardwareId;
+  setHardware: (h: HardwareId) => void;
+  opening: OpeningId;
+  setOpening: (o: OpeningId) => void;
   palette: Palette;
-  activeWall: number;
-  setActiveWall: (i: number) => void;
-  activeTier: CabinetTier;
-  setActiveTier: (t: CabinetTier) => void;
-  editorRow: RowTier;
-  onAdd: (unit: CabinetUnit, width: number) => void;
-  onRemove: (row: RowTier, key: string) => void;
-  onMove: (row: RowTier, key: string, by: number) => void;
 }) {
-  const wallMm = toMm(wall.lengthFt);
-  const usedMm = runWidth(wall.rows[editorRow]);
-  const pct = wallMm > 0 ? Math.min(100, (usedMm / wallMm) * 100) : 0;
-  const over = usedMm > wallMm;
+  const toggle = (id: string) => (prev: string[]) =>
+    prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
 
   return (
-    <div className="flex flex-col gap-7">
-      {/* Which wall, and how full it is. The meter is the whole feedback
-          loop of this step — it is how you know when to stop adding. */}
-      <div>
-        <div className="flex flex-wrap items-center gap-2">
-          {walls.map((w, i) => (
-            <button
-              key={w.id}
-              type="button"
-              onClick={() => setActiveWall(i)}
-              aria-pressed={i === activeWall}
-              className={`focus-ring rounded-xl border px-3.5 py-2 text-left transition-colors duration-300 ${
-                i === activeWall
-                  ? "border-brown bg-brown/10"
-                  : "border-line hover:border-foreground/30"
-              }`}
-            >
-              <span className="block font-mono text-[9px] tracking-[0.18em] text-muted uppercase">
-                {w.label} · {w.lengthFt} ft
-              </span>
-              <span className="mt-0.5 block text-[12.5px] tabular-nums">
-                {w.rows.lower.length + w.rows.upper.length + w.rows.loft.length} units
-              </span>
-            </button>
-          ))}
-        </div>
+    <div className="grid gap-10 lg:grid-cols-12">
+      <div className="flex flex-col gap-9 lg:col-span-7 xl:col-span-8">
+        <section>
+          <h3 className="mb-1 font-mono text-[10px] tracking-[0.2em] text-muted uppercase">
+            Storage
+          </h3>
+          <p className="mb-4 max-w-[52ch] text-[13px] leading-[1.6] text-muted">
+            Pick what you want inside. Everything else — the sink unit, the hob
+            unit, the drawer banks and the wall cabinets — is laid along your
+            walls for you and drawn at the end.
+          </p>
 
-        <div className="mt-4 flex items-center gap-4">
-          <span className="relative h-2 flex-1 overflow-hidden rounded-full bg-foreground/10">
-            <motion.span
-              className={`absolute inset-y-0 left-0 rounded-full ${over ? "bg-coral" : "bg-brown"}`}
-              initial={false}
-              animate={{ width: `${pct}%` }}
-              transition={{ type: "spring", stiffness: 180, damping: 26 }}
-            />
-          </span>
-          <span className="shrink-0 font-mono text-[10px] tracking-[0.14em] text-muted uppercase tabular-nums">
-            <RemainingLabel wall={wall} tier={editorRow} />
-          </span>
-        </div>
-
-        <div className="mt-4">
-          <Chips
-            options={(["lower", "upper", "loft", "tall"] as CabinetTier[]).map((t) => ({
-              id: t,
-              label: TIER_LABELS[t],
-            }))}
-            value={activeTier}
-            onChange={(v) => setActiveTier(v as CabinetTier)}
-          />
-        </div>
-      </div>
-
-      <div className="grid gap-8 lg:grid-cols-12">
-        {/* The catalogue, drawn. Each unit is shown at its own proportions
-            with its own front — a 3-drawer bank looks like one, which is
-            faster to scan than any amount of naming. */}
-        <div className="lg:col-span-7 xl:col-span-8">
           <motion.ul
-            key={activeTier}
             variants={grid}
             initial="hidden"
             animate="show"
             className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3"
           >
-            {CABINETS_BY_TIER[activeTier].map((unit) => (
-              <motion.li
-                key={unit.id}
-                variants={card}
-                whileHover={{ y: -4 }}
-                transition={{ duration: 0.25, ease: EASE_UI }}
-                className="flex flex-col overflow-hidden rounded-2xl border border-line bg-background/70"
-              >
-                <span className="flex h-28 items-end justify-center bg-surface/60 px-4 pt-4">
-                  <UnitPortrait unit={unit} palette={palette} />
-                </span>
+            {STORAGE_ACCESSORIES.map((accessory) => {
+              const unit = getUnit(accessory.unitId);
+              if (!unit) return null;
+              const on = accessories.includes(accessory.id);
 
-                <span className="flex flex-1 flex-col p-4">
-                  <span className="text-[13.5px] leading-[1.35] tracking-[-0.01em]">
-                    {unit.name}
-                  </span>
-                  <span className="mt-1 font-mono text-[9.5px] tracking-[0.14em] text-muted uppercase">
-                    D{unit.depth} · H{unit.height}
-                  </span>
-                  {unit.note && (
-                    <span className="mt-1.5 text-[12px] leading-[1.45] text-muted">
-                      {unit.note}
+              return (
+                <motion.li key={accessory.id} variants={card}>
+                  <button
+                    type="button"
+                    onClick={() => setAccessories(toggle(accessory.id))}
+                    aria-pressed={on}
+                    className={`focus-ring relative flex h-full w-full flex-col overflow-hidden rounded-2xl border-2 text-left transition-colors duration-300 ${
+                      on
+                        ? "border-brown bg-brown/[0.07]"
+                        : "border-line bg-background/70 hover:border-foreground/25"
+                    }`}
+                  >
+                    <span className="flex h-28 w-full items-end justify-center bg-surface/60 px-4 pt-4">
+                      <UnitPortrait unit={unit} palette={palette} />
                     </span>
-                  )}
 
-                  <span className="mt-3 flex flex-wrap gap-1.5">
-                    {unit.widths.map((width) => (
-                      <button
-                        key={width}
-                        type="button"
-                        onClick={() => onAdd(unit, width)}
-                        title={`Add ${unit.name} ${width}mm · ${unit.codes[width] ?? ""}`}
-                        className="focus-ring inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-1 font-mono text-[10px] tracking-[0.08em] text-foreground/65 transition-colors duration-300 hover:border-brown hover:bg-brown hover:text-white active:scale-95"
-                      >
-                        <Plus size={10} strokeWidth={2.5} />
-                        {width}
-                      </button>
-                    ))}
+                    <span className="flex flex-1 flex-col p-4">
+                      <span className="text-[13.5px] leading-[1.35] tracking-[-0.01em]">
+                        {unit.name}
+                      </span>
+                      <span className="mt-1 font-mono text-[9.5px] tracking-[0.14em] text-muted uppercase">
+                        {accessory.width}mm · D{unit.depth}
+                      </span>
+                      {unit.note && (
+                        <span className="mt-1.5 text-[12px] leading-[1.45] text-muted">
+                          {unit.note}
+                        </span>
+                      )}
+                    </span>
+
+                    <AnimatePresence>
+                      {on && (
+                        <motion.span
+                          initial={{ scale: 0.5, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.5, opacity: 0 }}
+                          className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-brown text-white"
+                        >
+                          <Check size={12} strokeWidth={2.5} />
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </button>
+                </motion.li>
+              );
+            })}
+          </motion.ul>
+        </section>
+
+        <section>
+          <h3 className="mb-4 font-mono text-[10px] tracking-[0.2em] text-muted uppercase">
+            Drawer hardware
+          </h3>
+          <Chips
+            options={DRAWER_HARDWARE.map((h) => ({ id: h.id, label: h.name }))}
+            value={hardware}
+            onChange={(v) => setHardware(v as HardwareId)}
+          />
+          <p className="mt-2 text-[12.5px] text-muted">
+            {DRAWER_HARDWARE.find((h) => h.id === hardware)?.note}
+          </p>
+
+          <h3 className="mt-7 mb-4 font-mono text-[10px] tracking-[0.2em] text-muted uppercase">
+            How it opens
+          </h3>
+          <Chips
+            options={OPENING_STYLES.map((o) => ({ id: o.id, label: o.name }))}
+            value={opening}
+            onChange={(v) => setOpening(v as OpeningId)}
+          />
+          <p className="mt-2 text-[12.5px] text-muted">
+            {OPENING_STYLES.find((o) => o.id === opening)?.note}
+          </p>
+        </section>
+      </div>
+
+      <section className="lg:col-span-5 xl:col-span-4">
+        <h3 className="mb-4 font-mono text-[10px] tracking-[0.2em] text-muted uppercase">
+          Appliances
+        </h3>
+        <div className="flex flex-col gap-2">
+          {APPLIANCES.map((appliance) => {
+            const on = appliances.includes(appliance.id);
+            return (
+              <button
+                key={appliance.id}
+                type="button"
+                onClick={() => setAppliances(toggle(appliance.id))}
+                aria-pressed={on}
+                className={`focus-ring flex items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition-colors duration-300 ${
+                  on
+                    ? "border-brown bg-brown/[0.07]"
+                    : "border-line hover:border-foreground/25"
+                }`}
+              >
+                {/* A photograph when there is one, the drawing until then — a
+                    list of appliance names with no pictures is the hardest kind
+                    of list to choose from. */}
+                {appliance.image ? (
+                  <span className="relative block h-11 w-16 shrink-0 overflow-hidden rounded-lg">
+                    <Image
+                      src={appliance.image}
+                      alt=""
+                      fill
+                      sizes="64px"
+                      className="object-cover"
+                    />
+                  </span>
+                ) : (
+                  <ApplianceGlyph appliance={appliance} palette={palette} />
+                )}
+
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[13px] tracking-[-0.01em]">
+                    {appliance.name}
+                  </span>
+                  <span className="block font-mono text-[9px] tracking-[0.14em] text-muted uppercase">
+                    {appliance.brand} · {appliance.spec}
                   </span>
                 </span>
-              </motion.li>
-            ))}
-          </motion.ul>
+                <span className="shrink-0 font-mono text-[11px] tabular-nums text-foreground/70">
+                  {money(appliance.price)}
+                </span>
+              </button>
+            );
+          })}
         </div>
-
-        {/* The run so far, live. */}
-        <div className="lg:col-span-5 xl:col-span-4">
-          <div className="lg:sticky lg:top-2">
-            <p className="font-mono text-[10px] tracking-[0.2em] text-muted uppercase">
-              {wall.label} · {TIER_LABELS[activeTier]} run
-            </p>
-
-            <div className="mt-4 overflow-hidden rounded-2xl border border-line bg-surface/40 p-3">
-              <RunStrip wall={wall} tier={editorRow} palette={palette} />
-            </div>
-
-            {wall.rows[editorRow].length === 0 ? (
-              <p className="mt-4 text-[13px] leading-[1.6] text-muted">
-                Nothing here yet. Add a unit and it lands at the end of the run,
-                left to right from the corner.
-              </p>
-            ) : (
-              <ol className="mt-3 flex flex-col gap-1.5">
-                <AnimatePresence initial={false}>
-                  {wall.rows[editorRow].map((placed, i) => {
-                    const unit = getUnit(placed.unitId);
-                    if (!unit) return null;
-                    return (
-                      <motion.li
-                        key={placed.key}
-                        layout
-                        initial={{ opacity: 0, x: 24 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -24, height: 0, marginTop: 0 }}
-                        transition={{ duration: 0.3, ease: EASE_UI }}
-                        className="flex items-center gap-2 rounded-xl border border-line bg-background/70 px-3 py-2"
-                      >
-                        <span className="w-4 shrink-0 font-mono text-[10px] text-muted tabular-nums">
-                          {i + 1}
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-[13px]">{unit.name}</span>
-                          <span className="block font-mono text-[9.5px] tracking-[0.12em] text-muted uppercase">
-                            {unit.codes[placed.width] ?? "—"} · {placed.width}mm
-                          </span>
-                        </span>
-                        <IconButton
-                          label="Move left"
-                          onClick={() => onMove(editorRow, placed.key, -1)}
-                        >
-                          <ArrowLeft size={13} strokeWidth={1.75} />
-                        </IconButton>
-                        <IconButton
-                          label="Move right"
-                          onClick={() => onMove(editorRow, placed.key, 1)}
-                        >
-                          <ArrowRight size={13} strokeWidth={1.75} />
-                        </IconButton>
-                        <IconButton
-                          label="Remove"
-                          onClick={() => onRemove(editorRow, placed.key)}
-                        >
-                          <Minus size={13} strokeWidth={1.75} />
-                        </IconButton>
-                      </motion.li>
-                    );
-                  })}
-                </AnimatePresence>
-              </ol>
-            )}
-          </div>
-        </div>
-      </div>
+      </section>
     </div>
-  );
-}
-
-/** The active run, drawn to scale as a strip — the elevation in miniature. */
-function RunStrip({
-  wall,
-  tier,
-  palette,
-}: {
-  wall: PlannerWall;
-  tier: RowTier;
-  palette: Palette;
-}) {
-  const wallMm = Math.max(toMm(wall.lengthFt), 1000);
-  const h = 220;
-
-  return (
-    <svg viewBox={`0 0 ${wallMm} ${h}`} className="w-full" aria-hidden="true">
-      <FinishDefs palette={palette} />
-      <rect
-        x="0"
-        y="0"
-        width={wallMm}
-        height={h}
-        fill="none"
-        stroke="var(--foreground)"
-        strokeWidth="6"
-        strokeDasharray="22 18"
-        opacity="0.2"
-      />
-      <AnimatePresence initial={false}>
-        {withOffsets(wall.rows[tier]).map(({ placed, at }) => (
-          <motion.rect
-            key={placed.key}
-            layout
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: EASE_UI }}
-            x={at + 6}
-            y={6}
-            width={Math.max(placed.width - 12, 8)}
-            height={h - 12}
-            rx="8"
-            fill="url(#finish-face)"
-            stroke="var(--foreground)"
-            strokeWidth="5"
-            strokeOpacity="0.5"
-          />
-        ))}
-      </AnimatePresence>
-    </svg>
   );
 }
 
@@ -1118,12 +993,6 @@ function FinishStep({
   setMetalId,
   splashId,
   setSplashId,
-  hardware,
-  setHardware,
-  opening,
-  setOpening,
-  appliances,
-  setAppliances,
   style,
 }: {
   range: RangeId;
@@ -1139,12 +1008,6 @@ function FinishStep({
   setMetalId: (s: MetalId) => void;
   splashId: SplashbackId;
   setSplashId: (s: SplashbackId) => void;
-  hardware: HardwareId;
-  setHardware: (h: HardwareId) => void;
-  opening: OpeningId;
-  setOpening: (o: OpeningId) => void;
-  appliances: string[];
-  setAppliances: (fn: (prev: string[]) => string[]) => void;
   style: (typeof KITCHEN_STYLES)[number] | null;
 }) {
   return (
@@ -1363,32 +1226,6 @@ function FinishStep({
           </div>
         </section>
 
-        <section>
-          <h3 className="mb-4 font-mono text-[10px] tracking-[0.2em] text-muted uppercase">
-            Drawer hardware
-          </h3>
-          <Chips
-            options={DRAWER_HARDWARE.map((h) => ({ id: h.id, label: h.name }))}
-            value={hardware}
-            onChange={(v) => setHardware(v as HardwareId)}
-          />
-          <p className="mt-2 text-[12.5px] text-muted">
-            {DRAWER_HARDWARE.find((h) => h.id === hardware)?.note} · applies to
-            units added from here on.
-          </p>
-
-          <h3 className="mt-6 mb-4 font-mono text-[10px] tracking-[0.2em] text-muted uppercase">
-            How it opens
-          </h3>
-          <Chips
-            options={OPENING_STYLES.map((o) => ({ id: o.id, label: o.name }))}
-            value={opening}
-            onChange={(v) => setOpening(v as OpeningId)}
-          />
-          <p className="mt-2 text-[12.5px] text-muted">
-            {OPENING_STYLES.find((o) => o.id === opening)?.note}
-          </p>
-        </section>
       </div>
 
       <div className="flex flex-col gap-6 lg:col-span-5">
@@ -1424,64 +1261,6 @@ function FinishStep({
           </motion.div>
         )}
 
-        <section>
-          <h3 className="mb-3 font-mono text-[10px] tracking-[0.2em] text-muted uppercase">
-            Appliances
-          </h3>
-          <div className="flex flex-col gap-2">
-            {APPLIANCES.map((appliance) => {
-              const on = appliances.includes(appliance.id);
-              return (
-                <button
-                  key={appliance.id}
-                  type="button"
-                  onClick={() =>
-                    setAppliances((prev) =>
-                      prev.includes(appliance.id)
-                        ? prev.filter((x) => x !== appliance.id)
-                        : [...prev, appliance.id]
-                    )
-                  }
-                  aria-pressed={on}
-                  className={`focus-ring flex items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition-colors duration-300 ${
-                    on
-                      ? "border-brown bg-brown/[0.07]"
-                      : "border-line hover:border-foreground/25"
-                  }`}
-                >
-                  {/* A photograph when there is one, the drawing until then —
-                      a list of appliance names with no pictures is the hardest
-                      kind of list to choose from. */}
-                  {appliance.image ? (
-                    <span className="relative block h-11 w-16 shrink-0 overflow-hidden rounded-lg">
-                      <Image
-                        src={appliance.image}
-                        alt=""
-                        fill
-                        sizes="64px"
-                        className="object-cover"
-                      />
-                    </span>
-                  ) : (
-                    <ApplianceGlyph appliance={appliance} palette={palette} />
-                  )}
-
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[13px] tracking-[-0.01em]">
-                      {appliance.name}
-                    </span>
-                    <span className="block font-mono text-[9px] tracking-[0.14em] text-muted uppercase">
-                      {appliance.brand} · {appliance.spec}
-                    </span>
-                  </span>
-                  <span className="shrink-0 font-mono text-[11px] tabular-nums text-foreground/70">
-                    {money(appliance.price)}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </section>
       </div>
     </div>
   );
@@ -2817,33 +2596,6 @@ function Chips({
       })}
     </div>
   );
-}
-
-function IconButton({
-  label,
-  onClick,
-  children,
-}: {
-  label: string;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      className="focus-ring flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-foreground/45 transition-colors duration-300 hover:bg-foreground hover:text-background active:scale-90"
-    >
-      {children}
-    </button>
-  );
-}
-
-function RemainingLabel({ wall, tier }: { wall: PlannerWall; tier: RowTier }) {
-  const left = remaining(wall, tier);
-  if (left < 0) return <span className="text-coral">{Math.abs(left)}mm over</span>;
-  return <span className="text-brown">{left}mm left</span>;
 }
 
 function Line({ label, value }: { label: string; value: number }) {

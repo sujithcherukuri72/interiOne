@@ -58,12 +58,13 @@ export default function Estimator() {
             Estimate
           </p>
           <h2 className="mt-8 max-w-[20ch] text-[clamp(1.9rem,3.4vw,3rem)] leading-[1.05] font-medium tracking-[-0.035em] text-balance">
-            Price your kitchen cabinet by cabinet
+            Price your kitchen, drawn to your walls
           </h2>
           <p className="mt-6 max-w-[48ch] text-[15px] leading-[1.65] tracking-[-0.01em] text-muted">
             Not a slider and a guess — the actual Modula catalogue, at the
-            widths it is manufactured in. Place the units along your walls and
-            the drawing and the figure move with them.
+            widths it is manufactured in. Give us the walls and pick your
+            storage; the run is laid out for you, and the drawing and the
+            figure move with it.
           </p>
         </motion.div>
 

@@ -67,6 +67,165 @@ export function emptyWall(id: WallId, label: string, lengthFt: number): PlannerW
   return { id, label, lengthFt, rows: { lower: [], upper: [], loft: [] } };
 }
 
+/**
+ * The accessories a customer actually chooses, each one a real catalogue unit.
+ *
+ * The planner no longer asks anyone to lay out cabinets — it lays the run
+ * itself from the wall lengths — so this is the only place a choice changes
+ * what is in the run. Everything here is a lower or tall unit, because that is
+ * where storage accessories live; wall units are doors and nothing else.
+ */
+export const STORAGE_ACCESSORIES = [
+  { id: "bottle", unitId: "lower-bottle", width: 300 },
+  { id: "wicker", unitId: "lower-wicker", width: 450 },
+  { id: "grain", unitId: "lower-grain", width: 450 },
+  { id: "cylinder", unitId: "lower-cylinder", width: 450 },
+  { id: "dishwasher", unitId: "lower-dishwasher", width: 600 },
+  { id: "corner", unitId: "lower-magic-corner", width: 900 },
+  { id: "larder", unitId: "tall-larder", width: 300 },
+  { id: "pantry", unitId: "tall-pantry-pullout", width: 600 },
+] as const;
+
+export type AccessoryId = (typeof STORAGE_ACCESSORIES)[number]["id"];
+
+/**
+ * The run, laid out for them.
+ *
+ * A kitchen is not a free composition: the sink goes on the longest wall, the
+ * hob goes beside it with drawers under, the chosen accessories take their
+ * widths out of the same run, and whatever is left is doors and drawer banks
+ * from the widest down. That is what a designer draws on the first visit, and
+ * it is deterministic — so it belongs here rather than in a step that asked the
+ * customer to do it themselves.
+ *
+ * Greedy, largest-first, and it never overruns: a unit is only placed if it
+ * fits in what is left. The tail below the narrowest cabinet becomes a filler,
+ * which is exactly what the factory does with it.
+ */
+const FILL_LOWER = [
+  { unitId: "lower-3drawer", widths: [900, 600, 450] },
+  { unitId: "lower-2door", widths: [800] },
+  { unitId: "lower-2drawer", widths: [900, 800, 600, 450] },
+  { unitId: "lower-1door", widths: [600, 450, 400] },
+] as const;
+
+const FILL_UPPER = [
+  { unitId: "upper-2door", widths: [900, 800] },
+  { unitId: "upper-1door", widths: [600, 450, 400] },
+] as const;
+
+const FILLER_WIDTHS = [300, 200, 100];
+
+/** The narrowest thing worth placing before the tail becomes a filler. */
+const MIN_CABINET = 400;
+
+type AutoOptions = {
+  accessories: readonly string[];
+  hardware: HardwareId;
+  /** Wall units above the run. Off for a wall the customer wants open. */
+  uppers?: boolean;
+};
+
+function fillRow(
+  spaceMm: number,
+  table: readonly { unitId: string; widths: readonly number[] }[],
+  fillerId: string,
+  hardware: HardwareId,
+  keyPrefix: string,
+  seed: PlacedUnit[] = []
+): PlacedUnit[] {
+  const out = [...seed];
+  let left = spaceMm - runWidth(seed);
+  let n = out.length;
+
+  while (left >= MIN_CABINET) {
+    const pick = table
+      .flatMap((entry) => entry.widths.map((width) => ({ ...entry, width })))
+      .find((candidate) => candidate.width <= left);
+    if (!pick) break;
+
+    out.push({
+      key: `${keyPrefix}-${n++}`,
+      unitId: pick.unitId,
+      width: pick.width,
+      hardware,
+    });
+    left -= pick.width;
+  }
+
+  // The tail. A 240mm gap is a filler panel, not a hole in the run.
+  const filler = FILLER_WIDTHS.find((w) => w <= left);
+  if (filler) {
+    out.push({ key: `${keyPrefix}-${n}`, unitId: fillerId, width: filler, hardware });
+  }
+
+  return out;
+}
+
+export function autoFillWall(
+  wall: PlannerWall,
+  { accessories, hardware, uppers = true }: AutoOptions,
+  /** Only the first wall gets the sink, the hob and the accessories. */
+  primary: boolean
+): PlannerWall {
+  const spaceMm = toMm(wall.lengthFt);
+  if (spaceMm <= 0) return { ...wall, rows: { lower: [], upper: [], loft: [] } };
+
+  const seed: PlacedUnit[] = [];
+  /**
+   * Tall units are placed in the lower row but rise the full height of the
+   * wall, so they are held back and parked at the far end of the run — and the
+   * wall cabinets stop short of them. Mixed into the middle they would have
+   * wall units drawn straight through them in the elevation.
+   */
+  const towers: PlacedUnit[] = [];
+  let n = 0;
+
+  const place = (unitId: string, width: number, into = seed) => {
+    if (runWidth(seed) + runWidth(towers) + width > spaceMm) return;
+    into.push({ key: `${wall.id}-l-s${n++}`, unitId, width, hardware });
+  };
+
+  if (primary) {
+    // The two fixtures every kitchen has, before anything optional.
+    place("lower-sink-2door", 800);
+    place("lower-hob-3drawer", 600);
+
+    for (const id of accessories) {
+      const accessory = STORAGE_ACCESSORIES.find((a) => a.id === id);
+      if (!accessory) continue;
+      const unit = getUnit(accessory.unitId);
+      place(accessory.unitId, accessory.width, unit?.tier === "tall" ? towers : seed);
+    }
+  }
+
+  const cabinetSpace = spaceMm - runWidth(towers);
+
+  return {
+    ...wall,
+    rows: {
+      lower: [
+        ...fillRow(cabinetSpace, FILL_LOWER, "filler-lower", hardware, `${wall.id}-l`, seed),
+        ...towers,
+      ],
+      upper: uppers
+        ? fillRow(cabinetSpace, FILL_UPPER, "filler-upper", hardware, `${wall.id}-u`)
+        : [],
+      loft: [],
+    },
+  };
+}
+
+/** Every wall laid out at once — the plan the last step draws. */
+export function autoFillWalls(walls: PlannerWall[], options: AutoOptions) {
+  // The sink goes on the longest wall, which is where a designer puts it.
+  const primary = walls.reduce(
+    (best, w, i) => (w.lengthFt > walls[best].lengthFt ? i : best),
+    0
+  );
+  return walls.map((wall, i) => autoFillWall(wall, options, i === primary));
+}
+
 /** A tall unit is placed in the lower row but is not a lower cabinet. */
 export const rowFor = (unit: CabinetUnit): Exclude<CabinetTier, "tall"> =>
   unit.tier === "tall" ? "lower" : unit.tier;
@@ -233,11 +392,9 @@ export function warnings(plan: Plan): string[] {
         out.push(
           `${wall.label}: the ${tier} run is ${Math.abs(left)}mm longer than the wall.`
         );
-      } else if (left > 0 && left < 100 && wall.rows[tier].length) {
-        out.push(
-          `${wall.label}: ${left}mm left on the ${tier} run — too narrow for a filler.`
-        );
       }
+      // A tail under a filler's width is a scribe, not a fault: the run is
+      // laid out here rather than by hand, so nobody can act on it anyway.
     }
   }
 

@@ -7,7 +7,16 @@ import { ASSETS } from "@/data/assets";
 import { HERO_MEDIA } from "@/data/kitchen-styles";
 import { EASE } from "@/lib/motion";
 import { SHUFFLE_PRESET } from "@/lib/shuffle";
+import { BOOK_VISIT_LINK } from "@/lib/whatsapp";
 import Shuffle from "./ui/Shuffle";
+
+/** Four claims the sections below back up, in the order they are made. */
+const HERO_PROOF = [
+  "Termite proof",
+  "Fire safe · UL 94 V-0",
+  "Zero plywood",
+  "Installed in 30 days",
+] as const;
 
 /**
  * The hero: a kitchen playing behind the headline, and nothing else.
@@ -65,16 +74,60 @@ export default function Hero() {
         </span>
       </h1>
 
-      {/* ── Foot ───────────────────────────────────────────────────── */}
+      {/* ── Foot ─────────────────────────────────────────────────────
+          One cluster, bottom-left: the line, the four facts under a hairline,
+          then the ask. Floated on its own mid-screen it cut the kitchen in
+          half — hung off the same baseline as the JSW mark it reads as the
+          foot of the frame instead of a band across it. */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}
         className="flex items-end justify-between gap-6 px-5 pb-[5vh] sm:px-8"
       >
-        <p className="max-w-[34ch] text-[13.5px] leading-[1.6] tracking-[-0.01em] text-white/70">
-          Steel-composite kitchens, built in Hyderabad and installed in 30 days.
-        </p>
+        <div className="max-w-[46ch]">
+          <p className="max-w-[34ch] text-[13.5px] leading-[1.6] tracking-[-0.01em] text-white/70">
+            Steel-composite kitchens, built in Hyderabad and installed in 30 days.
+          </p>
+
+          {/* Set at caption weight and kept to one line on anything but a
+              phone: it is a footnote to the headline, not a second headline. */}
+          <ul className="mt-5 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 border-t border-white/15 pt-4 font-mono text-[9px] tracking-[0.18em] text-white/55 uppercase sm:text-[10px] sm:tracking-[0.22em]">
+            {HERO_PROOF.map((item, i) => (
+              <li key={item} className="flex items-center gap-2.5">
+                {i > 0 && (
+                  <span aria-hidden="true" className="h-2.5 w-px bg-white/20" />
+                )}
+                {item}
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3">
+            <a
+              href={BOOK_VISIT_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="focus-ring rounded-full bg-white/95 px-5 py-2.5 text-[12.5px] font-medium tracking-[-0.01em] text-brown-deep transition-colors duration-300 hover:bg-white"
+            >
+              Book a free site visit
+            </a>
+            {/* A link, not a second button — two pills side by side made the
+                corner read as a form. */}
+            <a
+              href="#technology"
+              className="focus-ring group inline-flex items-center gap-2 rounded text-[12.5px] tracking-[-0.01em] text-white/70 transition-colors duration-300 hover:text-white"
+            >
+              See how it&rsquo;s built
+              <span
+                aria-hidden="true"
+                className="inline-block transition-transform duration-300 group-hover:translate-y-0.5"
+              >
+                ↓
+              </span>
+            </a>
+          </div>
+        </div>
 
         <span className="flex shrink-0 flex-col items-end gap-5">
           {/* The parent group, straight onto the photograph.
