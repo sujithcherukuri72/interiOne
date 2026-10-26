@@ -12,6 +12,7 @@ import ContentGuard from "@/components/ui/ContentGuard";
 import Preloader from "@/components/ui/Preloader";
 import { IS_PREVIEW, SITE, SITE_URL, STUDIO } from "@/lib/site";
 import { buildGraph } from "@/lib/structured-data";
+import { Analytics } from "@vercel/analytics/next";
 
 /** Modula's primary face — headings are set in it, Black at the top end. */
 const montserrat = Montserrat({
@@ -202,6 +203,7 @@ export default function RootLayout({
             {children}
           </ClickSpark>
         </SmoothScrollProvider>
+        <Analytics />
       </body>
     </html>
   );
